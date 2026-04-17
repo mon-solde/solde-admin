@@ -10,8 +10,11 @@ import {
   Bell,
   Package,
   Palette,
+  PiggyBank,
+  Repeat,
   ServerOff,
   Settings,
+  Wallet,
   Wrench,
   UserCog,
   UserX,
@@ -21,6 +24,7 @@ import {
   AudioWaveform,
   Command,
   GalleryVerticalEnd,
+  Car,
 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
@@ -72,6 +76,26 @@ export const sidebarData: SidebarData = {
           url: '/chats',
           badge: '3',
           icon: MessagesSquare,
+        },
+        {
+          title: 'Véhicules',
+          url: '/vehicles',
+          icon: Car,
+        },
+        {
+          title: 'Budget mensuel',
+          url: '/budget',
+          icon: Wallet,
+        },
+        {
+          title: 'Épargne',
+          url: '/savings',
+          icon: PiggyBank,
+        },
+        {
+          title: 'Charges récurrentes',
+          url: '/subscriptions',
+          icon: Repeat,
         },
         {
           title: 'Users',
