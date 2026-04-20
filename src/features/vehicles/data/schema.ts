@@ -1,9 +1,6 @@
 import { z } from 'zod'
 
-const vehicleStatusSchema = z.union([
-  z.literal('active'),
-  z.literal('sold'),
-])
+const vehicleStatusSchema = z.union([z.literal('active'), z.literal('sold')])
 export type VehicleStatus = z.infer<typeof vehicleStatusSchema>
 
 const vehicleParticipantSchema = z.object({

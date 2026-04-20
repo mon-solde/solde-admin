@@ -1,5 +1,5 @@
-import { monthlyBudgets } from '@/features/budget/data/monthly-budgets'
 import { FRENCH_MONTHS } from '@/features/budget/data/data'
+import { monthlyBudgets } from '@/features/budget/data/monthly-budgets'
 import { type SavingsMovement } from './schema'
 
 export type SavingsHistoryEntry = {
@@ -12,7 +12,9 @@ export type SavingsHistoryEntry = {
   source: 'bank' | 'cash'
 }
 
-export function buildSavingsHistory(manualMovements: SavingsMovement[]): SavingsHistoryEntry[] {
+export function buildSavingsHistory(
+  manualMovements: SavingsMovement[]
+): SavingsHistoryEntry[] {
   const fromBudget: SavingsHistoryEntry[] = monthlyBudgets.flatMap((budget) =>
     budget.savingsWithdrawals.map((w) => ({
       id: w.id,
@@ -35,7 +37,9 @@ export function buildSavingsHistory(manualMovements: SavingsMovement[]): Savings
     source: m.source,
   }))
 
-  return [...fromBudget, ...fromManual].sort((a, b) => b.date.getTime() - a.date.getTime())
+  return [...fromBudget, ...fromManual].sort(
+    (a, b) => b.date.getTime() - a.date.getTime()
+  )
 }
 
 export function computeSavingsTotals(history: SavingsHistoryEntry[]) {
@@ -62,11 +66,20 @@ export const savingsSources = [
 ]
 
 export function formatEuros(amount: number): string {
-  return amount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
+  return (
+    amount.toLocaleString('fr-FR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }) + ' €'
+  )
 }
 
 export function formatFrenchDate(date: Date): string {
-  return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })
+  return date.toLocaleDateString('fr-FR', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  })
 }
 
 export function getTodayAsInputValue(): string {

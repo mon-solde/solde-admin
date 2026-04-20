@@ -1,5 +1,5 @@
-import { type Row } from '@tanstack/react-table'
 import { useNavigate } from '@tanstack/react-router'
+import { type Row } from '@tanstack/react-table'
 import { Eye, MoreHorizontal, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -21,7 +21,10 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const navigate = useNavigate()
 
   function openDetail() {
-    navigate({ to: '/budget/detail', search: { year: row.original.year, month: row.original.month } })
+    navigate({
+      to: '/budget/detail',
+      search: { year: row.original.year, month: row.original.month },
+    })
   }
 
   function openDeleteDialog() {
@@ -32,7 +35,10 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant='ghost' className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'>
+        <Button
+          variant='ghost'
+          className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'
+        >
           <MoreHorizontal size={16} />
           <span className='sr-only'>Ouvrir le menu</span>
         </Button>

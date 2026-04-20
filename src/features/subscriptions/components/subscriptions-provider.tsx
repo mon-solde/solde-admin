@@ -11,9 +11,14 @@ type SubscriptionsContextType = {
   setCurrentRow: React.Dispatch<React.SetStateAction<Subscription | null>>
 }
 
-const SubscriptionsContext = React.createContext<SubscriptionsContextType | null>(null)
+const SubscriptionsContext =
+  React.createContext<SubscriptionsContextType | null>(null)
 
-export function SubscriptionsProvider({ children }: { children: React.ReactNode }) {
+export function SubscriptionsProvider({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const [open, setOpen] = useDialogState<SubscriptionsDialogType>(null)
   const [currentRow, setCurrentRow] = useState<Subscription | null>(null)
 
@@ -27,6 +32,9 @@ export function SubscriptionsProvider({ children }: { children: React.ReactNode 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useSubscriptions = () => {
   const ctx = React.useContext(SubscriptionsContext)
-  if (!ctx) throw new Error('useSubscriptions has to be used within <SubscriptionsProvider>')
+  if (!ctx)
+    throw new Error(
+      'useSubscriptions has to be used within <SubscriptionsProvider>'
+    )
   return ctx
 }

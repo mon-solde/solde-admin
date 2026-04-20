@@ -1,7 +1,11 @@
 import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
+import {
+  monthlyBudgets as initialBudgets,
+  addMonthlyBudget,
+  removeMonthlyBudget,
+} from '../data/monthly-budgets'
 import { type MonthlyBudget } from '../data/schema'
-import { monthlyBudgets as initialBudgets, addMonthlyBudget, removeMonthlyBudget } from '../data/monthly-budgets'
 
 type BudgetListDialogType = 'add' | 'delete'
 
@@ -15,9 +19,15 @@ type BudgetListContextType = {
   deleteBudget: (id: string) => void
 }
 
-const BudgetListContext = React.createContext<BudgetListContextType | null>(null)
+const BudgetListContext = React.createContext<BudgetListContextType | null>(
+  null
+)
 
-export function BudgetListProvider({ children }: { children: React.ReactNode }) {
+export function BudgetListProvider({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   const [open, setOpen] = useDialogState<BudgetListDialogType>(null)
   const [currentRow, setCurrentRow] = useState<MonthlyBudget | null>(null)
   const [budgets, setBudgets] = useState<MonthlyBudget[]>([...initialBudgets])
@@ -37,7 +47,17 @@ export function BudgetListProvider({ children }: { children: React.ReactNode }) 
   }
 
   return (
-    <BudgetListContext value={{ open, setOpen, currentRow, setCurrentRow, budgets, addBudget, deleteBudget }}>
+    <BudgetListContext
+      value={{
+        open,
+        setOpen,
+        currentRow,
+        setCurrentRow,
+        budgets,
+        addBudget,
+        deleteBudget,
+      }}
+    >
       {children}
     </BudgetListContext>
   )
@@ -46,6 +66,7 @@ export function BudgetListProvider({ children }: { children: React.ReactNode }) 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useBudgetList = () => {
   const ctx = React.useContext(BudgetListContext)
-  if (!ctx) throw new Error('useBudgetList has to be used within <BudgetListProvider>')
+  if (!ctx)
+    throw new Error('useBudgetList has to be used within <BudgetListProvider>')
   return ctx
 }

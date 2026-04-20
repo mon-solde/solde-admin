@@ -4,8 +4,8 @@ import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
-import { expenses } from '../data/expenses'
 import { statusColorMap, vehicleStatuses } from '../data/data'
+import { expenses } from '../data/expenses'
 import { type Vehicle } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
@@ -66,7 +66,9 @@ export const vehiclesColumns: ColumnDef<Vehicle>[] = [
       <DataTableColumnHeader column={column} title='Statut' />
     ),
     cell: ({ row }) => {
-      const status = vehicleStatuses.find((s) => s.value === row.original.status)
+      const status = vehicleStatuses.find(
+        (s) => s.value === row.original.status
+      )
       return (
         <Badge
           variant='outline'
@@ -112,9 +114,7 @@ export const vehiclesColumns: ColumnDef<Vehicle>[] = [
     cell: ({ row }) => {
       const total = getTotalInvested(row.original.id)
       return (
-        <span className='font-medium'>
-          {total.toLocaleString('fr-FR')} €
-        </span>
+        <span className='font-medium'>{total.toLocaleString('fr-FR')} €</span>
       )
     },
   },

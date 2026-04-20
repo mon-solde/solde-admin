@@ -1,7 +1,7 @@
-import { type Vehicle } from '../../data/schema'
 import { expenses as allExpenses } from '../../data/expenses'
-import { ExpenseMutateDrawer } from './expense-mutate-drawer'
+import { type Vehicle } from '../../data/schema'
 import { DeclareSoldDialog } from './declare-sold-dialog'
+import { ExpenseMutateDrawer } from './expense-mutate-drawer'
 import { useVehicleDetail } from './vehicle-detail-provider'
 
 type VehicleDetailDialogsProps = {
@@ -9,7 +9,8 @@ type VehicleDetailDialogsProps = {
 }
 
 export function VehicleDetailDialogs({ vehicle }: VehicleDetailDialogsProps) {
-  const { open, setOpen, currentExpense, setCurrentExpense } = useVehicleDetail()
+  const { open, setOpen, currentExpense, setCurrentExpense } =
+    useVehicleDetail()
   const vehicleExpenses = allExpenses.filter((e) => e.vehicleId === vehicle.id)
 
   return (

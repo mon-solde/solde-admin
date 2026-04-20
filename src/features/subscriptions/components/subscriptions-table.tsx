@@ -22,7 +22,11 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { subscriptionCategories, subscriptionPaymentTypes, subscriptionStatuses } from '../data/data'
+import {
+  subscriptionCategories,
+  subscriptionPaymentTypes,
+  subscriptionStatuses,
+} from '../data/data'
 import { type Subscription } from '../data/schema'
 import { subscriptionsColumns as columns } from './subscriptions-columns'
 
@@ -32,7 +36,11 @@ type SubscriptionsTableProps = {
   navigate: NavigateFn
 }
 
-export function SubscriptionsTable({ data, search, navigate }: SubscriptionsTableProps) {
+export function SubscriptionsTable({
+  data,
+  search,
+  navigate,
+}: SubscriptionsTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -59,7 +67,13 @@ export function SubscriptionsTable({ data, search, navigate }: SubscriptionsTabl
   const table = useReactTable({
     data,
     columns,
-    state: { sorting, pagination, rowSelection, columnFilters, columnVisibility },
+    state: {
+      sorting,
+      pagination,
+      rowSelection,
+      columnFilters,
+      columnVisibility,
+    },
     enableRowSelection: true,
     onPaginationChange,
     onColumnFiltersChange,
@@ -129,7 +143,10 @@ export function SubscriptionsTable({ data, search, navigate }: SubscriptionsTabl
                   >
                     {header.isPlaceholder
                       ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -152,14 +169,20 @@ export function SubscriptionsTable({ data, search, navigate }: SubscriptionsTabl
                         cell.column.columnDef.meta?.tdClassName
                       )}
                     >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className='h-24 text-center'>
+                <TableCell
+                  colSpan={columns.length}
+                  className='h-24 text-center'
+                >
                   Aucun abonnement trouvé.
                 </TableCell>
               </TableRow>

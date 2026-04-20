@@ -1,6 +1,6 @@
-import { useBudgetList } from './budget-list-provider'
 import { BudgetListActionDialog } from './budget-list-action-dialog'
 import { BudgetListDeleteDialog } from './budget-list-delete-dialog'
+import { useBudgetList } from './budget-list-provider'
 
 export function BudgetListDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useBudgetList()

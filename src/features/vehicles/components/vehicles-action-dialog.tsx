@@ -1,5 +1,5 @@
-import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusIcon, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -20,8 +20,8 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { SelectDropdown } from '@/components/select-dropdown'
 import { Separator } from '@/components/ui/separator'
+import { SelectDropdown } from '@/components/select-dropdown'
 import { useCreateVehicle } from '../api/create-vehicle'
 import { partners } from '../data/data'
 import { type Vehicle } from '../data/schema'
@@ -29,7 +29,7 @@ import { type Vehicle } from '../data/schema'
 const participantSchema = z.object({
   userId: z.string().min(1, 'Sélectionner un partenaire'),
   userName: z.string(),
-  profitShare: z.coerce
+  profitShare: z
     .number({ error: 'Requis' })
     .min(1, 'Min 1%')
     .max(100, 'Max 100%'),
@@ -72,7 +72,7 @@ export function VehiclesActionDialog({
     resolver: zodResolver(formSchema),
     defaultValues: isEdit
       ? {
-          name: currentRow.name,
+          name: `${currentRow.make} ${currentRow.model} ${currentRow.year}`,
           purchaseDate: currentRow.purchaseDate.toISOString().split('T')[0],
           participants: currentRow.participants.map((p) => ({
             userId: p.userId,
@@ -151,7 +151,7 @@ export function VehiclesActionDialog({
                 control={form.control}
                 name='name'
                 render={({ field }) => (
-                  <FormItem className='grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0'>
+                  <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                     <FormLabel className='col-span-2 text-end'>Nom</FormLabel>
                     <FormControl>
                       <Input
@@ -169,8 +169,8 @@ export function VehiclesActionDialog({
                 control={form.control}
                 name='purchaseDate'
                 render={({ field }) => (
-                  <FormItem className='grid grid-cols-6 items-center gap-x-4 gap-y-1 space-y-0'>
-                    <FormLabel className="col-span-2 text-end">
+                  <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                    <FormLabel className='col-span-2 text-end'>
                       Date d&apos;achat
                     </FormLabel>
                     <FormControl>
@@ -240,6 +240,9 @@ export function VehiclesActionDialog({
                                   placeholder='0'
                                   className='pe-6'
                                   {...f}
+                                  onChange={(e) =>
+                                    f.onChange(e.target.valueAsNumber)
+                                  }
                                 />
                                 <span className='pointer-events-none absolute end-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
                                   %
@@ -289,7 +292,11 @@ export function VehiclesActionDialog({
 
         <DialogFooter>
           <Button type='submit' form='vehicle-form' disabled={isPending}>
-            {isPending ? 'Enregistrement...' : isEdit ? 'Enregistrer' : 'Créer le véhicule'}
+            {isPending
+              ? 'Enregistrement...'
+              : isEdit
+                ? 'Enregistrer'
+                : 'Créer le véhicule'}
           </Button>
         </DialogFooter>
       </DialogContent>

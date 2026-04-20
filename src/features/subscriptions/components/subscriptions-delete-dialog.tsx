@@ -32,7 +32,9 @@ export function SubscriptionsDeleteDialog({
           <AlertDialogTitle>Supprimer la charge récurrente</AlertDialogTitle>
           <AlertDialogDescription>
             Êtes-vous sûr de vouloir supprimer{' '}
-            <span className='font-medium text-foreground'>{currentRow.name}</span>{' '}
+            <span className='font-medium text-foreground'>
+              {currentRow.name}
+            </span>{' '}
             ? Cette action est irréversible.
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -40,7 +42,7 @@ export function SubscriptionsDeleteDialog({
           <AlertDialogCancel>Annuler</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
-            className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
+            className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
           >
             Supprimer
           </AlertDialogAction>

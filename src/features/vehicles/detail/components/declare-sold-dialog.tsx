@@ -99,10 +99,19 @@ export function DeclareSoldDialog({
 
               <div className='space-y-2'>
                 <div className='flex items-center gap-2'>
-                  <TrendingUp size={14} className={netProfit >= 0 ? 'text-green-600' : 'text-red-500'} />
+                  <TrendingUp
+                    size={14}
+                    className={
+                      netProfit >= 0 ? 'text-green-600' : 'text-red-500'
+                    }
+                  />
                   <span className='text-sm font-medium'>
                     Bénéfice net :{' '}
-                    <span className={netProfit >= 0 ? 'text-green-600' : 'text-red-500'}>
+                    <span
+                      className={
+                        netProfit >= 0 ? 'text-green-600' : 'text-red-500'
+                      }
+                    >
                       {netProfit >= 0 ? '+' : ''}
                       {netProfit.toLocaleString('fr-FR')} €
                     </span>
@@ -122,12 +131,19 @@ export function DeclareSoldDialog({
                     <div>
                       <p className='text-sm font-medium'>{p.userName}</p>
                       <p className='text-xs text-muted-foreground'>
-                        Mise : {p.invested.toLocaleString('fr-FR')} € · Bénéf {p.profitShare}% :{' '}
-                        {p.profitShare.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} €
+                        Mise : {p.invested.toLocaleString('fr-FR')} € · Bénéf{' '}
+                        {p.profitShare}% :{' '}
+                        {p.profitShare.toLocaleString('fr-FR', {
+                          maximumFractionDigits: 2,
+                        })}{' '}
+                        €
                       </p>
                     </div>
                     <span className='text-base font-bold'>
-                      {p.total.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} €
+                      {p.total.toLocaleString('fr-FR', {
+                        maximumFractionDigits: 2,
+                      })}{' '}
+                      €
                     </span>
                   </div>
                 ))}
@@ -140,7 +156,10 @@ export function DeclareSoldDialog({
           <Button variant='outline' onClick={() => onOpenChange(false)}>
             Annuler
           </Button>
-          <Button onClick={handleConfirm} disabled={!salePrice || salePriceNum <= 0}>
+          <Button
+            onClick={handleConfirm}
+            disabled={!salePrice || salePriceNum <= 0}
+          >
             Confirmer la vente
           </Button>
         </DialogFooter>
