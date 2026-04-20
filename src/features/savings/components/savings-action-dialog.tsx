@@ -1,5 +1,5 @@
-import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/components/ui/button'
 import {
@@ -32,7 +32,7 @@ import { useSavings } from './savings-provider'
 const addMovementSchema = z.object({
   kind: z.union([z.literal('addition'), z.literal('withdrawal')]),
   source: z.union([z.literal('bank'), z.literal('cash')]),
-  amount: z.coerce.number({ error: 'Requis' }).min(0.01, 'Montant requis'),
+  amount: z.number({ error: 'Requis' }).min(0.01, 'Montant requis'),
   label: z.string().min(1, 'Libellé requis'),
   movementDate: z.string().min(1, 'Date requise'),
 })
@@ -44,12 +44,21 @@ type SavingsActionDialogProps = {
   onOpenChange: (open: boolean) => void
 }
 
-export function SavingsActionDialog({ open, onOpenChange }: SavingsActionDialogProps) {
+export function SavingsActionDialog({
+  open,
+  onOpenChange,
+}: SavingsActionDialogProps) {
   const { addMovement } = useSavings()
 
   const form = useForm<AddMovementValues>({
     resolver: zodResolver(addMovementSchema),
-    defaultValues: { kind: 'withdrawal', source: 'cash', amount: 0, label: '', movementDate: getTodayAsInputValue() },
+    defaultValues: {
+      kind: 'withdrawal',
+      source: 'cash',
+      amount: 0,
+      label: '',
+      movementDate: getTodayAsInputValue(),
+    },
   })
 
   function handleSubmit(values: AddMovementValues) {
@@ -65,7 +74,13 @@ export function SavingsActionDialog({ open, onOpenChange }: SavingsActionDialogP
   }
 
   return (
-    <Dialog open={open} onOpenChange={(state) => { form.reset(); onOpenChange(state) }}>
+    <Dialog
+      open={open}
+      onOpenChange={(state) => {
+        form.reset()
+        onOpenChange(state)
+      }}
+    >
       <DialogContent className='sm:max-w-md'>
         <DialogHeader>
           <DialogTitle>Ajouter un mouvement</DialogTitle>
@@ -74,7 +89,11 @@ export function SavingsActionDialog({ open, onOpenChange }: SavingsActionDialogP
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form id='savings-add-form' onSubmit={form.handleSubmit(handleSubmit)} className='space-y-4'>
+          <form
+            id='savings-add-form'
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className='space-y-4'
+          >
             <div className='grid grid-cols-2 gap-3'>
               <FormField
                 control={form.control}
@@ -128,8 +147,19 @@ export function SavingsActionDialog({ open, onOpenChange }: SavingsActionDialogP
                     <FormLabel>Montant</FormLabel>
                     <FormControl>
                       <div className='relative'>
-                        <Input type='number' step='0.01' min='0' placeholder='0' {...field} />
-                        <span className='pointer-events-none absolute end-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>€</span>
+                        <Input
+                          type='number'
+                          step='0.01'
+                          min='0'
+                          placeholder='0'
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(e.target.valueAsNumber)
+                          }
+                        />
+                        <span className='pointer-events-none absolute end-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
+                          €
+                        </span>
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -157,7 +187,10 @@ export function SavingsActionDialog({ open, onOpenChange }: SavingsActionDialogP
                 <FormItem>
                   <FormLabel>Libellé</FormLabel>
                   <FormControl>
-                    <Input placeholder='Ex : Aide maman, remboursement dette...' {...field} />
+                    <Input
+                      placeholder='Ex : Aide maman, remboursement dette...'
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -166,7 +199,9 @@ export function SavingsActionDialog({ open, onOpenChange }: SavingsActionDialogP
           </form>
         </Form>
         <DialogFooter>
-          <Button type='submit' form='savings-add-form'>Enregistrer</Button>
+          <Button type='submit' form='savings-add-form'>
+            Enregistrer
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

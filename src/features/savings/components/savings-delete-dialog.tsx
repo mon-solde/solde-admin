@@ -17,7 +17,11 @@ type SavingsDeleteDialogProps = {
   onOpenChange: (open: boolean) => void
 }
 
-export function SavingsDeleteDialog({ currentRow, open, onOpenChange }: SavingsDeleteDialogProps) {
+export function SavingsDeleteDialog({
+  currentRow,
+  open,
+  onOpenChange,
+}: SavingsDeleteDialogProps) {
   const { deleteMovement } = useSavings()
 
   function handleDelete() {
@@ -32,7 +36,9 @@ export function SavingsDeleteDialog({ currentRow, open, onOpenChange }: SavingsD
           <AlertDialogTitle>Supprimer le mouvement</AlertDialogTitle>
           <AlertDialogDescription>
             Êtes-vous sûr de vouloir supprimer{' '}
-            <span className='font-medium text-foreground'>{currentRow.label}</span>{' '}
+            <span className='font-medium text-foreground'>
+              {currentRow.label}
+            </span>{' '}
             ? Cette action est irréversible.
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -40,7 +46,7 @@ export function SavingsDeleteDialog({ currentRow, open, onOpenChange }: SavingsD
           <AlertDialogCancel>Annuler</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
-            className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
+            className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
           >
             Supprimer
           </AlertDialogAction>

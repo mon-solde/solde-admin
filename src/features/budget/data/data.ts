@@ -2,15 +2,28 @@ import { subscriptions } from '@/features/subscriptions/data/subscriptions'
 import { type ActionPayment, type MonthlyBudget } from './schema'
 
 export const FRENCH_MONTHS = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
+  'Janvier',
+  'Février',
+  'Mars',
+  'Avril',
+  'Mai',
+  'Juin',
+  'Juillet',
+  'Août',
+  'Septembre',
+  'Octobre',
+  'Novembre',
+  'Décembre',
 ]
 
 export function calculateTotalPaid(payments: ActionPayment[]): number {
   return payments.reduce((sum, p) => sum + p.amount, 0)
 }
 
-export function resolveActionState(totalPaid: number, plannedAmount: number): 'pending' | 'partial' | 'done' {
+export function resolveActionState(
+  totalPaid: number,
+  plannedAmount: number
+): 'pending' | 'partial' | 'done' {
   if (totalPaid === 0) return 'pending'
   if (totalPaid < plannedAmount) return 'partial'
   return 'done'
@@ -21,7 +34,12 @@ export function formatFrenchDate(date: Date): string {
 }
 
 export function formatEuros(amount: number): string {
-  return amount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
+  return (
+    amount.toLocaleString('fr-FR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }) + ' €'
+  )
 }
 
 export function getTodayAsInputValue(): string {
@@ -46,12 +64,16 @@ export function computeSavingsRemaining(budget: MonthlyBudget): number {
   const totalAutomaticDeductions = subscriptions
     .filter((s) => s.status === 'active' && s.paymentType === 'automatic')
     .reduce((sum, s) => sum + s.amount, 0)
-  const availableAfterDeductions = budget.receivedSalary - totalAutomaticDeductions
+  const availableAfterDeductions =
+    budget.receivedSalary - totalAutomaticDeductions
   const totalManualPaid = budget.manualActionEntries
     .flatMap((e) => e.payments)
     .reduce((sum, p) => sum + p.amount, 0)
   const availableForSavings = availableAfterDeductions - totalManualPaid
-  const totalSaved = budget.savingsWithdrawals.reduce((sum, w) => sum + w.amount, 0)
+  const totalSaved = budget.savingsWithdrawals.reduce(
+    (sum, w) => sum + w.amount,
+    0
+  )
   return availableForSavings - totalSaved
 }
 

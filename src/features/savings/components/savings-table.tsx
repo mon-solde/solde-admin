@@ -35,7 +35,9 @@ export function SavingsTable({ search, navigate }: SavingsTableProps) {
   const { history } = useSavings()
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'date', desc: true }])
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: 'date', desc: true },
+  ])
 
   const {
     columnFilters,
@@ -58,7 +60,13 @@ export function SavingsTable({ search, navigate }: SavingsTableProps) {
   const table = useReactTable({
     data: history,
     columns,
-    state: { sorting, pagination, rowSelection, columnFilters, columnVisibility },
+    state: {
+      sorting,
+      pagination,
+      rowSelection,
+      columnFilters,
+      columnVisibility,
+    },
     enableRowSelection: true,
     onPaginationChange,
     onColumnFiltersChange,
@@ -114,7 +122,12 @@ export function SavingsTable({ search, navigate }: SavingsTableProps) {
                       header.column.columnDef.meta?.thClassName
                     )}
                   >
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -137,14 +150,20 @@ export function SavingsTable({ search, navigate }: SavingsTableProps) {
                         cell.column.columnDef.meta?.tdClassName
                       )}
                     >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className='h-24 text-center'>
+                <TableCell
+                  colSpan={columns.length}
+                  className='h-24 text-center'
+                >
                   Aucun mouvement enregistré.
                 </TableCell>
               </TableRow>

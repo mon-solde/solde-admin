@@ -48,9 +48,7 @@ export function VehiclesTable({ data, search, navigate }: VehiclesTableProps) {
     navigate,
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: false },
-    columnFilters: [
-      { columnId: 'status', searchKey: 'status', type: 'array' },
-    ],
+    columnFilters: [{ columnId: 'status', searchKey: 'status', type: 'array' }],
   })
 
   // eslint-disable-next-line react-hooks/incompatible-library

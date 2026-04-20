@@ -1,6 +1,6 @@
-import { useBudget } from './budget-provider'
 import { BudgetEditSalaryDialog } from './budget-edit-salary-dialog'
 import { BudgetInitMonthDialog } from './budget-init-month-dialog'
+import { useBudget } from './budget-provider'
 
 type BudgetDialogsProps = {
   year: number
@@ -8,7 +8,11 @@ type BudgetDialogsProps = {
   currentSalary: number
 }
 
-export function BudgetDialogs({ year, month, currentSalary }: BudgetDialogsProps) {
+export function BudgetDialogs({
+  year,
+  month,
+  currentSalary,
+}: BudgetDialogsProps) {
   const { open, setOpen } = useBudget()
 
   return (

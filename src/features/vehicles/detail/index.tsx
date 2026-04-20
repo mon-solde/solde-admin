@@ -1,8 +1,17 @@
 import { getRouteApi, Link } from '@tanstack/react-router'
-import { ArrowLeft, CheckCircle2, CircleDashed, Pencil, PlusIcon, TrendingUp } from 'lucide-react'
+import {
+  ArrowLeft,
+  CheckCircle2,
+  CircleDashed,
+  Pencil,
+  PlusIcon,
+  TrendingUp,
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
 import {
   Table,
   TableBody,
@@ -15,13 +24,11 @@ import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { Separator } from '@/components/ui/separator'
-import { cn } from '@/lib/utils'
-import { vehicles } from '../data/vehicles'
-import { expenses as allExpenses } from '../data/expenses'
 import { statusColorMap } from '../data/data'
-import { VehicleDetailProvider } from './components/vehicle-detail-provider'
+import { expenses as allExpenses } from '../data/expenses'
+import { vehicles } from '../data/vehicles'
 import { VehicleDetailDialogs } from './components/vehicle-detail-dialogs'
+import { VehicleDetailProvider } from './components/vehicle-detail-provider'
 import { useVehicleDetail } from './components/vehicle-detail-provider'
 
 const route = getRouteApi('/_authenticated/vehicles/$vehicleId')
@@ -46,7 +53,10 @@ function VehicleDetailContent() {
   }
 
   const vehicleExpenses = allExpenses.filter((e) => e.vehicleId === vehicle.id)
-  const totalInvested = vehicleExpenses.reduce((sum, e) => sum + e.totalAmount, 0)
+  const totalInvested = vehicleExpenses.reduce(
+    (sum, e) => sum + e.totalAmount,
+    0
+  )
   const netProfit =
     vehicle.status === 'sold' && vehicle.salePrice
       ? vehicle.salePrice - totalInvested
@@ -134,8 +144,7 @@ function VehicleDetailContent() {
               )}
               {vehicle.soldAt && (
                 <p className='text-xs text-muted-foreground'>
-                  Vendu le{' '}
-                  {vehicle.soldAt.toLocaleDateString('fr-FR')}
+                  Vendu le {vehicle.soldAt.toLocaleDateString('fr-FR')}
                 </p>
               )}
             </CardContent>
@@ -160,13 +169,16 @@ function VehicleDetailContent() {
                     {netProfit.toLocaleString('fr-FR')} €
                   </p>
                   <p className='text-xs text-muted-foreground'>
-                    {((netProfit / totalInvested) * 100).toFixed(1)}% de rendement
+                    {((netProfit / totalInvested) * 100).toFixed(1)}% de
+                    rendement
                   </p>
                 </>
               ) : (
                 <>
                   <p className='text-2xl font-bold text-muted-foreground'>—</p>
-                  <p className='text-xs text-muted-foreground'>Véhicule en cours</p>
+                  <p className='text-xs text-muted-foreground'>
+                    Véhicule en cours
+                  </p>
                 </>
               )}
             </CardContent>
@@ -179,9 +191,13 @@ function VehicleDetailContent() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className='text-2xl font-bold'>{vehicle.participants.length}</p>
+              <p className='text-2xl font-bold'>
+                {vehicle.participants.length}
+              </p>
               <p className='text-xs text-muted-foreground'>
-                {vehicle.participants.map((p) => p.userName.split(' ')[0]).join(', ')}
+                {vehicle.participants
+                  .map((p) => p.userName.split(' ')[0])
+                  .join(', ')}
               </p>
             </CardContent>
           </Card>
@@ -191,7 +207,9 @@ function VehicleDetailContent() {
           {/* Participants */}
           <div className='space-y-3'>
             <h3 className='font-semibold'>
-              {vehicle.status === 'sold' ? 'Répartition de la vente' : 'Participants'}
+              {vehicle.status === 'sold'
+                ? 'Répartition de la vente'
+                : 'Participants'}
             </h3>
             <div className='overflow-hidden rounded-md border'>
               <Table>
@@ -208,7 +226,9 @@ function VehicleDetailContent() {
                 <TableBody>
                   {participantSummary.map((p) => (
                     <TableRow key={p.userId}>
-                      <TableCell className='font-medium'>{p.userName}</TableCell>
+                      <TableCell className='font-medium'>
+                        {p.userName}
+                      </TableCell>
                       <TableCell className='text-end'>
                         <Badge variant='outline'>{p.profitShare}%</Badge>
                       </TableCell>
@@ -217,7 +237,11 @@ function VehicleDetailContent() {
                       </TableCell>
                       {vehicle.status === 'sold' && (
                         <TableCell className='text-end text-green-600'>
-                          +{p.profitAmount.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} €
+                          +
+                          {p.profitAmount.toLocaleString('fr-FR', {
+                            maximumFractionDigits: 2,
+                          })}{' '}
+                          €
                         </TableCell>
                       )}
                     </TableRow>
@@ -305,7 +329,10 @@ function VehicleDetailContent() {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={5} className='h-24 text-center text-muted-foreground'>
+                      <TableCell
+                        colSpan={5}
+                        className='h-24 text-center text-muted-foreground'
+                      >
                         Aucune dépense enregistrée.
                       </TableCell>
                     </TableRow>

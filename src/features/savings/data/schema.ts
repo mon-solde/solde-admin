@@ -1,9 +1,15 @@
 import { z } from 'zod'
 
-const savingsMovementKindSchema = z.union([z.literal('addition'), z.literal('withdrawal')])
+const savingsMovementKindSchema = z.union([
+  z.literal('addition'),
+  z.literal('withdrawal'),
+])
 export type SavingsMovementKind = z.infer<typeof savingsMovementKindSchema>
 
-const savingsMovementSourceSchema = z.union([z.literal('bank'), z.literal('cash')])
+const savingsMovementSourceSchema = z.union([
+  z.literal('bank'),
+  z.literal('cash'),
+])
 export type SavingsMovementSource = z.infer<typeof savingsMovementSourceSchema>
 
 const savingsMovementSchema = z.object({

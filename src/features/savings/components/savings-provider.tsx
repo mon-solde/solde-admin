@@ -1,8 +1,12 @@
 import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
-import { type SavingsMovement } from '../data/schema'
+import {
+  buildSavingsHistory,
+  computeSavingsTotals,
+  type SavingsHistoryEntry,
+} from '../data/data'
 import { savingsMovements as initialMovements } from '../data/savings-movements'
-import { buildSavingsHistory, computeSavingsTotals, type SavingsHistoryEntry } from '../data/data'
+import { type SavingsMovement } from '../data/schema'
 
 type SavingsDialogType = 'add' | 'delete'
 
@@ -10,7 +14,9 @@ type SavingsContextType = {
   open: SavingsDialogType | null
   setOpen: (str: SavingsDialogType | null) => void
   currentRow: SavingsHistoryEntry | null
-  setCurrentRow: React.Dispatch<React.SetStateAction<SavingsHistoryEntry | null>>
+  setCurrentRow: React.Dispatch<
+    React.SetStateAction<SavingsHistoryEntry | null>
+  >
   history: SavingsHistoryEntry[]
   totals: { bank: number; cash: number; total: number }
   addMovement: (movement: Omit<SavingsMovement, 'id' | 'createdAt'>) => void
@@ -22,7 +28,8 @@ const SavingsContext = React.createContext<SavingsContextType | null>(null)
 export function SavingsProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useDialogState<SavingsDialogType>(null)
   const [currentRow, setCurrentRow] = useState<SavingsHistoryEntry | null>(null)
-  const [manualMovements, setManualMovements] = useState<SavingsMovement[]>(initialMovements)
+  const [manualMovements, setManualMovements] =
+    useState<SavingsMovement[]>(initialMovements)
 
   const history = buildSavingsHistory(manualMovements)
   const totals = computeSavingsTotals(history)
@@ -39,7 +46,18 @@ export function SavingsProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <SavingsContext value={{ open, setOpen, currentRow, setCurrentRow, history, totals, addMovement, deleteMovement }}>
+    <SavingsContext
+      value={{
+        open,
+        setOpen,
+        currentRow,
+        setCurrentRow,
+        history,
+        totals,
+        addMovement,
+        deleteMovement,
+      }}
+    >
       {children}
     </SavingsContext>
   )
@@ -48,6 +66,7 @@ export function SavingsProvider({ children }: { children: React.ReactNode }) {
 // eslint-disable-next-line react-refresh/only-export-components
 export const useSavings = () => {
   const ctx = React.useContext(SavingsContext)
-  if (!ctx) throw new Error('useSavings has to be used within <SavingsProvider>')
+  if (!ctx)
+    throw new Error('useSavings has to be used within <SavingsProvider>')
   return ctx
 }

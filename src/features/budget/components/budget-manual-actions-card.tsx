@@ -2,8 +2,12 @@ import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  calculateTotalPaid,
+  formatEuros,
+  resolveActionState,
+} from '../data/data'
 import { type ActionPayment, type MonthlyManualAction } from '../data/schema'
-import { calculateTotalPaid, formatEuros, resolveActionState } from '../data/data'
 import { BudgetActionPaymentSheet } from './budget-action-payment-sheet'
 
 const stateStyles: Record<string, string> = {
@@ -23,7 +27,10 @@ type BudgetManualActionsCardProps = {
   paymentsByAction: Record<string, ActionPayment[]>
   month: number
   year: number
-  onAddPayment: (subscriptionId: string, payment: { amount: number; paymentDate: Date }) => void
+  onAddPayment: (
+    subscriptionId: string,
+    payment: { amount: number; paymentDate: Date }
+  ) => void
 }
 
 export function BudgetManualActionsCard({
@@ -33,13 +40,16 @@ export function BudgetManualActionsCard({
   year,
   onAddPayment,
 }: BudgetManualActionsCardProps) {
-  const [selectedEntry, setSelectedEntry] = useState<MonthlyManualAction | null>(null)
+  const [selectedEntry, setSelectedEntry] =
+    useState<MonthlyManualAction | null>(null)
 
   return (
     <>
       <Card>
         <CardHeader className='pb-3'>
-          <CardTitle className='text-sm font-medium text-muted-foreground'>Actions manuelles</CardTitle>
+          <CardTitle className='text-sm font-medium text-muted-foreground'>
+            Actions manuelles
+          </CardTitle>
         </CardHeader>
         <CardContent className='space-y-2'>
           {entries.map((entry) => {
@@ -54,13 +64,24 @@ export function BudgetManualActionsCard({
                 onClick={() => setSelectedEntry(entry)}
                 className='flex w-full items-center justify-between rounded-md border px-4 py-3 text-left transition-colors hover:bg-muted'
               >
-                <span className='flex-1 text-sm font-medium'>{entry.label}</span>
+                <span className='flex-1 text-sm font-medium'>
+                  {entry.label}
+                </span>
                 <div className='flex items-center gap-3'>
                   <span className='text-sm text-muted-foreground'>
                     {formatEuros(totalPaid)}
-                    <span className='text-xs'> / {formatEuros(entry.plannedAmount)}</span>
+                    <span className='text-xs'>
+                      {' '}
+                      / {formatEuros(entry.plannedAmount)}
+                    </span>
                   </span>
-                  <Badge variant='outline' className={cn('w-20 justify-center text-xs', stateStyles[state])}>
+                  <Badge
+                    variant='outline'
+                    className={cn(
+                      'w-20 justify-center text-xs',
+                      stateStyles[state]
+                    )}
+                  >
                     {stateLabels[state]}
                   </Badge>
                 </div>
@@ -77,7 +98,9 @@ export function BudgetManualActionsCard({
           month={month}
           year={year}
           open={selectedEntry !== null}
-          onOpenChange={(open) => { if (!open) setSelectedEntry(null) }}
+          onOpenChange={(open) => {
+            if (!open) setSelectedEntry(null)
+          }}
           onAddPayment={(payment) => {
             onAddPayment(selectedEntry.subscriptionId, payment)
           }}

@@ -13,11 +13,7 @@ const BudgetContext = React.createContext<BudgetContextType | null>(null)
 export function BudgetProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useDialogState<BudgetDialogType>(null)
 
-  return (
-    <BudgetContext value={{ open, setOpen }}>
-      {children}
-    </BudgetContext>
-  )
+  return <BudgetContext value={{ open, setOpen }}>{children}</BudgetContext>
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

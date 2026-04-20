@@ -1,6 +1,6 @@
-import { useVehicles } from './vehicles-provider'
 import { VehiclesActionDialog } from './vehicles-action-dialog'
 import { VehiclesDeleteDialog } from './vehicles-delete-dialog'
+import { useVehicles } from './vehicles-provider'
 
 export function VehiclesDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useVehicles()

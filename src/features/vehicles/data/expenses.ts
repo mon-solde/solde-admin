@@ -29,9 +29,7 @@ export const expenses: Expense[] = [
     label: 'Plein carburant',
     date: new Date('2024-02-14'),
     totalAmount: 80,
-    payers: [
-      { userId: 'partner-2', userName: 'Thomas Martin', amount: 80 },
-    ],
+    payers: [{ userId: 'partner-2', userName: 'Thomas Martin', amount: 80 }],
   },
 
   // BMW 320d (v-2)
@@ -76,9 +74,7 @@ export const expenses: Expense[] = [
     label: 'Pare-chocs arrière',
     date: new Date('2024-03-18'),
     totalAmount: 320,
-    payers: [
-      { userId: 'partner-4', userName: 'Mehdi Saïdi', amount: 320 },
-    ],
+    payers: [{ userId: 'partner-4', userName: 'Mehdi Saïdi', amount: 320 }],
   },
 
   // Peugeot 308 (v-4)

@@ -1,9 +1,8 @@
-import { type ColumnDef } from '@tanstack/react-table'
 import { Link } from '@tanstack/react-router'
+import { type ColumnDef } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { DataTableColumnHeader } from '@/components/data-table'
-import { type MonthlyBudget } from '../data/schema'
 import {
   FRENCH_MONTHS,
   budgetStatusColorMap,
@@ -12,12 +11,15 @@ import {
   computeSavingsRemaining,
   formatEuros,
 } from '../data/data'
+import { type MonthlyBudget } from '../data/schema'
 import { DataTableRowActions } from './budget-list-data-table-row-actions'
 
 export const budgetListColumns: ColumnDef<MonthlyBudget>[] = [
   {
     id: 'mois',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Mois' />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Mois' />
+    ),
     accessorFn: (row) => `${row.year}-${String(row.month).padStart(2, '0')}`,
     cell: ({ row }) => (
       <Link
@@ -32,21 +34,32 @@ export const budgetListColumns: ColumnDef<MonthlyBudget>[] = [
   },
   {
     accessorKey: 'receivedSalary',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Salaire reçu' />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Salaire reçu' />
+    ),
     cell: ({ row }) => <span>{formatEuros(row.original.receivedSalary)}</span>,
   },
   {
     id: 'epargne',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Épargne' />,
-    accessorFn: (row) => row.savingsWithdrawals.reduce((sum, w) => sum + w.amount, 0),
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Épargne' />
+    ),
+    accessorFn: (row) =>
+      row.savingsWithdrawals.reduce((sum, w) => sum + w.amount, 0),
     cell: ({ row }) => {
-      const total = row.original.savingsWithdrawals.reduce((sum, w) => sum + w.amount, 0)
+      const total = row.original.savingsWithdrawals.reduce(
+        (sum, w) => sum + w.amount,
+        0
+      )
       const remaining = computeSavingsRemaining(row.original)
       return (
         <div className='flex items-center gap-2'>
           <span>{formatEuros(total)}</span>
           {remaining > 0 && (
-            <Badge variant='outline' className='text-amber-600 border-amber-200 bg-amber-50 text-xs font-normal'>
+            <Badge
+              variant='outline'
+              className='border-amber-200 bg-amber-50 text-xs font-normal text-amber-600'
+            >
               reste {formatEuros(remaining)}
             </Badge>
           )}
@@ -57,11 +70,14 @@ export const budgetListColumns: ColumnDef<MonthlyBudget>[] = [
   },
   {
     id: 'status',
-    header: ({ column }) => <DataTableColumnHeader column={column} title='Statut' />,
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Statut' />
+    ),
     accessorFn: (row) => computeBudgetStatus(row),
     cell: ({ row }) => {
       const status = computeBudgetStatus(row.original)
-      const label = budgetStatuses.find((s) => s.value === status)?.label ?? status
+      const label =
+        budgetStatuses.find((s) => s.value === status)?.label ?? status
       return (
         <Badge variant='outline' className={cn(budgetStatusColorMap[status])}>
           {label}

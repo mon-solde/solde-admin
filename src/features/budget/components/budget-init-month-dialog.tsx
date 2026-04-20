@@ -11,8 +11,18 @@ import {
 import { subscriptions } from '@/features/subscriptions/data/subscriptions'
 
 const FRENCH_MONTHS = [
-  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-  'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre',
+  'Janvier',
+  'Février',
+  'Mars',
+  'Avril',
+  'Mai',
+  'Juin',
+  'Juillet',
+  'Août',
+  'Septembre',
+  'Octobre',
+  'Novembre',
+  'Décembre',
 ]
 
 type BudgetInitMonthDialogProps = {
@@ -22,7 +32,12 @@ type BudgetInitMonthDialogProps = {
   onOpenChange: (open: boolean) => void
 }
 
-export function BudgetInitMonthDialog({ year, month, open, onOpenChange }: BudgetInitMonthDialogProps) {
+export function BudgetInitMonthDialog({
+  year,
+  month,
+  open,
+  onOpenChange,
+}: BudgetInitMonthDialogProps) {
   const activeManualSubscriptions = subscriptions.filter(
     (s) => s.status === 'active' && s.paymentType === 'manual'
   )
@@ -40,7 +55,9 @@ export function BudgetInitMonthDialog({ year, month, open, onOpenChange }: Budge
           </AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div className='space-y-2'>
-              <p>Les actions manuelles suivantes seront créées pour ce mois :</p>
+              <p>
+                Les actions manuelles suivantes seront créées pour ce mois :
+              </p>
               <ul className='list-inside list-disc space-y-1'>
                 {activeManualSubscriptions.map((s) => (
                   <li key={s.id} className='text-foreground'>
@@ -56,7 +73,9 @@ export function BudgetInitMonthDialog({ year, month, open, onOpenChange }: Budge
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Annuler</AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirm}>Initialiser</AlertDialogAction>
+          <AlertDialogAction onClick={handleConfirm}>
+            Initialiser
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

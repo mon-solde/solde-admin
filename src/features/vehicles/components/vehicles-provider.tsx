@@ -27,6 +27,7 @@ export function VehiclesProvider({ children }: { children: React.ReactNode }) {
 // eslint-disable-next-line react-refresh/only-export-components
 export const useVehicles = () => {
   const ctx = React.useContext(VehiclesContext)
-  if (!ctx) throw new Error('useVehicles has to be used within <VehiclesProvider>')
+  if (!ctx)
+    throw new Error('useVehicles has to be used within <VehiclesProvider>')
   return ctx
 }

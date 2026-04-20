@@ -9,7 +9,11 @@ type BudgetListDeleteDialogProps = {
   currentRow: MonthlyBudget
 }
 
-export function BudgetListDeleteDialog({ open, onOpenChange, currentRow }: BudgetListDeleteDialogProps) {
+export function BudgetListDeleteDialog({
+  open,
+  onOpenChange,
+  currentRow,
+}: BudgetListDeleteDialogProps) {
   const { deleteBudget } = useBudgetList()
 
   function handleDelete() {

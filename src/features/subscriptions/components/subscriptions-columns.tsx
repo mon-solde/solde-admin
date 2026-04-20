@@ -46,9 +46,7 @@ export const subscriptionsColumns: ColumnDef<Subscription>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Nom' />
     ),
-    cell: ({ row }) => (
-      <span className='font-medium'>{row.original.name}</span>
-    ),
+    cell: ({ row }) => <span className='font-medium'>{row.original.name}</span>,
     enableHiding: false,
   },
   {
@@ -57,7 +55,9 @@ export const subscriptionsColumns: ColumnDef<Subscription>[] = [
       <DataTableColumnHeader column={column} title='Montant / mois' />
     ),
     cell: ({ row }) => (
-      <span className='font-medium'>{formatAmountInEuros(row.original.amount)}</span>
+      <span className='font-medium'>
+        {formatAmountInEuros(row.original.amount)}
+      </span>
     ),
   },
   {
@@ -71,7 +71,9 @@ export const subscriptionsColumns: ColumnDef<Subscription>[] = [
         return <span className='text-muted-foreground'>—</span>
       }
       return (
-        <span className='text-muted-foreground'>{formatBillingDay(billingDay)}</span>
+        <span className='text-muted-foreground'>
+          {formatBillingDay(billingDay)}
+        </span>
       )
     },
   },
@@ -81,7 +83,9 @@ export const subscriptionsColumns: ColumnDef<Subscription>[] = [
       <DataTableColumnHeader column={column} title='Type' />
     ),
     cell: ({ row }) => {
-      const paymentType = subscriptionPaymentTypes.find((t) => t.value === row.original.paymentType)
+      const paymentType = subscriptionPaymentTypes.find(
+        (t) => t.value === row.original.paymentType
+      )
       return (
         <Badge
           variant='outline'
@@ -100,7 +104,9 @@ export const subscriptionsColumns: ColumnDef<Subscription>[] = [
       <DataTableColumnHeader column={column} title='Catégorie' />
     ),
     cell: ({ row }) => {
-      const category = subscriptionCategories.find((c) => c.value === row.original.category)
+      const category = subscriptionCategories.find(
+        (c) => c.value === row.original.category
+      )
       return (
         <Badge
           variant='outline'
@@ -119,7 +125,9 @@ export const subscriptionsColumns: ColumnDef<Subscription>[] = [
       <DataTableColumnHeader column={column} title='Statut' />
     ),
     cell: ({ row }) => {
-      const status = subscriptionStatuses.find((s) => s.value === row.original.status)
+      const status = subscriptionStatuses.find(
+        (s) => s.value === row.original.status
+      )
       return (
         <Badge
           variant='outline'

@@ -35,7 +35,9 @@ export function BudgetListTable({ search, navigate }: BudgetListTableProps) {
   const { budgets } = useBudgetList()
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'mois', desc: true }])
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: 'mois', desc: true },
+  ])
 
   const {
     columnFilters,
@@ -48,16 +50,20 @@ export function BudgetListTable({ search, navigate }: BudgetListTableProps) {
     navigate,
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: false },
-    columnFilters: [
-      { columnId: 'status', searchKey: 'status', type: 'array' },
-    ],
+    columnFilters: [{ columnId: 'status', searchKey: 'status', type: 'array' }],
   })
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: budgets,
     columns,
-    state: { sorting, pagination, rowSelection, columnFilters, columnVisibility },
+    state: {
+      sorting,
+      pagination,
+      rowSelection,
+      columnFilters,
+      columnVisibility,
+    },
     enableRowSelection: true,
     onPaginationChange,
     onColumnFiltersChange,
@@ -108,7 +114,12 @@ export function BudgetListTable({ search, navigate }: BudgetListTableProps) {
                       header.column.columnDef.meta?.thClassName
                     )}
                   >
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -131,14 +142,20 @@ export function BudgetListTable({ search, navigate }: BudgetListTableProps) {
                         cell.column.columnDef.meta?.tdClassName
                       )}
                     >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className='h-24 text-center'>
+                <TableCell
+                  colSpan={columns.length}
+                  className='h-24 text-center'
+                >
                   Aucun mois trouvé.
                 </TableCell>
               </TableRow>

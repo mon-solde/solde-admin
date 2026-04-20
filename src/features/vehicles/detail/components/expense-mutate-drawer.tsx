@@ -1,5 +1,5 @@
-import { useFieldArray, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusIcon, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -12,6 +12,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Separator } from '@/components/ui/separator'
 import {
   Sheet,
   SheetClose,
@@ -21,14 +22,13 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import { Separator } from '@/components/ui/separator'
 import { SelectDropdown } from '@/components/select-dropdown'
 import { type Vehicle, type Expense } from '../../data/schema'
 
 const payerSchema = z.object({
   userId: z.string().min(1, 'Sélectionner un participant'),
   userName: z.string(),
-  amount: z.coerce
+  amount: z
     .number({ error: 'Requis' })
     .min(0.01, 'Le montant doit être supérieur à 0'),
 })
@@ -81,7 +81,10 @@ export function ExpenseMutateDrawer({
   })
 
   const payers = form.watch('payers')
-  const totalAmount = payers.reduce((sum, p) => sum + (Number(p.amount) || 0), 0)
+  const totalAmount = payers.reduce(
+    (sum, p) => sum + (Number(p.amount) || 0),
+    0
+  )
 
   const onSubmit = (data: ExpenseForm) => {
     onOpenChange(false)
@@ -123,7 +126,11 @@ export function ExpenseMutateDrawer({
                 <FormItem>
                   <FormLabel>Libellé</FormLabel>
                   <FormControl>
-                    <Input placeholder='Ex : Révision moteur' autoComplete='off' {...field} />
+                    <Input
+                      placeholder='Ex : Révision moteur'
+                      autoComplete='off'
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -205,6 +212,9 @@ export function ExpenseMutateDrawer({
                                 step='0.01'
                                 className='pe-6'
                                 {...f}
+                                onChange={(e) =>
+                                  f.onChange(e.target.valueAsNumber)
+                                }
                               />
                               <span className='pointer-events-none absolute end-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
                                 €

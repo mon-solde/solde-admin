@@ -19,7 +19,9 @@ const subscriptionPaymentTypeSchema = z.union([
   z.literal('automatic'),
   z.literal('manual'),
 ])
-export type SubscriptionPaymentType = z.infer<typeof subscriptionPaymentTypeSchema>
+export type SubscriptionPaymentType = z.infer<
+  typeof subscriptionPaymentTypeSchema
+>
 
 const subscriptionSchema = z.object({
   id: z.string(),

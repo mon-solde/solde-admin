@@ -1,4 +1,14 @@
-import { Car, Phone, Bot, CreditCard, MoreHorizontal, CheckCircle2, PauseCircle, Zap, Hand } from 'lucide-react'
+import {
+  Car,
+  Phone,
+  Bot,
+  CreditCard,
+  MoreHorizontal,
+  CheckCircle2,
+  PauseCircle,
+  Zap,
+  Hand,
+} from 'lucide-react'
 
 export const subscriptionCategories = [
   { label: 'Auto', value: 'auto' as const, icon: Car },
@@ -42,5 +52,10 @@ export function formatBillingDay(day: number) {
 }
 
 export function formatAmountInEuros(amount: number) {
-  return amount.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
+  return (
+    amount.toLocaleString('fr-FR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }) + ' €'
+  )
 }

@@ -26,7 +26,9 @@ import { getNextAvailableMonth } from '../data/monthly-budgets'
 import { useBudgetList } from './budget-list-provider'
 
 const formSchema = z.object({
-  receivedSalary: z.number({ error: () => 'Le salaire est requis.' }).positive('Le salaire doit être positif.'),
+  receivedSalary: z
+    .number({ error: () => 'Le salaire est requis.' })
+    .positive('Le salaire doit être positif.'),
 })
 
 type BudgetListActionDialogForm = z.infer<typeof formSchema>
@@ -36,7 +38,10 @@ type BudgetListActionDialogProps = {
   onOpenChange: (open: boolean) => void
 }
 
-export function BudgetListActionDialog({ open, onOpenChange }: BudgetListActionDialogProps) {
+export function BudgetListActionDialog({
+  open,
+  onOpenChange,
+}: BudgetListActionDialogProps) {
   const { budgets, addBudget } = useBudgetList()
   const navigate = useNavigate()
   const { month, year } = getNextAvailableMonth(budgets)
@@ -105,7 +110,9 @@ export function BudgetListActionDialog({ open, onOpenChange }: BudgetListActionD
               name='receivedSalary'
               render={({ field }) => (
                 <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                  <FormLabel className='col-span-2 text-end'>Salaire reçu</FormLabel>
+                  <FormLabel className='col-span-2 text-end'>
+                    Salaire reçu
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type='number'
@@ -113,7 +120,9 @@ export function BudgetListActionDialog({ open, onOpenChange }: BudgetListActionD
                       placeholder='1384.17'
                       className='col-span-4'
                       {...field}
-                      onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value) || 0)
+                      }
                     />
                   </FormControl>
                   <FormMessage className='col-span-4 col-start-3' />

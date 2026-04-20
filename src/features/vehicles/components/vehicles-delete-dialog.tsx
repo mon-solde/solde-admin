@@ -1,4 +1,13 @@
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { type Vehicle } from '../data/schema'
 
 type VehiclesDeleteDialogProps = {
@@ -27,14 +36,15 @@ export function VehiclesDeleteDialog({
             <span className='font-medium text-foreground'>
               {currentRow.make} {currentRow.model} ({currentRow.year})
             </span>{' '}
-            ? Cette action est irréversible et supprimera toutes les dépenses associées.
+            ? Cette action est irréversible et supprimera toutes les dépenses
+            associées.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Annuler</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
-            className='bg-destructive text-destructive-foreground hover:bg-destructive/90'
+            className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
           >
             Supprimer
           </AlertDialogAction>
