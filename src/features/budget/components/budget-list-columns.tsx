@@ -8,7 +8,7 @@ import {
   budgetStatusColorMap,
   budgetStatuses,
   computeBudgetStatus,
-  computeSavingsRemaining,
+  computeAvailableForSavings,
   formatEuros,
 } from '../data/data'
 import { type MonthlyBudget } from '../data/schema'
@@ -40,30 +40,19 @@ export const budgetListColumns: ColumnDef<MonthlyBudget>[] = [
     cell: ({ row }) => <span>{formatEuros(row.original.receivedSalary)}</span>,
   },
   {
-    id: 'epargne',
+    id: 'disponible',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Épargne' />
+      <DataTableColumnHeader column={column} title='Dispo épargne' />
     ),
-    accessorFn: (row) =>
-      row.savingsWithdrawals.reduce((sum, w) => sum + w.amount, 0),
+    accessorFn: (row) => computeAvailableForSavings(row),
     cell: ({ row }) => {
-      const total = row.original.savingsWithdrawals.reduce(
-        (sum, w) => sum + w.amount,
-        0
-      )
-      const remaining = computeSavingsRemaining(row.original)
+      const available = computeAvailableForSavings(row.original)
       return (
-        <div className='flex items-center gap-2'>
-          <span>{formatEuros(total)}</span>
-          {remaining > 0 && (
-            <Badge
-              variant='outline'
-              className='border-amber-200 bg-amber-50 text-xs font-normal text-amber-600'
-            >
-              reste {formatEuros(remaining)}
-            </Badge>
-          )}
-        </div>
+        <span
+          className={cn(available >= 0 ? 'text-green-600' : 'text-red-600')}
+        >
+          {formatEuros(available)}
+        </span>
       )
     },
     enableSorting: true,

@@ -32,6 +32,7 @@ import { Route as AuthenticatedSubscriptionsIndexRouteImport } from './routes/_a
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedSavingsIndexRouteImport } from './routes/_authenticated/savings/index'
 import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
+import { Route as AuthenticatedDettesIndexRouteImport } from './routes/_authenticated/dettes/index'
 import { Route as AuthenticatedChatsIndexRouteImport } from './routes/_authenticated/chats/index'
 import { Route as AuthenticatedBudgetIndexRouteImport } from './routes/_authenticated/budget/index'
 import { Route as AuthenticatedAppsIndexRouteImport } from './routes/_authenticated/apps/index'
@@ -164,6 +165,12 @@ const AuthenticatedHelpCenterIndexRoute =
     path: '/help-center/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedDettesIndexRoute =
+  AuthenticatedDettesIndexRouteImport.update({
+    id: '/dettes/',
+    path: '/dettes/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedChatsIndexRoute = AuthenticatedChatsIndexRouteImport.update({
   id: '/chats/',
   path: '/chats/',
@@ -266,6 +273,7 @@ export interface FileRoutesByFullPath {
   '/apps/': typeof AuthenticatedAppsIndexRoute
   '/budget/': typeof AuthenticatedBudgetIndexRoute
   '/chats/': typeof AuthenticatedChatsIndexRoute
+  '/dettes/': typeof AuthenticatedDettesIndexRoute
   '/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/savings/': typeof AuthenticatedSavingsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
@@ -300,6 +308,7 @@ export interface FileRoutesByTo {
   '/apps': typeof AuthenticatedAppsIndexRoute
   '/budget': typeof AuthenticatedBudgetIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
+  '/dettes': typeof AuthenticatedDettesIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/savings': typeof AuthenticatedSavingsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
@@ -339,6 +348,7 @@ export interface FileRoutesById {
   '/_authenticated/apps/': typeof AuthenticatedAppsIndexRoute
   '/_authenticated/budget/': typeof AuthenticatedBudgetIndexRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
+  '/_authenticated/dettes/': typeof AuthenticatedDettesIndexRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/_authenticated/savings/': typeof AuthenticatedSavingsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
@@ -376,6 +386,7 @@ export interface FileRouteTypes {
     | '/apps/'
     | '/budget/'
     | '/chats/'
+    | '/dettes/'
     | '/help-center/'
     | '/savings/'
     | '/settings/'
@@ -410,6 +421,7 @@ export interface FileRouteTypes {
     | '/apps'
     | '/budget'
     | '/chats'
+    | '/dettes'
     | '/help-center'
     | '/savings'
     | '/settings'
@@ -448,6 +460,7 @@ export interface FileRouteTypes {
     | '/_authenticated/apps/'
     | '/_authenticated/budget/'
     | '/_authenticated/chats/'
+    | '/_authenticated/dettes/'
     | '/_authenticated/help-center/'
     | '/_authenticated/savings/'
     | '/_authenticated/settings/'
@@ -635,6 +648,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHelpCenterIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/dettes/': {
+      id: '/_authenticated/dettes/'
+      path: '/dettes'
+      fullPath: '/dettes/'
+      preLoaderRoute: typeof AuthenticatedDettesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/chats/': {
       id: '/_authenticated/chats/'
       path: '/chats'
@@ -761,6 +781,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
   AuthenticatedBudgetIndexRoute: typeof AuthenticatedBudgetIndexRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
+  AuthenticatedDettesIndexRoute: typeof AuthenticatedDettesIndexRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
   AuthenticatedSavingsIndexRoute: typeof AuthenticatedSavingsIndexRoute
   AuthenticatedSubscriptionsIndexRoute: typeof AuthenticatedSubscriptionsIndexRoute
@@ -778,6 +799,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
   AuthenticatedBudgetIndexRoute: AuthenticatedBudgetIndexRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
+  AuthenticatedDettesIndexRoute: AuthenticatedDettesIndexRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
   AuthenticatedSavingsIndexRoute: AuthenticatedSavingsIndexRoute,
   AuthenticatedSubscriptionsIndexRoute: AuthenticatedSubscriptionsIndexRoute,

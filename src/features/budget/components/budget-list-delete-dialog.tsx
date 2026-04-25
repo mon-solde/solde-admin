@@ -1,4 +1,5 @@
 import { ConfirmDialog } from '@/components/confirm-dialog'
+import { useDeleteMonthlyBudget } from '../api/budget-api'
 import { FRENCH_MONTHS } from '../data/data'
 import { type MonthlyBudget } from '../data/schema'
 import { useBudgetList } from './budget-list-provider'
@@ -14,11 +15,16 @@ export function BudgetListDeleteDialog({
   onOpenChange,
   currentRow,
 }: BudgetListDeleteDialogProps) {
-  const { deleteBudget } = useBudgetList()
+  const { setCurrentRow } = useBudgetList()
+  const { mutate: deleteBudget, isPending } = useDeleteMonthlyBudget()
 
   function handleDelete() {
-    deleteBudget(currentRow.id)
-    onOpenChange(false)
+    deleteBudget(currentRow.id, {
+      onSuccess: () => {
+        onOpenChange(false)
+        setCurrentRow(null)
+      },
+    })
   }
 
   return (
@@ -26,6 +32,7 @@ export function BudgetListDeleteDialog({
       open={open}
       onOpenChange={onOpenChange}
       handleConfirm={handleDelete}
+      isLoading={isPending}
       title='Supprimer ce mois'
       desc={
         <p>

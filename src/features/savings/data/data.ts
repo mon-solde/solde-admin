@@ -1,45 +1,11 @@
-import { FRENCH_MONTHS } from '@/features/budget/data/data'
-import { monthlyBudgets } from '@/features/budget/data/monthly-budgets'
-import { type SavingsMovement } from './schema'
-
 export type SavingsHistoryEntry = {
   id: string
-  sourceType: 'budget' | 'manual'
+  sourceType: 'debt' | 'repayment' | 'budget' | 'manual'
   date: Date
   label: string
   amount: number
   kind: 'addition' | 'withdrawal'
   source: 'bank' | 'cash'
-}
-
-export function buildSavingsHistory(
-  manualMovements: SavingsMovement[]
-): SavingsHistoryEntry[] {
-  const fromBudget: SavingsHistoryEntry[] = monthlyBudgets.flatMap((budget) =>
-    budget.savingsWithdrawals.map((w) => ({
-      id: w.id,
-      sourceType: 'budget' as const,
-      date: w.withdrawalDate,
-      label: `Épargne ${FRENCH_MONTHS[budget.month - 1]} ${budget.year}`,
-      amount: w.amount,
-      kind: 'addition' as const,
-      source: w.destination,
-    }))
-  )
-
-  const fromManual: SavingsHistoryEntry[] = manualMovements.map((m) => ({
-    id: m.id,
-    sourceType: 'manual' as const,
-    date: m.movementDate,
-    label: m.label,
-    amount: m.amount,
-    kind: m.kind,
-    source: m.source,
-  }))
-
-  return [...fromBudget, ...fromManual].sort(
-    (a, b) => b.date.getTime() - a.date.getTime()
-  )
 }
 
 export function computeSavingsTotals(history: SavingsHistoryEntry[]) {

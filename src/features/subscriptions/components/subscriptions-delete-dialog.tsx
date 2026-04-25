@@ -8,6 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteRecurringCharge } from '../api/subscriptions-api'
 import { type Subscription } from '../data/schema'
 
 type SubscriptionsDeleteDialogProps = {
@@ -21,8 +22,12 @@ export function SubscriptionsDeleteDialog({
   open,
   onOpenChange,
 }: SubscriptionsDeleteDialogProps) {
+  const { mutate: deleteCharge, isPending } = useDeleteRecurringCharge()
+
   function handleDelete() {
-    onOpenChange(false)
+    deleteCharge(currentRow.id, {
+      onSuccess: () => onOpenChange(false),
+    })
   }
 
   return (
@@ -42,6 +47,7 @@ export function SubscriptionsDeleteDialog({
           <AlertDialogCancel>Annuler</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
+            disabled={isPending}
             className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
           >
             Supprimer

@@ -1,10 +1,6 @@
 import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
-import {
-  monthlyBudgets as initialBudgets,
-  addMonthlyBudget,
-  removeMonthlyBudget,
-} from '../data/monthly-budgets'
+import { useGetMonthlyBudgets } from '../api/budget-api'
 import { type MonthlyBudget } from '../data/schema'
 
 type BudgetListDialogType = 'add' | 'delete'
@@ -15,8 +11,7 @@ type BudgetListContextType = {
   currentRow: MonthlyBudget | null
   setCurrentRow: React.Dispatch<React.SetStateAction<MonthlyBudget | null>>
   budgets: MonthlyBudget[]
-  addBudget: (budget: MonthlyBudget) => void
-  deleteBudget: (id: string) => void
+  isLoading: boolean
 }
 
 const BudgetListContext = React.createContext<BudgetListContextType | null>(
@@ -30,21 +25,7 @@ export function BudgetListProvider({
 }) {
   const [open, setOpen] = useDialogState<BudgetListDialogType>(null)
   const [currentRow, setCurrentRow] = useState<MonthlyBudget | null>(null)
-  const [budgets, setBudgets] = useState<MonthlyBudget[]>([...initialBudgets])
-
-  function addBudget(budget: MonthlyBudget) {
-    addMonthlyBudget(budget)
-    setBudgets((prev) =>
-      [...prev, budget].sort((a, b) =>
-        a.year !== b.year ? a.year - b.year : a.month - b.month
-      )
-    )
-  }
-
-  function deleteBudget(id: string) {
-    removeMonthlyBudget(id)
-    setBudgets((prev) => prev.filter((b) => b.id !== id))
-  }
+  const { data = [], isLoading } = useGetMonthlyBudgets()
 
   return (
     <BudgetListContext
@@ -53,9 +34,8 @@ export function BudgetListProvider({
         setOpen,
         currentRow,
         setCurrentRow,
-        budgets,
-        addBudget,
-        deleteBudget,
+        budgets: data,
+        isLoading,
       }}
     >
       {children}

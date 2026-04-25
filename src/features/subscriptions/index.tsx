@@ -4,17 +4,18 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { useGetRecurringCharges } from './api/subscriptions-api'
 import { SubscriptionsDialogs } from './components/subscriptions-dialogs'
 import { SubscriptionsPrimaryButtons } from './components/subscriptions-primary-buttons'
 import { SubscriptionsProvider } from './components/subscriptions-provider'
 import { SubscriptionsTable } from './components/subscriptions-table'
-import { subscriptions } from './data/subscriptions'
 
 const route = getRouteApi('/_authenticated/subscriptions/')
 
 export function Subscriptions() {
   const search = route.useSearch()
   const navigate = route.useNavigate()
+  const { data: subscriptions = [], isLoading } = useGetRecurringCharges()
 
   return (
     <SubscriptionsProvider>
@@ -40,6 +41,7 @@ export function Subscriptions() {
         </div>
         <SubscriptionsTable
           data={subscriptions}
+          isLoading={isLoading}
           search={search}
           navigate={navigate}
         />

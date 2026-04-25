@@ -7,7 +7,7 @@ import {
   formatEuros,
   resolveActionState,
 } from '../data/data'
-import { type ActionPayment, type MonthlyManualAction } from '../data/schema'
+import { type MonthlyManualAction } from '../data/schema'
 import { BudgetActionPaymentSheet } from './budget-action-payment-sheet'
 
 const stateStyles: Record<string, string> = {
@@ -24,18 +24,16 @@ const stateLabels: Record<string, string> = {
 
 type BudgetManualActionsCardProps = {
   entries: MonthlyManualAction[]
-  paymentsByAction: Record<string, ActionPayment[]>
   month: number
   year: number
   onAddPayment: (
-    subscriptionId: string,
+    actionId: string,
     payment: { amount: number; paymentDate: Date }
   ) => void
 }
 
 export function BudgetManualActionsCard({
   entries,
-  paymentsByAction,
   month,
   year,
   onAddPayment,
@@ -53,13 +51,12 @@ export function BudgetManualActionsCard({
         </CardHeader>
         <CardContent className='space-y-2'>
           {entries.map((entry) => {
-            const payments = paymentsByAction[entry.subscriptionId] ?? []
-            const totalPaid = calculateTotalPaid(payments)
+            const totalPaid = calculateTotalPaid(entry.payments)
             const state = resolveActionState(totalPaid, entry.plannedAmount)
 
             return (
               <button
-                key={entry.subscriptionId}
+                key={entry.id}
                 type='button'
                 onClick={() => setSelectedEntry(entry)}
                 className='flex w-full items-center justify-between rounded-md border px-4 py-3 text-left transition-colors hover:bg-muted'
@@ -94,7 +91,7 @@ export function BudgetManualActionsCard({
       {selectedEntry && (
         <BudgetActionPaymentSheet
           entry={selectedEntry}
-          payments={paymentsByAction[selectedEntry.subscriptionId] ?? []}
+          payments={selectedEntry.payments}
           month={month}
           year={year}
           open={selectedEntry !== null}
@@ -102,7 +99,7 @@ export function BudgetManualActionsCard({
             if (!open) setSelectedEntry(null)
           }}
           onAddPayment={(payment) => {
-            onAddPayment(selectedEntry.subscriptionId, payment)
+            onAddPayment(selectedEntry.id, payment)
           }}
         />
       )}
