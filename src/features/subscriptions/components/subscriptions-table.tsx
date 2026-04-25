@@ -13,6 +13,7 @@ import {
 } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
   TableBody,
@@ -22,22 +23,20 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import {
-  subscriptionCategories,
-  subscriptionPaymentTypes,
-  subscriptionStatuses,
-} from '../data/data'
+import { subscriptionTypes, subscriptionStatuses } from '../data/data'
 import { type Subscription } from '../data/schema'
 import { subscriptionsColumns as columns } from './subscriptions-columns'
 
 type SubscriptionsTableProps = {
   data: Subscription[]
+  isLoading?: boolean
   search: Record<string, unknown>
   navigate: NavigateFn
 }
 
 export function SubscriptionsTable({
   data,
+  isLoading,
   search,
   navigate,
 }: SubscriptionsTableProps) {
@@ -57,8 +56,7 @@ export function SubscriptionsTable({
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: false },
     columnFilters: [
-      { columnId: 'paymentType', searchKey: 'paymentType', type: 'array' },
-      { columnId: 'category', searchKey: 'category', type: 'array' },
+      { columnId: 'type', searchKey: 'type', type: 'array' },
       { columnId: 'status', searchKey: 'status', type: 'array' },
     ],
   })
@@ -98,21 +96,12 @@ export function SubscriptionsTable({
         table={table}
         filters={[
           {
-            columnId: 'paymentType',
+            columnId: 'type',
             title: 'Type',
-            options: subscriptionPaymentTypes.map((t) => ({
+            options: subscriptionTypes.map((t) => ({
               label: t.label,
               value: t.value,
               icon: t.icon,
-            })),
-          },
-          {
-            columnId: 'category',
-            title: 'Catégorie',
-            options: subscriptionCategories.map((c) => ({
-              label: c.label,
-              value: c.value,
-              icon: c.icon,
             })),
           },
           {
@@ -153,7 +142,17 @@ export function SubscriptionsTable({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              Array.from({ length: 5 }).map((_, i) => (
+                <TableRow key={i}>
+                  {columns.map((_, j) => (
+                    <TableCell key={j}>
+                      <Skeleton className='h-4 w-full' />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -183,7 +182,7 @@ export function SubscriptionsTable({
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  Aucun abonnement trouvé.
+                  Aucune charge récurrente trouvée.
                 </TableCell>
               </TableRow>
             )}

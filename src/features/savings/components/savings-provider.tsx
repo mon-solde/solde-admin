@@ -1,14 +1,22 @@
 import React, { useState } from 'react'
+import { toast } from 'sonner'
 import useDialogState from '@/hooks/use-dialog-state'
 import {
-  buildSavingsHistory,
-  computeSavingsTotals,
-  type SavingsHistoryEntry,
-} from '../data/data'
-import { savingsMovements as initialMovements } from '../data/savings-movements'
-import { type SavingsMovement } from '../data/schema'
+  useGetSavings,
+  useCreateSavingsEvent,
+  useDeleteSavingsEvent,
+} from '../api/savings-api'
+import { type SavingsHistoryEntry } from '../data/data'
 
 type SavingsDialogType = 'add' | 'delete'
+
+type CreateManualMovementInput = {
+  kind: 'addition' | 'withdrawal'
+  source: 'bank' | 'cash'
+  amount: number
+  label: string
+  date: Date
+}
 
 type SavingsContextType = {
   open: SavingsDialogType | null
@@ -19,8 +27,12 @@ type SavingsContextType = {
   >
   history: SavingsHistoryEntry[]
   totals: { bank: number; cash: number; total: number }
-  addMovement: (movement: Omit<SavingsMovement, 'id' | 'createdAt'>) => void
-  deleteMovement: (id: string) => void
+  isLoading: boolean
+  addMovement: (
+    movement: CreateManualMovementInput,
+    callbacks?: { onSuccess?: () => void }
+  ) => void
+  deleteMovement: (id: string, callbacks?: { onSuccess?: () => void }) => void
 }
 
 const SavingsContext = React.createContext<SavingsContextType | null>(null)
@@ -28,21 +40,59 @@ const SavingsContext = React.createContext<SavingsContextType | null>(null)
 export function SavingsProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useDialogState<SavingsDialogType>(null)
   const [currentRow, setCurrentRow] = useState<SavingsHistoryEntry | null>(null)
-  const [manualMovements, setManualMovements] =
-    useState<SavingsMovement[]>(initialMovements)
 
-  const history = buildSavingsHistory(manualMovements)
-  const totals = computeSavingsTotals(history)
+  const { data, isLoading } = useGetSavings()
+  const { mutate: createEvent } = useCreateSavingsEvent()
+  const { mutate: deleteEvent } = useDeleteSavingsEvent()
 
-  function addMovement(movement: Omit<SavingsMovement, 'id' | 'createdAt'>) {
-    setManualMovements((prev) => [
-      ...prev,
-      { ...movement, id: `mov-${Date.now()}`, createdAt: new Date() },
-    ])
+  const history: SavingsHistoryEntry[] = (data?.history ?? []).map((e) => ({
+    id: e.id,
+    sourceType: e.sourceType,
+    date: e.date,
+    label: e.label,
+    amount: e.amount,
+    kind: e.kind,
+    source: e.source,
+  }))
+
+  const totals = data?.balances ?? { bank: 0, cash: 0, total: 0 }
+
+  function addMovement(
+    movement: CreateManualMovementInput,
+    callbacks?: { onSuccess?: () => void }
+  ) {
+    createEvent(
+      {
+        kind: movement.kind.toUpperCase() as 'ADDITION' | 'WITHDRAWAL',
+        source: movement.source.toUpperCase() as 'BANK' | 'CASH',
+        amount: movement.amount,
+        label: movement.label,
+        date: movement.date.toISOString().split('T')[0],
+      },
+      {
+        onSuccess: () => {
+          toast.success('Mouvement enregistré')
+          callbacks?.onSuccess?.()
+        },
+        onError: (error: any) =>
+          toast.error(
+            error?.response?.data?.message ?? 'Une erreur est survenue.'
+          ),
+      }
+    )
   }
 
-  function deleteMovement(id: string) {
-    setManualMovements((prev) => prev.filter((m) => m.id !== id))
+  function deleteMovement(id: string, callbacks?: { onSuccess?: () => void }) {
+    deleteEvent(id, {
+      onSuccess: () => {
+        toast.success('Mouvement supprimé')
+        callbacks?.onSuccess?.()
+      },
+      onError: (error: any) =>
+        toast.error(
+          error?.response?.data?.message ?? 'Une erreur est survenue.'
+        ),
+    })
   }
 
   return (
@@ -54,6 +104,7 @@ export function SavingsProvider({ children }: { children: React.ReactNode }) {
         setCurrentRow,
         history,
         totals,
+        isLoading,
         addMovement,
         deleteMovement,
       }}

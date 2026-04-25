@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -18,6 +19,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useUpdateSalary } from '../api/budget-api'
 
 const editSalaryFormSchema = z.object({
   receivedSalary: z
@@ -28,26 +30,36 @@ const editSalaryFormSchema = z.object({
 type EditSalaryFormValues = z.infer<typeof editSalaryFormSchema>
 
 type BudgetEditSalaryDialogProps = {
+  budgetId: string | undefined
   currentSalary: number
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
 export function BudgetEditSalaryDialog({
+  budgetId,
   currentSalary,
   open,
   onOpenChange,
 }: BudgetEditSalaryDialogProps) {
+  const { mutate: updateSalary, isPending } = useUpdateSalary()
+
   const form = useForm<EditSalaryFormValues>({
     resolver: zodResolver(editSalaryFormSchema),
     defaultValues: { receivedSalary: currentSalary },
   })
 
-  function handleSubmit(_values: EditSalaryFormValues) {
-    // TODO: mettre à jour le mouvement "ajout banque" dans l'épargne avec le nouveau montant disponible à épargner
-    // (salaire - prélèvements automatiques - actions manuelles payées)
-    form.reset()
-    onOpenChange(false)
+  function handleSubmit(values: EditSalaryFormValues) {
+    if (!budgetId) return
+    updateSalary(
+      { id: budgetId, receivedSalary: values.receivedSalary },
+      {
+        onSuccess: () => {
+          form.reset()
+          onOpenChange(false)
+        },
+      }
+    )
   }
 
   return (
@@ -82,7 +94,9 @@ export function BudgetEditSalaryDialog({
                         type='number'
                         step='0.01'
                         min='0'
+                        placeholder='1 384,17'
                         {...field}
+                        value={field.value ?? ''}
                         onChange={(e) => field.onChange(e.target.valueAsNumber)}
                       />
                       <span className='pointer-events-none absolute end-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
@@ -97,7 +111,8 @@ export function BudgetEditSalaryDialog({
           </form>
         </Form>
         <DialogFooter>
-          <Button type='submit' form='edit-salary-form'>
+          <Button type='submit' form='edit-salary-form' disabled={isPending}>
+            {isPending && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
             Enregistrer
           </Button>
         </DialogFooter>

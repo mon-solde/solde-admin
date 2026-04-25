@@ -3,11 +3,14 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, useNavigate } from '@tanstack/react-router'
+import { signInWithEmailAndPassword } from 'firebase/auth'
 import { Loader2, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
-import { IconFacebook, IconGithub } from '@/assets/brand-icons'
 import { useAuthStore } from '@/stores/auth-store'
-import { sleep, cn } from '@/lib/utils'
+import { firebaseAuth } from '@/lib/firebase'
+import { cn } from '@/lib/utils'
+// import { IconFacebook, IconGithub } from '@/assets/brand-icons'
+// import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -51,34 +54,31 @@ export function UserAuthForm({
     },
   })
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true)
+    try {
+      const credential = await signInWithEmailAndPassword(
+        firebaseAuth,
+        data.email,
+        data.password
+      )
+      const idToken = await credential.user.getIdToken()
 
-    toast.promise(sleep(2000), {
-      loading: 'Signing in...',
-      success: () => {
-        setIsLoading(false)
+      auth.setUser({
+        accountNo: credential.user.uid,
+        email: credential.user.email!,
+        role: ['user'],
+        exp: Date.now() + 60 * 60 * 1000,
+      })
+      auth.setAccessToken(idToken)
 
-        // Mock successful authentication with expiry computed at success time
-        const mockUser = {
-          accountNo: 'ACC001',
-          email: data.email,
-          role: ['user'],
-          exp: Date.now() + 24 * 60 * 60 * 1000, // 24 hours from now
-        }
-
-        // Set user and access token
-        auth.setUser(mockUser)
-        auth.setAccessToken('mock-access-token')
-
-        // Redirect to the stored location or default to dashboard
-        const targetPath = redirectTo || '/'
-        navigate({ to: targetPath, replace: true })
-
-        return `Welcome back, ${data.email}!`
-      },
-      error: 'Error',
-    })
+      navigate({ to: redirectTo ?? '/', replace: true })
+      toast.success(`Bienvenue !`)
+    } catch {
+      toast.error('Email ou mot de passe incorrect.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -125,6 +125,7 @@ export function UserAuthForm({
           Sign in
         </Button>
 
+        {/* Or continue with (GitHub/Facebook) — commented out, not needed
         <div className='relative my-2'>
           <div className='absolute inset-0 flex items-center'>
             <span className='w-full border-t' />
@@ -144,6 +145,7 @@ export function UserAuthForm({
             <IconFacebook className='h-4 w-4' /> Facebook
           </Button>
         </div>
+        */}
       </form>
     </Form>
   )

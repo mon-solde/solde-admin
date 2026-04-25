@@ -2,7 +2,7 @@ import { Pencil } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { type Subscription } from '@/features/subscriptions/data/schema'
+import { type AutomaticDeduction } from '../data/schema'
 
 function formatEuros(amount: number) {
   return (
@@ -15,19 +15,23 @@ function formatEuros(amount: number) {
 
 type BudgetOverviewCardsProps = {
   receivedSalary: number
-  activeAutomaticSubscriptions: Subscription[]
-  totalAutomaticDeductions: number
+  automaticDeductions: AutomaticDeduction[]
+  manualActionsCount: number
+  totalCharges: number
   availableAfterDeductions: number
   onEditSalaryClick: () => void
 }
 
 export function BudgetOverviewCards({
   receivedSalary,
-  activeAutomaticSubscriptions,
-  totalAutomaticDeductions,
+  automaticDeductions,
+  manualActionsCount,
+  totalCharges,
   availableAfterDeductions,
   onEditSalaryClick,
 }: BudgetOverviewCardsProps) {
+  const totalCount = automaticDeductions.length + manualActionsCount
+
   return (
     <div className='grid grid-cols-1 gap-4 sm:grid-cols-3'>
       <Card>
@@ -52,16 +56,22 @@ export function BudgetOverviewCards({
       <Card>
         <CardHeader className='pb-2'>
           <CardTitle className='text-sm font-medium text-muted-foreground'>
-            Prélèvements automatiques
+            Charges totales
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className='text-2xl font-bold text-red-600'>
-            − {formatEuros(totalAutomaticDeductions)}
+            − {formatEuros(totalCharges)}
           </p>
           <p className='mt-1 text-xs text-muted-foreground'>
-            {activeAutomaticSubscriptions.length} prélèvement
-            {activeAutomaticSubscriptions.length > 1 ? 's' : ''}
+            {totalCount} charge{totalCount > 1 ? 's' : ''}
+            {automaticDeductions.length > 0 && manualActionsCount > 0 && (
+              <span>
+                {' '}
+                ({automaticDeductions.length} auto · {manualActionsCount}{' '}
+                manuelle{manualActionsCount > 1 ? 's' : ''})
+              </span>
+            )}
           </p>
         </CardContent>
       </Card>

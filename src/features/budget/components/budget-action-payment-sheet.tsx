@@ -144,9 +144,6 @@ export function BudgetActionPaymentSheet({
                     <p className='text-sm font-medium'>
                       Payé le {formatFrenchDate(payment.paymentDate)}
                     </p>
-                    <p className='text-xs text-muted-foreground'>
-                      Inscrit le {formatFrenchDate(payment.createdAt)}
-                    </p>
                   </div>
                   <span className='font-semibold text-green-600'>
                     {formatEuros(payment.amount)}

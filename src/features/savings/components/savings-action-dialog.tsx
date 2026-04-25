@@ -34,7 +34,7 @@ const addMovementSchema = z.object({
   source: z.union([z.literal('bank'), z.literal('cash')]),
   amount: z.number({ error: 'Requis' }).min(0.01, 'Montant requis'),
   label: z.string().min(1, 'Libellé requis'),
-  movementDate: z.string().min(1, 'Date requise'),
+  date: z.string().min(1, 'Date requise'),
 })
 
 type AddMovementValues = z.infer<typeof addMovementSchema>
@@ -57,20 +57,26 @@ export function SavingsActionDialog({
       source: 'cash',
       amount: 0,
       label: '',
-      movementDate: getTodayAsInputValue(),
+      date: getTodayAsInputValue(),
     },
   })
 
   function handleSubmit(values: AddMovementValues) {
-    addMovement({
-      kind: values.kind,
-      source: values.source,
-      amount: values.amount,
-      label: values.label,
-      movementDate: new Date(values.movementDate),
-    })
-    form.reset()
-    onOpenChange(false)
+    addMovement(
+      {
+        kind: values.kind,
+        source: values.source,
+        amount: values.amount,
+        label: values.label,
+        date: new Date(values.date),
+      },
+      {
+        onSuccess: () => {
+          form.reset()
+          onOpenChange(false)
+        },
+      }
+    )
   }
 
   return (
@@ -168,7 +174,7 @@ export function SavingsActionDialog({
               />
               <FormField
                 control={form.control}
-                name='movementDate'
+                name='date'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Date</FormLabel>

@@ -2,18 +2,19 @@ import { getRouteApi, Link } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { useGetMonthlyBudget } from './api/budget-api'
 import { BudgetDialogs } from './components/budget-dialogs'
 import { BudgetManualActionsCard } from './components/budget-manual-actions-card'
 import { BudgetMonthNavigator } from './components/budget-month-navigator'
 import { BudgetOverviewCards } from './components/budget-overview-cards'
 import { BudgetProvider, useBudget } from './components/budget-provider'
 import { BudgetSavingsCard } from './components/budget-savings-card'
-import { findMonthlyBudget } from './data/monthly-budgets'
 import { type MonthlyBudget } from './data/schema'
 import { useBudgetState } from './hooks/use-budget-state'
 
@@ -28,12 +29,10 @@ type BudgetMonthContentProps = {
 function BudgetMonthContent({ budget, month, year }: BudgetMonthContentProps) {
   const { setOpen } = useBudget()
   const {
-    activeAutomaticSubscriptions,
-    paymentsByAction,
+    automaticDeductions,
     addPayment,
-    savingsWithdrawals,
     addSavingsWithdrawal,
-    totalAutomaticDeductions,
+    totalCharges,
     availableAfterDeductions,
     availableForSavings,
     totalSaved,
@@ -44,25 +43,23 @@ function BudgetMonthContent({ budget, month, year }: BudgetMonthContentProps) {
     <div className='flex flex-col gap-6'>
       <BudgetOverviewCards
         receivedSalary={budget.receivedSalary}
-        activeAutomaticSubscriptions={activeAutomaticSubscriptions}
-        totalAutomaticDeductions={totalAutomaticDeductions}
+        automaticDeductions={automaticDeductions}
+        manualActionsCount={budget.manualActions.length}
+        totalCharges={totalCharges}
         availableAfterDeductions={availableAfterDeductions}
         onEditSalaryClick={() => setOpen('editSalary')}
       />
       <BudgetManualActionsCard
-        entries={budget.manualActionEntries}
-        paymentsByAction={paymentsByAction}
+        entries={budget.manualActions}
         month={month}
         year={year}
-        onAddPayment={(subscriptionId, payment) =>
-          addPayment(subscriptionId, payment)
-        }
+        onAddPayment={(actionId, payment) => addPayment(actionId, payment)}
       />
       <BudgetSavingsCard
         availableForSavings={availableForSavings}
         totalSaved={totalSaved}
         remainingToSave={remainingToSave}
-        savingsWithdrawals={savingsWithdrawals}
+        savingsWithdrawals={budget.savingsWithdrawals}
         month={month}
         year={year}
         onAddWithdrawal={addSavingsWithdrawal}
@@ -78,7 +75,8 @@ function BudgetContent() {
 
   const year = search.year ?? new Date().getFullYear()
   const month = search.month ?? new Date().getMonth() + 1
-  const budget = findMonthlyBudget(year, month)
+
+  const { data: budget, isLoading } = useGetMonthlyBudget(year, month)
 
   return (
     <>
@@ -101,14 +99,24 @@ function BudgetContent() {
       <Main className='flex flex-1 flex-col gap-6 sm:gap-8'>
         <div className='flex flex-wrap items-center justify-between gap-4'>
           <BudgetMonthNavigator year={year} month={month} navigate={navigate} />
-          {!budget && (
+          {!isLoading && !budget && (
             <Button onClick={() => setOpen('initMonth')}>
               Initialiser ce mois
             </Button>
           )}
         </div>
 
-        {budget ? (
+        {isLoading ? (
+          <div className='flex flex-col gap-6'>
+            <div className='grid grid-cols-1 gap-4 sm:grid-cols-3'>
+              {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className='h-28 rounded-xl' />
+              ))}
+            </div>
+            <Skeleton className='h-48 rounded-xl' />
+            <Skeleton className='h-36 rounded-xl' />
+          </div>
+        ) : budget ? (
           <BudgetMonthContent
             key={budget.id}
             budget={budget}
@@ -128,6 +136,7 @@ function BudgetContent() {
       <BudgetDialogs
         year={year}
         month={month}
+        budgetId={budget?.id}
         currentSalary={budget?.receivedSalary ?? 0}
       />
     </>

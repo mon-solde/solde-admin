@@ -3,19 +3,22 @@ import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { formatEuros } from '../data/data'
-import { type SavingsWithdrawal } from '../data/schema'
+import {
+  type BudgetSavingsWithdrawal,
+  type SavingsDestination,
+} from '../data/schema'
 import { BudgetSavingsSheet } from './budget-savings-sheet'
 
 type BudgetSavingsCardProps = {
   availableForSavings: number
   totalSaved: number
   remainingToSave: number
-  savingsWithdrawals: SavingsWithdrawal[]
+  savingsWithdrawals: BudgetSavingsWithdrawal[]
   month: number
   year: number
   onAddWithdrawal: (withdrawal: {
     amount: number
-    destination: 'bank' | 'cash'
+    destination: SavingsDestination
     withdrawalDate: Date
   }) => void
 }
@@ -82,13 +85,11 @@ export function BudgetSavingsCard({
               {formatEuros(remainingToSave)}
             </span>
           </div>
-          {/* TODO: bouton "Clôturer le mois" — permet d'ignorer un reliquat trop petit à retirer (ex: 2,56€).
-              Le montant restant est perdu/absorbé et le mois passe en statut "done". */}
         </CardContent>
       </Card>
 
       <BudgetSavingsSheet
-        withdrawals={savingsWithdrawals}
+        savingsWithdrawals={savingsWithdrawals}
         totalSaved={totalSaved}
         availableForSavings={availableForSavings}
         month={month}

@@ -1,90 +1,61 @@
-import { useState } from 'react'
-import { subscriptions } from '@/features/subscriptions/data/subscriptions'
-import {
-  type ActionPayment,
-  type MonthlyBudget,
-  type SavingsWithdrawal,
-} from '../data/schema'
+import { useAddActionPayment, useAddSavingsWithdrawal } from '../api/budget-api'
+import { type MonthlyBudget, type SavingsDestination } from '../data/schema'
 
 export function useBudgetState(budget: MonthlyBudget) {
-  const activeAutomaticSubscriptions = subscriptions.filter(
-    (s) => s.status === 'active' && s.paymentType === 'automatic'
-  )
+  const { mutate: mutateAddPayment } = useAddActionPayment()
+  const { mutate: mutateAddWithdrawal } = useAddSavingsWithdrawal()
 
-  const [paymentsByAction, setPaymentsByAction] = useState<
-    Record<string, ActionPayment[]>
-  >(
-    Object.fromEntries(
-      budget.manualActionEntries.map((e) => [e.subscriptionId, e.payments])
-    )
-  )
-
-  const [savingsWithdrawals, setSavingsWithdrawals] = useState<
-    SavingsWithdrawal[]
-  >(budget.savingsWithdrawals)
-
-  const totalAutomaticDeductions = activeAutomaticSubscriptions.reduce(
-    (sum, s) => sum + s.amount,
+  const totalAutomaticDeductions = budget.automaticDeductions.reduce(
+    (sum, d) => sum + d.amount,
     0
   )
+  const totalManualPlanned = budget.manualActions.reduce(
+    (sum, a) => sum + a.plannedAmount,
+    0
+  )
+  const totalCharges = totalAutomaticDeductions + totalManualPlanned
+  const availableAfterDeductions = budget.receivedSalary - totalCharges
+  const availableForSavings = availableAfterDeductions
 
-  const availableAfterDeductions =
-    budget.receivedSalary - totalAutomaticDeductions
-
-  const totalManualPaid = Object.values(paymentsByAction)
-    .flat()
-    .reduce((sum, p) => sum + p.amount, 0)
-
-  const availableForSavings = availableAfterDeductions - totalManualPaid
-
-  const totalSaved = savingsWithdrawals.reduce((sum, w) => sum + w.amount, 0)
+  const totalSaved = budget.savingsWithdrawals.reduce(
+    (sum, w) => sum + w.amount,
+    0
+  )
   const remainingToSave = availableForSavings - totalSaved
 
   function addPayment(
-    subscriptionId: string,
+    actionId: string,
     payment: { amount: number; paymentDate: Date }
   ) {
-    const newPayment: ActionPayment = {
-      id: `pay-${Date.now()}`,
+    mutateAddPayment({
+      budgetId: budget.id,
+      actionId,
       amount: payment.amount,
-      paymentDate: payment.paymentDate,
-      createdAt: new Date(),
-    }
-    setPaymentsByAction((prev) => ({
-      ...prev,
-      [subscriptionId]: [...(prev[subscriptionId] ?? []), newPayment],
-    }))
+      paymentDate: payment.paymentDate.toISOString().split('T')[0],
+    })
   }
 
-  // TODO: quand un retrait est enregistré ici, créer automatiquement 2 mouvements dans l'épargne :
-  // 1. kind='withdrawal', source='bank' — le salaire quitte le compte courant
-  // 2. kind='addition', source=withdrawal.destination — l'argent arrive dans la destination (bank ou cash)
   function addSavingsWithdrawal(withdrawal: {
     amount: number
-    destination: 'bank' | 'cash'
+    destination: SavingsDestination
     withdrawalDate: Date
   }) {
-    const newWithdrawal: SavingsWithdrawal = {
-      id: `sav-${Date.now()}`,
+    mutateAddWithdrawal({
+      budgetId: budget.id,
       amount: withdrawal.amount,
       destination: withdrawal.destination,
-      withdrawalDate: withdrawal.withdrawalDate,
-      createdAt: new Date(),
-    }
-    setSavingsWithdrawals((prev) => [...prev, newWithdrawal])
+      withdrawalDate: withdrawal.withdrawalDate.toISOString().split('T')[0],
+    })
   }
 
   return {
-    activeAutomaticSubscriptions,
-    paymentsByAction,
-    addPayment,
-    savingsWithdrawals,
-    addSavingsWithdrawal,
-    totalAutomaticDeductions,
+    automaticDeductions: budget.automaticDeductions,
+    totalCharges,
     availableAfterDeductions,
-    totalManualPaid,
     availableForSavings,
     totalSaved,
     remainingToSave,
+    addPayment,
+    addSavingsWithdrawal,
   }
 }

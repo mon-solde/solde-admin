@@ -25,8 +25,7 @@ export function SavingsDeleteDialog({
   const { deleteMovement } = useSavings()
 
   function handleDelete() {
-    deleteMovement(currentRow.id)
-    onOpenChange(false)
+    deleteMovement(currentRow.id, { onSuccess: () => onOpenChange(false) })
   }
 
   return (

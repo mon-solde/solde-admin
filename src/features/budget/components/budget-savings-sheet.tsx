@@ -33,18 +33,21 @@ import {
   getTodayAsInputValue,
   FRENCH_MONTHS,
 } from '../data/data'
-import { type SavingsWithdrawal } from '../data/schema'
+import {
+  type BudgetSavingsWithdrawal,
+  type SavingsDestination,
+} from '../data/schema'
 
 const addWithdrawalFormSchema = z.object({
   amount: z.number({ error: 'Requis' }).min(0.01, 'Montant requis'),
-  destination: z.union([z.literal('bank'), z.literal('cash')]),
+  destination: z.union([z.literal('BANK'), z.literal('CASH')]),
   withdrawalDate: z.string().min(1, 'Date requise'),
 })
 
 type AddWithdrawalFormValues = z.infer<typeof addWithdrawalFormSchema>
 
 type BudgetSavingsSheetProps = {
-  withdrawals: SavingsWithdrawal[]
+  savingsWithdrawals: BudgetSavingsWithdrawal[]
   totalSaved: number
   availableForSavings: number
   month: number
@@ -53,13 +56,13 @@ type BudgetSavingsSheetProps = {
   onOpenChange: (open: boolean) => void
   onAddWithdrawal: (withdrawal: {
     amount: number
-    destination: 'bank' | 'cash'
+    destination: SavingsDestination
     withdrawalDate: Date
   }) => void
 }
 
 export function BudgetSavingsSheet({
-  withdrawals,
+  savingsWithdrawals,
   totalSaved,
   availableForSavings,
   month,
@@ -72,7 +75,7 @@ export function BudgetSavingsSheet({
     resolver: zodResolver(addWithdrawalFormSchema),
     defaultValues: {
       amount: 0,
-      destination: 'bank',
+      destination: 'BANK',
       withdrawalDate: getTodayAsInputValue(),
     },
   })
@@ -90,7 +93,7 @@ export function BudgetSavingsSheet({
     })
     form.reset({
       amount: 0,
-      destination: 'bank',
+      destination: 'BANK',
       withdrawalDate: getTodayAsInputValue(),
     })
   }
@@ -134,28 +137,27 @@ export function BudgetSavingsSheet({
         <Separator />
 
         <div className='flex-1 overflow-y-auto py-4'>
-          {withdrawals.length === 0 ? (
+          {savingsWithdrawals.length === 0 ? (
             <p className='text-center text-sm text-muted-foreground'>
               Aucun retrait enregistré
             </p>
           ) : (
             <div className='space-y-3'>
-              {withdrawals.map((withdrawal) => (
+              {savingsWithdrawals.map((w) => (
                 <div
-                  key={withdrawal.id}
+                  key={w.id}
                   className='flex items-center justify-between rounded-md border px-3 py-2'
                 >
                   <div>
                     <p className='text-sm font-medium'>
-                      Retiré le {formatFrenchDate(withdrawal.withdrawalDate)}
+                      Retiré le {formatFrenchDate(w.date)}
                     </p>
                     <p className='text-xs text-muted-foreground'>
-                      {withdrawal.destination === 'bank' ? 'Banque' : 'Espèces'}{' '}
-                      · Inscrit le {formatFrenchDate(withdrawal.createdAt)}
+                      {w.source === 'BANK' ? 'Banque' : 'Espèces'}
                     </p>
                   </div>
                   <span className='font-semibold text-green-600'>
-                    {formatEuros(withdrawal.amount)}
+                    {formatEuros(w.amount)}
                   </span>
                 </div>
               ))}
@@ -216,8 +218,8 @@ export function BudgetSavingsSheet({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value='bank'>Banque</SelectItem>
-                          <SelectItem value='cash'>Espèces</SelectItem>
+                          <SelectItem value='BANK'>Banque</SelectItem>
+                          <SelectItem value='CASH'>Espèces</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />

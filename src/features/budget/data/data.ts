@@ -1,4 +1,3 @@
-import { subscriptions } from '@/features/subscriptions/data/subscriptions'
 import { type ActionPayment, type MonthlyBudget } from './schema'
 
 export const FRENCH_MONTHS = [
@@ -60,29 +59,19 @@ export const budgetStatusColorMap: Record<BudgetStatus, string> = {
   pending: 'text-muted-foreground',
 }
 
-export function computeSavingsRemaining(budget: MonthlyBudget): number {
-  const totalAutomaticDeductions = subscriptions
-    .filter((s) => s.status === 'active' && s.paymentType === 'automatic')
-    .reduce((sum, s) => sum + s.amount, 0)
-  const availableAfterDeductions =
-    budget.receivedSalary - totalAutomaticDeductions
-  const totalManualPaid = budget.manualActionEntries
-    .flatMap((e) => e.payments)
-    .reduce((sum, p) => sum + p.amount, 0)
-  const availableForSavings = availableAfterDeductions - totalManualPaid
-  const totalSaved = budget.savingsWithdrawals.reduce(
-    (sum, w) => sum + w.amount,
-    0
-  )
-  return availableForSavings - totalSaved
+export function computeAvailableForSavings(budget: MonthlyBudget): number {
+  const totalCharges =
+    budget.automaticDeductions.reduce((sum, d) => sum + d.amount, 0) +
+    budget.manualActions.reduce((sum, a) => sum + a.plannedAmount, 0)
+  return budget.receivedSalary - totalCharges
 }
 
 export function computeBudgetStatus(budget: MonthlyBudget): BudgetStatus {
-  const { manualActionEntries } = budget
-  if (manualActionEntries.length === 0) return 'pending'
-  const states = manualActionEntries.map((entry) => {
-    const totalPaid = calculateTotalPaid(entry.payments)
-    return resolveActionState(totalPaid, entry.plannedAmount)
+  const { manualActions } = budget
+  if (manualActions.length === 0) return 'pending'
+  const states = manualActions.map((action) => {
+    const totalPaid = calculateTotalPaid(action.payments)
+    return resolveActionState(totalPaid, action.plannedAmount)
   })
   if (states.every((s) => s === 'done')) return 'done'
   if (states.some((s) => s !== 'pending')) return 'in-progress'

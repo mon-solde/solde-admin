@@ -4,36 +4,46 @@ const actionPaymentSchema = z.object({
   id: z.string(),
   amount: z.number(),
   paymentDate: z.coerce.date(),
-  createdAt: z.coerce.date(),
 })
 export type ActionPayment = z.infer<typeof actionPaymentSchema>
 
+const automaticDeductionSchema = z.object({
+  id: z.string(),
+  recurringChargeId: z.string().optional(),
+  label: z.string(),
+  amount: z.number(),
+})
+export type AutomaticDeduction = z.infer<typeof automaticDeductionSchema>
+
 const monthlyManualActionSchema = z.object({
-  subscriptionId: z.string(),
+  id: z.string(),
+  recurringChargeId: z.string().optional(),
   label: z.string(),
   plannedAmount: z.number(),
   payments: z.array(actionPaymentSchema),
 })
 export type MonthlyManualAction = z.infer<typeof monthlyManualActionSchema>
 
-const savingsDestinationSchema = z.union([z.literal('bank'), z.literal('cash')])
+const savingsDestinationSchema = z.union([z.literal('BANK'), z.literal('CASH')])
 export type SavingsDestination = z.infer<typeof savingsDestinationSchema>
 
-const savingsWithdrawalSchema = z.object({
+const budgetSavingsWithdrawalSchema = z.object({
   id: z.string(),
   amount: z.number(),
-  destination: savingsDestinationSchema,
-  withdrawalDate: z.coerce.date(),
-  createdAt: z.coerce.date(),
+  source: savingsDestinationSchema,
+  date: z.coerce.date(),
 })
-export type SavingsWithdrawal = z.infer<typeof savingsWithdrawalSchema>
+export type BudgetSavingsWithdrawal = z.infer<
+  typeof budgetSavingsWithdrawalSchema
+>
 
-const monthlyBudgetSchema = z.object({
+export const monthlyBudgetSchema = z.object({
   id: z.string(),
   month: z.number().min(1).max(12),
   year: z.number(),
   receivedSalary: z.number(),
-  savingsWithdrawals: z.array(savingsWithdrawalSchema),
-  manualActionEntries: z.array(monthlyManualActionSchema),
+  automaticDeductions: z.array(automaticDeductionSchema),
+  manualActions: z.array(monthlyManualActionSchema),
+  savingsWithdrawals: z.array(budgetSavingsWithdrawalSchema).default([]),
 })
 export type MonthlyBudget = z.infer<typeof monthlyBudgetSchema>

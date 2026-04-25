@@ -4,13 +4,11 @@ import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import {
-  categoryColorMap,
   formatAmountInEuros,
   formatBillingDay,
-  paymentTypeColorMap,
+  typeColorMap,
   statusColorMap,
-  subscriptionCategories,
-  subscriptionPaymentTypes,
+  subscriptionTypes,
   subscriptionStatuses,
 } from '../data/data'
 import { type Subscription } from '../data/schema'
@@ -61,37 +59,37 @@ export const subscriptionsColumns: ColumnDef<Subscription>[] = [
     ),
   },
   {
-    accessorKey: 'billingDay',
+    accessorKey: 'dueDay',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Échéance' />
     ),
     cell: ({ row }) => {
-      const { billingDay, paymentType } = row.original
-      if (paymentType === 'manual' || !billingDay) {
+      const { dueDay, type } = row.original
+      if (type === 'MANUAL' || !dueDay) {
         return <span className='text-muted-foreground'>—</span>
       }
       return (
         <span className='text-muted-foreground'>
-          {formatBillingDay(billingDay)}
+          {formatBillingDay(dueDay)}
         </span>
       )
     },
   },
   {
-    accessorKey: 'paymentType',
+    accessorKey: 'type',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Type' />
     ),
     cell: ({ row }) => {
-      const paymentType = subscriptionPaymentTypes.find(
-        (t) => t.value === row.original.paymentType
+      const typeItem = subscriptionTypes.find(
+        (t) => t.value === row.original.type
       )
       return (
         <Badge
           variant='outline'
-          className={cn(paymentTypeColorMap[row.original.paymentType])}
+          className={cn(typeColorMap[row.original.type])}
         >
-          {paymentType?.label ?? row.original.paymentType}
+          {typeItem?.label ?? row.original.type}
         </Badge>
       )
     },
@@ -99,41 +97,17 @@ export const subscriptionsColumns: ColumnDef<Subscription>[] = [
     enableSorting: false,
   },
   {
-    accessorKey: 'category',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Catégorie' />
-    ),
-    cell: ({ row }) => {
-      const category = subscriptionCategories.find(
-        (c) => c.value === row.original.category
-      )
-      return (
-        <Badge
-          variant='outline'
-          className={cn('capitalize', categoryColorMap[row.original.category])}
-        >
-          {category?.label ?? row.original.category}
-        </Badge>
-      )
-    },
-    filterFn: (row, id, value) => value.includes(row.getValue(id)),
-    enableSorting: false,
-  },
-  {
-    accessorKey: 'status',
+    id: 'status',
+    accessorFn: (row) => (row.isActive ? 'active' : 'inactive'),
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Statut' />
     ),
     cell: ({ row }) => {
-      const status = subscriptionStatuses.find(
-        (s) => s.value === row.original.status
-      )
+      const statusKey = row.original.isActive ? 'active' : 'inactive'
+      const statusItem = subscriptionStatuses.find((s) => s.value === statusKey)
       return (
-        <Badge
-          variant='outline'
-          className={cn(statusColorMap[row.original.status])}
-        >
-          {status?.label ?? row.original.status}
+        <Badge variant='outline' className={cn(statusColorMap[statusKey])}>
+          {statusItem?.label ?? statusKey}
         </Badge>
       )
     },

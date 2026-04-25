@@ -8,7 +8,6 @@ import {
   HelpCircle,
   Lock,
   Bell,
-  Package,
   Palette,
   PiggyBank,
   Repeat,
@@ -19,12 +18,12 @@ import {
   UserCog,
   UserX,
   Users,
-  MessagesSquare,
   ShieldCheck,
   AudioWaveform,
   Command,
   GalleryVerticalEnd,
   Car,
+  Handshake,
 } from 'lucide-react'
 import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
@@ -66,17 +65,17 @@ export const sidebarData: SidebarData = {
           url: '/tasks',
           icon: ListTodo,
         },
-        {
-          title: 'Apps',
-          url: '/apps',
-          icon: Package,
-        },
-        {
-          title: 'Chats',
-          url: '/chats',
-          badge: '3',
-          icon: MessagesSquare,
-        },
+        // {
+        //   title: 'Apps',
+        //   url: '/apps',
+        //   icon: Package,
+        // },
+        // {
+        //   title: 'Chats',
+        //   url: '/chats',
+        //   badge: '3',
+        //   icon: MessagesSquare,
+        // },
         {
           title: 'Véhicules',
           url: '/vehicles',
@@ -96,6 +95,11 @@ export const sidebarData: SidebarData = {
           title: 'Charges récurrentes',
           url: '/subscriptions',
           icon: Repeat,
+        },
+        {
+          title: 'Dettes',
+          url: '/dettes',
+          icon: Handshake,
         },
         {
           title: 'Users',

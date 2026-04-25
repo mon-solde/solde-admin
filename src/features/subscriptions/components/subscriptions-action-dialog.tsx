@@ -20,68 +20,63 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { SelectDropdown } from '@/components/select-dropdown'
-import {
-  subscriptionCategories,
-  subscriptionPaymentTypes,
-  subscriptionStatuses,
-} from '../data/data'
-import { type Subscription } from '../data/schema'
+import { useCreateRecurringCharge } from '../api/subscriptions-api'
+import { subscriptionTypes } from '../data/data'
 
 const subscriptionFormSchema = z.object({
   name: z.string().min(1, 'Le nom est requis'),
   amount: z
     .number({ error: 'Requis' })
     .min(0.01, 'Le montant doit être supérieur à 0'),
-  billingDay: z.number({ error: 'Requis' }).min(1, 'Min 1').max(31, 'Max 31'),
-  category: z.enum(['auto', 'telecom', 'ai', 'banking', 'other'], {
-    error: 'Choisir une catégorie',
-  }),
-  status: z.enum(['active', 'paused'], { error: 'Choisir un statut' }),
-  paymentType: z.enum(['automatic', 'manual'], { error: 'Choisir un type' }),
+  type: z.enum(['AUTOMATIC', 'MANUAL'], { error: 'Choisir un type' }),
+  dueDay: z
+    .number({ error: 'Requis' })
+    .min(1, 'Min 1')
+    .max(31, 'Max 31')
+    .optional(),
 })
 
 type SubscriptionFormValues = z.infer<typeof subscriptionFormSchema>
 
 type SubscriptionsActionDialogProps = {
-  currentRow?: Subscription
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
 export function SubscriptionsActionDialog({
-  currentRow,
   open,
   onOpenChange,
 }: SubscriptionsActionDialogProps) {
-  const isEdit = !!currentRow
+  const { mutate: createCharge, isPending } = useCreateRecurringCharge()
 
   const form = useForm<SubscriptionFormValues>({
     resolver: zodResolver(subscriptionFormSchema),
-    defaultValues: isEdit
-      ? {
-          name: currentRow.name,
-          amount: currentRow.amount,
-          billingDay: currentRow.billingDay,
-          category: currentRow.category,
-          status: currentRow.status,
-          paymentType: currentRow.paymentType,
-        }
-      : {
-          name: '',
-          amount: 0,
-          billingDay: 1,
-          category: 'other',
-          status: 'active',
-          paymentType: 'automatic',
-        },
+    defaultValues: {
+      name: '',
+      amount: 0,
+      type: 'AUTOMATIC',
+      dueDay: 1,
+    },
   })
 
-  const selectedPaymentType = form.watch('paymentType')
-  const isManual = selectedPaymentType === 'manual'
+  const selectedType = form.watch('type')
+  const isManual = selectedType === 'MANUAL'
 
-  function handleSubmit(_values: SubscriptionFormValues) {
-    form.reset()
-    onOpenChange(false)
+  function handleSubmit(values: SubscriptionFormValues) {
+    createCharge(
+      {
+        name: values.name,
+        amount: values.amount,
+        type: values.type,
+        dueDay: isManual ? undefined : values.dueDay,
+      },
+      {
+        onSuccess: () => {
+          form.reset()
+          onOpenChange(false)
+        },
+      }
+    )
   }
 
   return (
@@ -94,13 +89,9 @@ export function SubscriptionsActionDialog({
     >
       <DialogContent className='sm:max-w-lg'>
         <DialogHeader className='text-start'>
-          <DialogTitle>
-            {isEdit ? 'Modifier la charge' : 'Nouvelle charge récurrente'}
-          </DialogTitle>
+          <DialogTitle>Nouvelle charge récurrente</DialogTitle>
           <DialogDescription>
-            {isEdit
-              ? 'Modifiez les informations de cette charge récurrente.'
-              : 'Renseignez les informations de la nouvelle charge récurrente.'}
+            Renseignez les informations de la nouvelle charge récurrente.
           </DialogDescription>
         </DialogHeader>
 
@@ -155,10 +146,33 @@ export function SubscriptionsActionDialog({
               )}
             />
 
+            <FormField
+              control={form.control}
+              name='type'
+              render={({ field }) => (
+                <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                  <FormLabel className='col-span-2 text-end'>Type</FormLabel>
+                  <div className='col-span-4'>
+                    <SelectDropdown
+                      defaultValue={field.value}
+                      onValueChange={field.onChange}
+                      isControlled
+                      placeholder='Choisir un type'
+                      items={subscriptionTypes.map((t) => ({
+                        label: t.label,
+                        value: t.value,
+                      }))}
+                    />
+                  </div>
+                  <FormMessage className='col-span-4 col-start-3' />
+                </FormItem>
+              )}
+            />
+
             {!isManual && (
               <FormField
                 control={form.control}
-                name='billingDay'
+                name='dueDay'
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                     <FormLabel className='col-span-2 text-end'>
@@ -186,83 +200,12 @@ export function SubscriptionsActionDialog({
                 )}
               />
             )}
-
-            <FormField
-              control={form.control}
-              name='category'
-              render={({ field }) => (
-                <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                  <FormLabel className='col-span-2 text-end'>
-                    Catégorie
-                  </FormLabel>
-                  <div className='col-span-4'>
-                    <SelectDropdown
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                      isControlled
-                      placeholder='Choisir une catégorie'
-                      items={subscriptionCategories.map((c) => ({
-                        label: c.label,
-                        value: c.value,
-                      }))}
-                    />
-                  </div>
-                  <FormMessage className='col-span-4 col-start-3' />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name='paymentType'
-              render={({ field }) => (
-                <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                  <FormLabel className='col-span-2 text-end'>Type</FormLabel>
-                  <div className='col-span-4'>
-                    <SelectDropdown
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                      isControlled
-                      placeholder='Choisir un type'
-                      items={subscriptionPaymentTypes.map((t) => ({
-                        label: t.label,
-                        value: t.value,
-                      }))}
-                    />
-                  </div>
-                  <FormMessage className='col-span-4 col-start-3' />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name='status'
-              render={({ field }) => (
-                <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                  <FormLabel className='col-span-2 text-end'>Statut</FormLabel>
-                  <div className='col-span-4'>
-                    <SelectDropdown
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                      isControlled
-                      placeholder='Choisir un statut'
-                      items={subscriptionStatuses.map((s) => ({
-                        label: s.label,
-                        value: s.value,
-                      }))}
-                    />
-                  </div>
-                  <FormMessage className='col-span-4 col-start-3' />
-                </FormItem>
-              )}
-            />
           </form>
         </Form>
 
         <DialogFooter>
-          <Button type='submit' form='subscription-form'>
-            {isEdit ? 'Enregistrer' : 'Créer la charge'}
+          <Button type='submit' form='subscription-form' disabled={isPending}>
+            Créer la charge
           </Button>
         </DialogFooter>
       </DialogContent>

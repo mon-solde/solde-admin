@@ -1,5 +1,11 @@
 import { type Row } from '@tanstack/react-table'
-import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react'
+import {
+  MoreHorizontal,
+  Trash2,
+  PlayCircle,
+  PauseCircle,
+  Loader2,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -8,6 +14,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+  useActivateRecurringCharge,
+  useDeactivateRecurringCharge,
+} from '../api/subscriptions-api'
 import { type Subscription } from '../data/schema'
 import { useSubscriptions } from './subscriptions-provider'
 
@@ -17,15 +27,25 @@ type DataTableRowActionsProps = {
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const { setOpen, setCurrentRow } = useSubscriptions()
+  const { mutate: activate, isPending: isActivating } =
+    useActivateRecurringCharge()
+  const { mutate: deactivate, isPending: isDeactivating } =
+    useDeactivateRecurringCharge()
 
-  function openEditDialog() {
-    setCurrentRow(row.original)
-    setOpen('edit')
-  }
+  const charge = row.original
+  const isToggling = isActivating || isDeactivating
 
   function openDeleteDialog() {
-    setCurrentRow(row.original)
+    setCurrentRow(charge)
     setOpen('delete')
+  }
+
+  function toggleStatus() {
+    if (charge.isActive) {
+      deactivate(charge.id)
+    } else {
+      activate(charge.id)
+    }
   }
 
   return (
@@ -40,9 +60,23 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end'>
-        <DropdownMenuItem onClick={openEditDialog}>
-          <Pencil size={14} className='me-2' />
-          Modifier
+        <DropdownMenuItem onClick={toggleStatus} disabled={isToggling}>
+          {isToggling ? (
+            <>
+              <Loader2 size={14} className='me-2 animate-spin' />
+              {charge.isActive ? 'Désactivation...' : 'Activation...'}
+            </>
+          ) : charge.isActive ? (
+            <>
+              <PauseCircle size={14} className='me-2' />
+              Désactiver
+            </>
+          ) : (
+            <>
+              <PlayCircle size={14} className='me-2' />
+              Activer
+            </>
+          )}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
