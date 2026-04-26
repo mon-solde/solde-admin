@@ -33,7 +33,12 @@ type VehiclesTableProps = {
   navigate: NavigateFn
 }
 
-export function VehiclesTable({ data, isLoading, search, navigate }: VehiclesTableProps) {
+export function VehiclesTable({
+  data,
+  isLoading,
+  search,
+  navigate,
+}: VehiclesTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -126,7 +131,10 @@ export function VehiclesTable({ data, isLoading, search, navigate }: VehiclesTab
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className='h-24 text-center text-muted-foreground'>
+                <TableCell
+                  colSpan={columns.length}
+                  className='h-24 text-center text-muted-foreground'
+                >
                   Chargement…
                 </TableCell>
               </TableRow>

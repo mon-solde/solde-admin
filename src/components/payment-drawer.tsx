@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { z } from 'zod'
 import { format } from 'date-fns'
-import { fr } from 'date-fns/locale'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { fr } from 'date-fns/locale'
 import { Plus, Banknote, Landmark, SplitSquareHorizontal } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
@@ -154,8 +154,14 @@ export function PaymentDrawer({
       amount: data.amount,
       date: data.date,
       note: data.note || undefined,
-      source: sourceType === 'bank' ? 'BANK' : sourceType === 'cash' ? 'CASH' : 'BOTH',
-      bankSplitAmount: sourceType === 'both' ? (data.bankSplit ?? 0) : undefined,
+      source:
+        sourceType === 'bank'
+          ? 'BANK'
+          : sourceType === 'cash'
+            ? 'CASH'
+            : 'BOTH',
+      bankSplitAmount:
+        sourceType === 'both' ? (data.bankSplit ?? 0) : undefined,
     })
   }
 
@@ -237,84 +243,84 @@ export function PaymentDrawer({
                 />
 
                 <Card className='gap-3 border-0 bg-transparent p-0 shadow-none'>
-                    <Label className='text-xs text-muted-foreground'>
-                      {sourceSelectorLabel}
-                    </Label>
-                    <Card className='grid grid-cols-3 gap-2 rounded-none border-0 bg-transparent p-0 shadow-none'>
-                      {SOURCE_OPTIONS.map(({ value, label, icon: Icon }) => (
-                        <Card
-                          key={value}
-                          onClick={() => setSourceType(value)}
-                          className={cn(
-                            'cursor-pointer gap-0 rounded-xl border-2 py-0 shadow-none transition-all',
-                            sourceType === value
-                              ? 'border-zinc-900 bg-zinc-900'
-                              : 'border-muted hover:border-zinc-400'
-                          )}
-                        >
-                          <CardContent className='flex flex-col items-center gap-1.5 p-3'>
-                            <Icon
-                              size={16}
-                              strokeWidth={2}
-                              className={
-                                sourceType === value
-                                  ? 'text-white'
-                                  : 'text-muted-foreground'
-                              }
-                            />
-                            <Label
-                              className={cn(
-                                'cursor-pointer text-xs font-medium',
-                                sourceType === value ? 'text-white' : ''
-                              )}
-                            >
-                              {label}
-                            </Label>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </Card>
-
-                    {sourceType === 'both' && (
-                      <Card className='gap-3 border-0 bg-transparent p-0 shadow-none'>
-                        <FormField
-                          control={form.control}
-                          name='bankSplit'
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className='flex items-center gap-1.5'>
-                                <Landmark size={13} /> Banque (€)
-                              </FormLabel>
-                              <FormControl>
-                                <Input
-                                  {...field}
-                                  type='number'
-                                  min='0'
-                                  max={amount}
-                                  step='0.01'
-                                  placeholder='0,00'
-                                  onChange={(e) =>
-                                    field.onChange(e.target.valueAsNumber)
-                                  }
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <Card className='gap-0 rounded-lg p-0 shadow-none'>
-                          <CardContent className='flex items-center justify-between px-3 py-2.5'>
-                            <CardDescription className='flex items-center gap-1.5'>
-                              <Banknote size={13} /> Espèces
-                            </CardDescription>
-                            <CardTitle className='text-sm font-semibold tabular-nums'>
-                              {fmt.format(cashComputed)}
-                            </CardTitle>
-                          </CardContent>
-                        </Card>
+                  <Label className='text-xs text-muted-foreground'>
+                    {sourceSelectorLabel}
+                  </Label>
+                  <Card className='grid grid-cols-3 gap-2 rounded-none border-0 bg-transparent p-0 shadow-none'>
+                    {SOURCE_OPTIONS.map(({ value, label, icon: Icon }) => (
+                      <Card
+                        key={value}
+                        onClick={() => setSourceType(value)}
+                        className={cn(
+                          'cursor-pointer gap-0 rounded-xl border-2 py-0 shadow-none transition-all',
+                          sourceType === value
+                            ? 'border-zinc-900 bg-zinc-900'
+                            : 'border-muted hover:border-zinc-400'
+                        )}
+                      >
+                        <CardContent className='flex flex-col items-center gap-1.5 p-3'>
+                          <Icon
+                            size={16}
+                            strokeWidth={2}
+                            className={
+                              sourceType === value
+                                ? 'text-white'
+                                : 'text-muted-foreground'
+                            }
+                          />
+                          <Label
+                            className={cn(
+                              'cursor-pointer text-xs font-medium',
+                              sourceType === value ? 'text-white' : ''
+                            )}
+                          >
+                            {label}
+                          </Label>
+                        </CardContent>
                       </Card>
-                    )}
+                    ))}
                   </Card>
+
+                  {sourceType === 'both' && (
+                    <Card className='gap-3 border-0 bg-transparent p-0 shadow-none'>
+                      <FormField
+                        control={form.control}
+                        name='bankSplit'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className='flex items-center gap-1.5'>
+                              <Landmark size={13} /> Banque (€)
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                type='number'
+                                min='0'
+                                max={amount}
+                                step='0.01'
+                                placeholder='0,00'
+                                onChange={(e) =>
+                                  field.onChange(e.target.valueAsNumber)
+                                }
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Card className='gap-0 rounded-lg p-0 shadow-none'>
+                        <CardContent className='flex items-center justify-between px-3 py-2.5'>
+                          <CardDescription className='flex items-center gap-1.5'>
+                            <Banknote size={13} /> Espèces
+                          </CardDescription>
+                          <CardTitle className='text-sm font-semibold tabular-nums'>
+                            {fmt.format(cashComputed)}
+                          </CardTitle>
+                        </CardContent>
+                      </Card>
+                    </Card>
+                  )}
+                </Card>
 
                 <FormField
                   control={form.control}

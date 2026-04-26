@@ -26,7 +26,8 @@ export function ReversementsSection({
   vehicleName,
 }: ReversementsSectionProps) {
   const [selectedDebtId, setSelectedDebtId] = useState<string | null>(null)
-  const selectedReversement = reversements.find((r) => r.debtId === selectedDebtId) ?? null
+  const selectedReversement =
+    reversements.find((r) => r.debtId === selectedDebtId) ?? null
 
   return (
     <>

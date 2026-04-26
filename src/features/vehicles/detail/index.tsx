@@ -27,9 +27,12 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { useGetVehicleDetail, useDeleteExpense } from '../api/vehicles-api'
 import { statusColorMap } from '../data/data'
-import { VehicleDetailDialogs } from './components/vehicle-detail-dialogs'
-import { VehicleDetailProvider, useVehicleDetail } from './components/vehicle-detail-provider'
 import { ReversementsSection } from './components/reversements-section'
+import { VehicleDetailDialogs } from './components/vehicle-detail-dialogs'
+import {
+  VehicleDetailProvider,
+  useVehicleDetail,
+} from './components/vehicle-detail-provider'
 
 const route = getRouteApi('/_authenticated/vehicles/$vehicleId')
 
@@ -69,7 +72,9 @@ function VehicleDetailContent() {
     deleteExpense(expenseId, {
       onSuccess: () => toast.success('Dépense supprimée.'),
       onError: (error: any) =>
-        toast.error(error?.response?.data?.message ?? 'Une erreur est survenue.'),
+        toast.error(
+          error?.response?.data?.message ?? 'Une erreur est survenue.'
+        ),
     })
   }
 

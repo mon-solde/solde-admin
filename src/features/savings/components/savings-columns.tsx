@@ -28,7 +28,9 @@ export const savingsColumns: ColumnDef<SavingsHistoryEntry>[] = [
       <div className='flex flex-col'>
         <span className='text-sm'>{row.getValue('label')}</span>
         {row.original.note && (
-          <span className='text-xs text-muted-foreground'>{row.original.note}</span>
+          <span className='text-xs text-muted-foreground'>
+            {row.original.note}
+          </span>
         )}
       </div>
     ),

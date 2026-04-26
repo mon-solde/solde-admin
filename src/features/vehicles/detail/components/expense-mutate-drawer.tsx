@@ -13,6 +13,13 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import {
   Sheet,
@@ -24,13 +31,6 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import { SelectDropdown } from '@/components/select-dropdown'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { useAddExpense } from '../../api/vehicles-api'
 import { type VehicleDetail } from '../../data/schema'
 
@@ -115,9 +115,7 @@ export function ExpenseMutateDrawer({
       <SheetContent className='flex flex-col'>
         <SheetHeader className='text-start'>
           <SheetTitle>Ajouter une dépense</SheetTitle>
-          <SheetDescription>
-            {vehicle.name}
-          </SheetDescription>
+          <SheetDescription>{vehicle.name}</SheetDescription>
         </SheetHeader>
 
         <Form {...form}>
@@ -259,7 +257,9 @@ export function ExpenseMutateDrawer({
                 variant='outline'
                 size='sm'
                 className='w-full'
-                onClick={() => append({ userId: '', amount: 0, source: 'BANK' as const })}
+                onClick={() =>
+                  append({ userId: '', amount: 0, source: 'BANK' as const })
+                }
               >
                 <PlusIcon size={14} className='me-1' />
                 Ajouter un payeur

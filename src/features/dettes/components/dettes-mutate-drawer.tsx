@@ -220,7 +220,10 @@ export function DettesMutateDrawer({
               </Label>
               <Card className='grid grid-cols-2 gap-3 rounded-none border-0 bg-transparent p-0 shadow-none'>
                 <Card
-                  onClick={() => { setRole('lent'); setSourceType(null) }}
+                  onClick={() => {
+                    setRole('lent')
+                    setSourceType(null)
+                  }}
                   className={cn(
                     'cursor-pointer gap-0 rounded-2xl border-2 py-0 transition-all',
                     role === 'lent'
@@ -258,7 +261,10 @@ export function DettesMutateDrawer({
                 </Card>
 
                 <Card
-                  onClick={() => { setRole('borrowed'); setSourceType(null) }}
+                  onClick={() => {
+                    setRole('borrowed')
+                    setSourceType(null)
+                  }}
                   className={cn(
                     'cursor-pointer gap-0 rounded-2xl border-2 py-0 transition-all',
                     role === 'borrowed'

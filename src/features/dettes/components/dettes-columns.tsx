@@ -70,7 +70,9 @@ export const dettesColumns: ColumnDef<Dette>[] = [
       row.role === 'lent' ? row.borrowerName : row.lenderName,
     cell: ({ row, getValue }) => (
       <div className='flex flex-col gap-0.5'>
-        <Label className='cursor-default font-medium'>{getValue<string>()}</Label>
+        <Label className='cursor-default font-medium'>
+          {getValue<string>()}
+        </Label>
         {row.original.type === 'VEHICLE' && row.original.vehicleId && (
           <Link
             to='/vehicles/$vehicleId'
