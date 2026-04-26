@@ -31,7 +31,7 @@ async function createDette({
   const body =
     role === 'lent'
       ? { borrowerId: personId, bankAmount, cashAmount, ...rest }
-      : { lenderId: personId, ...rest }
+      : { lenderId: personId, bankAmount, cashAmount, ...rest }
   return apiClient.post(endpoint, body)
 }
 
@@ -44,8 +44,8 @@ export type AddRepaymentPayload = {
   amount: number
   date: string
   note?: string
-  bankAmount?: number
-  cashAmount?: number
+  source: 'BANK' | 'CASH' | 'BOTH'
+  bankSplitAmount?: number
 }
 
 async function addRepayment({

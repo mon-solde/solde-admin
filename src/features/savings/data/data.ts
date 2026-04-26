@@ -1,8 +1,9 @@
 export type SavingsHistoryEntry = {
   id: string
-  sourceType: 'debt' | 'repayment' | 'budget' | 'manual'
+  sourceType: 'debt' | 'repayment' | 'budget' | 'manual' | 'vehicle_sale'
   date: Date
   label: string
+  note?: string
   amount: number
   kind: 'addition' | 'withdrawal'
   source: 'bank' | 'cash'

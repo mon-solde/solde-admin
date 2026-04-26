@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusIcon, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -21,14 +22,11 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
-import { SelectDropdown } from '@/components/select-dropdown'
-import { useCreateVehicle } from '../api/create-vehicle'
-import { partners } from '../data/data'
-import { type Vehicle } from '../data/schema'
+import { UserCombobox } from '@/features/users/components/user-combobox'
+import { useCreateVehicle } from '../api/vehicles-api'
 
 const participantSchema = z.object({
-  userId: z.string().min(1, 'Sélectionner un partenaire'),
-  userName: z.string(),
+  userId: z.string().min(1, 'Sélectionner un participant'),
   profitShare: z
     .number({ error: 'Requis' })
     .min(1, 'Min 1%')
@@ -39,13 +37,18 @@ const formSchema = z
   .object({
     name: z.string().min(1, 'Le nom est requis'),
     purchaseDate: z.string().min(1, "La date d'achat est requise"),
+    purchasePrice: z.number({ error: 'Requis' }).min(0, 'Doit être positif'),
     participants: z
       .array(participantSchema)
       .min(1, 'Au moins un participant requis'),
   })
   .refine(
+    // Same logic as the backend: allow up to 0.001 for machine rounding errors,
+    // but reject any human-visible gap like 55% + 44.99% = 99.99%.
     (data) =>
-      data.participants.reduce((sum, p) => sum + p.profitShare, 0) === 100,
+      Math.abs(
+        data.participants.reduce((sum, p) => sum + p.profitShare, 0) - 100
+      ) <= 0.001,
     {
       message: 'La somme des parts de bénéfices doit être égale à 100%',
       path: ['participants'],
@@ -55,36 +58,24 @@ const formSchema = z
 type VehicleForm = z.infer<typeof formSchema>
 
 type VehiclesActionDialogProps = {
-  currentRow?: Vehicle
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
 export function VehiclesActionDialog({
-  currentRow,
   open,
   onOpenChange,
 }: VehiclesActionDialogProps) {
   const { mutate, isPending } = useCreateVehicle()
-  const isEdit = !!currentRow
 
   const form = useForm<VehicleForm>({
     resolver: zodResolver(formSchema),
-    defaultValues: isEdit
-      ? {
-          name: `${currentRow.make} ${currentRow.model} ${currentRow.year}`,
-          purchaseDate: currentRow.purchaseDate.toISOString().split('T')[0],
-          participants: currentRow.participants.map((p) => ({
-            userId: p.userId,
-            userName: p.userName,
-            profitShare: p.profitShare,
-          })),
-        }
-      : {
-          name: '',
-          purchaseDate: '',
-          participants: [{ userId: '', userName: '', profitShare: 0 }],
-        },
+    defaultValues: {
+      name: '',
+      purchaseDate: '',
+      purchasePrice: 0,
+      participants: [{ userId: '', profitShare: 0 }],
+    },
   })
 
   const { fields, append, remove } = useFieldArray({
@@ -101,20 +92,24 @@ export function VehiclesActionDialog({
   const onSubmit = (values: VehicleForm) => {
     mutate(
       {
-        data: {
-          name: values.name,
-          purchaseDate: values.purchaseDate,
-          participants: values.participants.map((p) => ({
-            userId: p.userId,
-            profitShare: p.profitShare,
-          })),
-        },
+        name: values.name,
+        purchaseDate: values.purchaseDate,
+        purchasePrice: values.purchasePrice,
+        participants: values.participants.map((p) => ({
+          userId: p.userId,
+          profitShare: p.profitShare,
+        })),
       },
       {
         onSuccess: () => {
+          toast.success('Véhicule créé.')
           form.reset()
           onOpenChange(false)
         },
+        onError: (error: any) =>
+          toast.error(
+            error?.response?.data?.message ?? 'Une erreur est survenue.'
+          ),
       }
     )
   }
@@ -129,13 +124,9 @@ export function VehiclesActionDialog({
     >
       <DialogContent className='sm:max-w-lg'>
         <DialogHeader className='text-start'>
-          <DialogTitle>
-            {isEdit ? 'Modifier le véhicule' : 'Nouveau véhicule'}
-          </DialogTitle>
+          <DialogTitle>Nouveau véhicule</DialogTitle>
           <DialogDescription>
-            {isEdit
-              ? 'Modifiez les informations du véhicule.'
-              : 'Renseignez les informations du véhicule et ses participants.'}
+            Renseignez les informations du véhicule et ses participants.
           </DialogDescription>
         </DialogHeader>
 
@@ -146,7 +137,6 @@ export function VehiclesActionDialog({
               onSubmit={form.handleSubmit(onSubmit)}
               className='space-y-4 px-0.5'
             >
-              {/* Informations véhicule */}
               <FormField
                 control={form.control}
                 name='name'
@@ -180,10 +170,38 @@ export function VehiclesActionDialog({
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name='purchasePrice'
+                render={({ field }) => (
+                  <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                    <FormLabel className='col-span-2 text-end'>
+                      Prix d&apos;achat
+                    </FormLabel>
+                    <FormControl>
+                      <div className='relative col-span-4'>
+                        <Input
+                          type='number'
+                          placeholder='0'
+                          step='0.01'
+                          className='pe-6'
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(e.target.valueAsNumber)
+                          }
+                        />
+                        <span className='pointer-events-none absolute end-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
+                          €
+                        </span>
+                      </div>
+                    </FormControl>
+                    <FormMessage className='col-span-4 col-start-3' />
+                  </FormItem>
+                )}
+              />
 
               <Separator className='my-2' />
 
-              {/* Participants */}
               <div className='space-y-3'>
                 <div className='flex items-center justify-between'>
                   <p className='text-sm font-medium'>Participants</p>
@@ -202,25 +220,9 @@ export function VehiclesActionDialog({
                         name={`participants.${index}.userId`}
                         render={({ field: f }) => (
                           <FormItem className='space-y-1'>
-                            <SelectDropdown
-                              defaultValue={f.value}
-                              onValueChange={(val) => {
-                                f.onChange(val)
-                                const partner = partners.find(
-                                  (p) => p.id === val
-                                )
-                                if (partner) {
-                                  form.setValue(
-                                    `participants.${index}.userName`,
-                                    `${partner.firstName} ${partner.lastName}`
-                                  )
-                                }
-                              }}
-                              placeholder='Partenaire'
-                              items={partners.map((p) => ({
-                                label: `${p.firstName} ${p.lastName}`,
-                                value: p.id,
-                              }))}
+                            <UserCombobox
+                              value={f.value}
+                              onChange={f.onChange}
                             />
                             <FormMessage />
                           </FormItem>
@@ -278,9 +280,7 @@ export function VehiclesActionDialog({
                   variant='outline'
                   size='sm'
                   className='w-full'
-                  onClick={() =>
-                    append({ userId: '', userName: '', profitShare: 0 })
-                  }
+                  onClick={() => append({ userId: '', profitShare: 0 })}
                 >
                   <PlusIcon size={14} className='me-1' />
                   Ajouter un participant
@@ -292,11 +292,7 @@ export function VehiclesActionDialog({
 
         <DialogFooter>
           <Button type='submit' form='vehicle-form' disabled={isPending}>
-            {isPending
-              ? 'Enregistrement...'
-              : isEdit
-                ? 'Enregistrer'
-                : 'Créer le véhicule'}
+            {isPending ? 'Enregistrement…' : 'Créer le véhicule'}
           </Button>
         </DialogFooter>
       </DialogContent>

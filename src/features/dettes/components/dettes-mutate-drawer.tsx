@@ -115,39 +115,38 @@ export function DettesMutateDrawer({
   const onSubmit = (data: DetteForm) => {
     if (!role) return
 
-    if (role === 'lent') {
-      if (!sourceType) {
-        toast.error("Veuillez indiquer d'où vient l'argent.")
+    if (!sourceType) {
+      toast.error(
+        role === 'lent'
+          ? "Veuillez indiquer d'où vient l'argent."
+          : "Veuillez indiquer où va l'argent."
+      )
+      return
+    }
+
+    if (sourceType === 'both') {
+      const split = data.bankSplit ?? 0
+      if (split <= 0 || split >= data.amount) {
+        toast.error(
+          'Le montant Banque doit être compris entre 0 et le montant total.'
+        )
         return
-      }
-      if (sourceType === 'both') {
-        const split = data.bankSplit ?? 0
-        if (split <= 0 || split >= data.amount) {
-          toast.error(
-            'Le montant Banque doit être compris entre 0 et le montant total.'
-          )
-          return
-        }
       }
     }
 
     const bankAmount =
-      role === 'lent'
-        ? sourceType === 'bank'
-          ? data.amount
-          : sourceType === 'cash'
-            ? 0
-            : (data.bankSplit ?? 0)
-        : undefined
+      sourceType === 'bank'
+        ? data.amount
+        : sourceType === 'cash'
+          ? 0
+          : (data.bankSplit ?? 0)
 
     const cashAmount =
-      role === 'lent'
-        ? sourceType === 'cash'
-          ? data.amount
-          : sourceType === 'bank'
-            ? 0
-            : data.amount - (data.bankSplit ?? 0)
-        : undefined
+      sourceType === 'cash'
+        ? data.amount
+        : sourceType === 'bank'
+          ? 0
+          : data.amount - (data.bankSplit ?? 0)
 
     createDette.mutate(
       {
@@ -221,7 +220,7 @@ export function DettesMutateDrawer({
               </Label>
               <Card className='grid grid-cols-2 gap-3 rounded-none border-0 bg-transparent p-0 shadow-none'>
                 <Card
-                  onClick={() => setRole('lent')}
+                  onClick={() => { setRole('lent'); setSourceType(null) }}
                   className={cn(
                     'cursor-pointer gap-0 rounded-2xl border-2 py-0 transition-all',
                     role === 'lent'
@@ -259,7 +258,7 @@ export function DettesMutateDrawer({
                 </Card>
 
                 <Card
-                  onClick={() => setRole('borrowed')}
+                  onClick={() => { setRole('borrowed'); setSourceType(null) }}
                   className={cn(
                     'cursor-pointer gap-0 rounded-2xl border-2 py-0 transition-all',
                     role === 'borrowed'
@@ -352,11 +351,13 @@ export function DettesMutateDrawer({
                     )}
                   />
 
-                  {/* Pattern C — Source (prêt uniquement) */}
-                  {role === 'lent' && (
+                  {/* Source */}
+                  {role && (
                     <Card className='gap-3 border-0 bg-transparent p-0 shadow-none'>
                       <Label className='text-xs text-muted-foreground'>
-                        D'où vient l'argent ?
+                        {role === 'lent'
+                          ? "D'où vient l'argent ?"
+                          : "Où va l'argent ?"}
                       </Label>
                       <Card className='grid grid-cols-3 gap-2 rounded-none border-0 bg-transparent p-0 shadow-none'>
                         {SOURCE_OPTIONS.map(({ value, label, icon: Icon }) => (

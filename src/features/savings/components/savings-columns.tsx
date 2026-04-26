@@ -24,7 +24,14 @@ export const savingsColumns: ColumnDef<SavingsHistoryEntry>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Libellé' />
     ),
-    cell: ({ row }) => <span className='text-sm'>{row.getValue('label')}</span>,
+    cell: ({ row }) => (
+      <div className='flex flex-col'>
+        <span className='text-sm'>{row.getValue('label')}</span>
+        {row.original.note && (
+          <span className='text-xs text-muted-foreground'>{row.original.note}</span>
+        )}
+      </div>
+    ),
     enableSorting: false,
   },
   {

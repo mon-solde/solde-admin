@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusIcon, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -23,14 +24,22 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { type Vehicle, type Expense } from '../../data/schema'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { useAddExpense } from '../../api/vehicles-api'
+import { type VehicleDetail } from '../../data/schema'
 
 const payerSchema = z.object({
   userId: z.string().min(1, 'Sélectionner un participant'),
-  userName: z.string(),
   amount: z
     .number({ error: 'Requis' })
     .min(0.01, 'Le montant doit être supérieur à 0'),
+  source: z.enum(['BANK', 'CASH']),
 })
 
 const formSchema = z.object({
@@ -42,37 +51,25 @@ const formSchema = z.object({
 type ExpenseForm = z.infer<typeof formSchema>
 
 type ExpenseMutateDrawerProps = {
-  vehicle: Vehicle
-  currentExpense?: Expense
+  vehicle: VehicleDetail
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
 export function ExpenseMutateDrawer({
   vehicle,
-  currentExpense,
   open,
   onOpenChange,
 }: ExpenseMutateDrawerProps) {
-  const isUpdate = !!currentExpense
+  const { mutate: addExpense, isPending } = useAddExpense(vehicle.id)
 
   const form = useForm<ExpenseForm>({
     resolver: zodResolver(formSchema),
-    defaultValues: isUpdate
-      ? {
-          label: currentExpense.label,
-          date: currentExpense.date.toISOString().split('T')[0],
-          payers: currentExpense.payers.map((p) => ({
-            userId: p.userId,
-            userName: p.userName,
-            amount: p.amount,
-          })),
-        }
-      : {
-          label: '',
-          date: new Date().toISOString().split('T')[0],
-          payers: [{ userId: '', userName: '', amount: 0 }],
-        },
+    defaultValues: {
+      label: '',
+      date: new Date().toISOString().split('T')[0],
+      payers: [{ userId: '', amount: 0, source: 'BANK' as const }],
+    },
   })
 
   const { fields, append, remove } = useFieldArray({
@@ -87,10 +84,24 @@ export function ExpenseMutateDrawer({
   )
 
   const onSubmit = (data: ExpenseForm) => {
-    onOpenChange(false)
-    form.reset()
-    // appel API ici plus tard
-    console.log(data)
+    addExpense(
+      {
+        label: data.label,
+        date: data.date,
+        payers: data.payers,
+      },
+      {
+        onSuccess: () => {
+          toast.success('Dépense ajoutée.')
+          form.reset()
+          onOpenChange(false)
+        },
+        onError: (error: any) =>
+          toast.error(
+            error?.response?.data?.message ?? 'Une erreur est survenue.'
+          ),
+      }
+    )
   }
 
   return (
@@ -103,13 +114,9 @@ export function ExpenseMutateDrawer({
     >
       <SheetContent className='flex flex-col'>
         <SheetHeader className='text-start'>
-          <SheetTitle>
-            {isUpdate ? 'Modifier la dépense' : 'Ajouter une dépense'}
-          </SheetTitle>
+          <SheetTitle>Ajouter une dépense</SheetTitle>
           <SheetDescription>
-            {isUpdate
-              ? 'Modifiez les informations de la dépense.'
-              : `Ajoutez une dépense pour ${vehicle.make} ${vehicle.model}.`}
+            {vehicle.name}
           </SheetDescription>
         </SheetHeader>
 
@@ -153,7 +160,6 @@ export function ExpenseMutateDrawer({
 
             <Separator />
 
-            {/* Payeurs */}
             <div className='space-y-3'>
               <div className='flex items-center justify-between'>
                 <p className='text-sm font-medium'>Qui a payé ?</p>
@@ -175,21 +181,10 @@ export function ExpenseMutateDrawer({
                         <FormItem className='space-y-1'>
                           <SelectDropdown
                             defaultValue={f.value}
-                            onValueChange={(val) => {
-                              f.onChange(val)
-                              const participant = vehicle.participants.find(
-                                (p) => p.userId === val
-                              )
-                              if (participant) {
-                                form.setValue(
-                                  `payers.${index}.userName`,
-                                  participant.userName
-                                )
-                              }
-                            }}
+                            onValueChange={f.onChange}
                             placeholder='Participant'
                             items={vehicle.participants.map((p) => ({
-                              label: p.userName,
+                              label: `${p.firstName} ${p.lastName}`,
                               value: p.userId,
                             }))}
                           />
@@ -198,7 +193,7 @@ export function ExpenseMutateDrawer({
                       )}
                     />
                   </div>
-                  <div className='w-28'>
+                  <div className='w-24'>
                     <FormField
                       control={form.control}
                       name={`payers.${index}.amount`}
@@ -226,6 +221,26 @@ export function ExpenseMutateDrawer({
                       )}
                     />
                   </div>
+                  <div className='w-24'>
+                    <FormField
+                      control={form.control}
+                      name={`payers.${index}.source`}
+                      render={({ field: f }) => (
+                        <FormItem className='space-y-1'>
+                          <Select value={f.value} onValueChange={f.onChange}>
+                            <SelectTrigger className='h-9'>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value='BANK'>Banque</SelectItem>
+                              <SelectItem value='CASH'>Espèces</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
                   <Button
                     type='button'
                     variant='ghost'
@@ -244,7 +259,7 @@ export function ExpenseMutateDrawer({
                 variant='outline'
                 size='sm'
                 className='w-full'
-                onClick={() => append({ userId: '', userName: '', amount: 0 })}
+                onClick={() => append({ userId: '', amount: 0, source: 'BANK' as const })}
               >
                 <PlusIcon size={14} className='me-1' />
                 Ajouter un payeur
@@ -257,8 +272,8 @@ export function ExpenseMutateDrawer({
           <SheetClose asChild>
             <Button variant='outline'>Annuler</Button>
           </SheetClose>
-          <Button form='expense-form' type='submit'>
-            {isUpdate ? 'Enregistrer' : 'Ajouter'}
+          <Button form='expense-form' type='submit' disabled={isPending}>
+            {isPending ? 'Enregistrement…' : 'Ajouter'}
           </Button>
         </SheetFooter>
       </SheetContent>

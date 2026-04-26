@@ -50,6 +50,7 @@ export function SavingsProvider({ children }: { children: React.ReactNode }) {
     sourceType: e.sourceType,
     date: e.date,
     label: e.label,
+    note: e.note,
     amount: e.amount,
     kind: e.kind,
     source: e.source,

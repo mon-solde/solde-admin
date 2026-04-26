@@ -5,15 +5,8 @@ import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { statusColorMap, vehicleStatuses } from '../data/data'
-import { expenses } from '../data/expenses'
 import { type Vehicle } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
-
-function getTotalInvested(vehicleId: string) {
-  return expenses
-    .filter((e) => e.vehicleId === vehicleId)
-    .reduce((sum, e) => sum + e.totalAmount, 0)
-}
 
 export const vehiclesColumns: ColumnDef<Vehicle>[] = [
   {
@@ -45,17 +38,14 @@ export const vehiclesColumns: ColumnDef<Vehicle>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Véhicule' />
     ),
-    accessorFn: (row) => `${row.make} ${row.model}`,
+    accessorKey: 'name',
     cell: ({ row }) => (
       <Link
         to='/vehicles/$vehicleId'
         params={{ vehicleId: row.original.id }}
         className='font-medium hover:underline'
       >
-        {row.original.make} {row.original.model}{' '}
-        <span className='font-normal text-muted-foreground'>
-          ({row.original.year})
-        </span>
+        {row.original.name}
       </Link>
     ),
     enableHiding: false,
@@ -66,9 +56,7 @@ export const vehiclesColumns: ColumnDef<Vehicle>[] = [
       <DataTableColumnHeader column={column} title='Statut' />
     ),
     cell: ({ row }) => {
-      const status = vehicleStatuses.find(
-        (s) => s.value === row.original.status
-      )
+      const status = vehicleStatuses.find((s) => s.value === row.original.status)
       return (
         <Badge
           variant='outline'
@@ -85,24 +73,21 @@ export const vehiclesColumns: ColumnDef<Vehicle>[] = [
   {
     id: 'participants',
     header: 'Participants',
-    cell: ({ row }) => {
-      const { participants } = row.original
-      return (
-        <div className='flex flex-wrap gap-1'>
-          {participants.map((p) => (
-            <span
-              key={p.userId}
-              className='inline-flex items-center rounded-full border px-2 py-0.5 text-xs text-muted-foreground'
-            >
-              {p.userName.split(' ')[0]}
-              <span className='ms-1 font-medium text-foreground'>
-                {p.profitShare}%
-              </span>
+    cell: ({ row }) => (
+      <div className='flex flex-wrap gap-1'>
+        {row.original.participants.map((p) => (
+          <span
+            key={p.userId}
+            className='inline-flex items-center rounded-full border px-2 py-0.5 text-xs text-muted-foreground'
+          >
+            {p.firstName}
+            <span className='ms-1 font-medium text-foreground'>
+              {p.profitShare}%
             </span>
-          ))}
-        </div>
-      )
-    },
+          </span>
+        ))}
+      </div>
+    ),
     enableSorting: false,
   },
   {
@@ -110,31 +95,12 @@ export const vehiclesColumns: ColumnDef<Vehicle>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Total investi' />
     ),
-    accessorFn: (row) => getTotalInvested(row.id),
-    cell: ({ row }) => {
-      const total = getTotalInvested(row.original.id)
-      return (
-        <span className='font-medium'>{total.toLocaleString('fr-FR')} €</span>
-      )
-    },
-  },
-  {
-    id: 'salePrice',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Prix de vente' />
+    accessorKey: 'totalExpenses',
+    cell: ({ row }) => (
+      <span className='font-medium'>
+        {row.original.totalExpenses.toLocaleString('fr-FR')} €
+      </span>
     ),
-    accessorFn: (row) => row.salePrice ?? 0,
-    cell: ({ row }) => {
-      const { salePrice, status } = row.original
-      if (status !== 'sold' || !salePrice) {
-        return <span className='text-muted-foreground'>—</span>
-      }
-      return (
-        <span className='font-medium text-green-600'>
-          {salePrice.toLocaleString('fr-FR')} €
-        </span>
-      )
-    },
   },
   {
     id: 'actions',

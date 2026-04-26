@@ -28,11 +28,12 @@ import { vehiclesColumns as columns } from './vehicles-columns'
 
 type VehiclesTableProps = {
   data: Vehicle[]
+  isLoading?: boolean
   search: Record<string, unknown>
   navigate: NavigateFn
 }
 
-export function VehiclesTable({ data, search, navigate }: VehiclesTableProps) {
+export function VehiclesTable({ data, isLoading, search, navigate }: VehiclesTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [sorting, setSorting] = useState<SortingState>([])
@@ -123,7 +124,13 @@ export function VehiclesTable({ data, search, navigate }: VehiclesTableProps) {
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className='h-24 text-center text-muted-foreground'>
+                  Chargement…
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
