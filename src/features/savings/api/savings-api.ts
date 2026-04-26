@@ -14,11 +14,13 @@ const savingsHistoryItemSchema = z.object({
     .transform((v) => v.toLowerCase() as 'bank' | 'cash'),
   amount: z.number(),
   label: z.string(),
+  note: z.string().optional(),
   date: z.coerce.date(),
   sourceType: z
-    .enum(['DEBT', 'REPAYMENT', 'BUDGET', 'MANUAL'])
+    .enum(['DEBT', 'REPAYMENT', 'BUDGET', 'MANUAL', 'VEHICLE_SALE'])
     .transform(
-      (v) => v.toLowerCase() as 'debt' | 'repayment' | 'budget' | 'manual'
+      (v) =>
+        v.toLowerCase() as 'debt' | 'repayment' | 'budget' | 'manual' | 'vehicle_sale'
     ),
 })
 

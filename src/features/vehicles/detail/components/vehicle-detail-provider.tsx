@@ -2,11 +2,7 @@ import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { type Expense } from '../../data/schema'
 
-type VehicleDetailDialogType =
-  | 'add-expense'
-  | 'edit-expense'
-  | 'delete-expense'
-  | 'declare-sold'
+type VehicleDetailDialogType = 'add-expense' | 'declare-sold'
 
 type VehicleDetailContextType = {
   open: VehicleDetailDialogType | null

@@ -1,5 +1,6 @@
+import { Link } from '@tanstack/react-router'
 import { type ColumnDef } from '@tanstack/react-table'
-import { ArrowUpRight, ArrowDownLeft } from 'lucide-react'
+import { ArrowUpRight, ArrowDownLeft, Car } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -67,8 +68,20 @@ export const dettesColumns: ColumnDef<Dette>[] = [
     header: 'À qui ?',
     accessorFn: (row) =>
       row.role === 'lent' ? row.borrowerName : row.lenderName,
-    cell: ({ getValue }) => (
-      <Label className='cursor-default font-medium'>{getValue<string>()}</Label>
+    cell: ({ row, getValue }) => (
+      <div className='flex flex-col gap-0.5'>
+        <Label className='cursor-default font-medium'>{getValue<string>()}</Label>
+        {row.original.type === 'VEHICLE' && row.original.vehicleId && (
+          <Link
+            to='/vehicles/$vehicleId'
+            params={{ vehicleId: row.original.vehicleId }}
+            className='flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground'
+          >
+            <Car size={11} />
+            {row.original.vehicleName ?? 'Véhicule'}
+          </Link>
+        )}
+      </div>
     ),
   },
   {

@@ -4,17 +4,18 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { useGetVehicles } from './api/vehicles-api'
 import { VehiclesDialogs } from './components/vehicles-dialogs'
 import { VehiclesPrimaryButtons } from './components/vehicles-primary-buttons'
 import { VehiclesProvider } from './components/vehicles-provider'
 import { VehiclesTable } from './components/vehicles-table'
-import { vehicles } from './data/vehicles'
 
 const route = getRouteApi('/_authenticated/vehicles/')
 
 export function Vehicles() {
   const search = route.useSearch()
   const navigate = route.useNavigate()
+  const { data: vehicles = [], isLoading } = useGetVehicles()
 
   return (
     <VehiclesProvider>
@@ -36,7 +37,12 @@ export function Vehicles() {
           </div>
           <VehiclesPrimaryButtons />
         </div>
-        <VehiclesTable data={vehicles} search={search} navigate={navigate} />
+        <VehiclesTable
+          data={vehicles}
+          isLoading={isLoading}
+          search={search}
+          navigate={navigate}
+        />
       </Main>
 
       <VehiclesDialogs />

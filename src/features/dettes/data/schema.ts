@@ -5,6 +5,7 @@ export const repaymentSchema = z.object({
   amount: z.number(),
   date: z.coerce.date(),
   note: z.string().optional(),
+  source: z.enum(['BANK', 'CASH']),
 })
 
 export type Repayment = z.infer<typeof repaymentSchema>
@@ -18,11 +19,14 @@ export const detteSchema = z.object({
   lenderName: z.string(),
   borrowerName: z.string(),
   role: z.enum(['lent', 'borrowed']).default('lent'),
-  amount: z.number(),
+  amount: z.coerce.number(),
   date: z.coerce.date(),
+  type: z.enum(['MANUAL', 'VEHICLE']).default('MANUAL'),
   description: z.string().optional(),
-  totalRepaid: z.number(),
-  remaining: z.number(),
+  vehicleId: z.string().optional(),
+  vehicleName: z.string().optional(),
+  totalRepaid: z.coerce.number(),
+  remaining: z.coerce.number(),
   isRepaid: z.boolean(),
   repayments: z.array(repaymentSchema).default([]),
 })

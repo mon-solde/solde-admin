@@ -1,6 +1,6 @@
 import { useRouter } from '@tanstack/react-router'
 import { type Row } from '@tanstack/react-table'
-import { MoreHorizontal, Pencil, Trash2, Eye } from 'lucide-react'
+import { MoreHorizontal, Trash2, Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -44,15 +44,6 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           Voir la fiche
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => {
-            setCurrentRow(row.original)
-            setOpen('edit')
-          }}
-        >
-          <Pencil size={14} className='me-2' />
-          Modifier
-        </DropdownMenuItem>
         <DropdownMenuItem
           className='text-destructive focus:text-destructive'
           onClick={() => {

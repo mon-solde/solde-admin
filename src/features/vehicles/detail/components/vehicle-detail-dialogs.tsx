@@ -1,17 +1,14 @@
-import { expenses as allExpenses } from '../../data/expenses'
-import { type Vehicle } from '../../data/schema'
+import { type VehicleDetail } from '../../data/schema'
 import { DeclareSoldDialog } from './declare-sold-dialog'
 import { ExpenseMutateDrawer } from './expense-mutate-drawer'
 import { useVehicleDetail } from './vehicle-detail-provider'
 
 type VehicleDetailDialogsProps = {
-  vehicle: Vehicle
+  vehicle: VehicleDetail
 }
 
 export function VehicleDetailDialogs({ vehicle }: VehicleDetailDialogsProps) {
-  const { open, setOpen, currentExpense, setCurrentExpense } =
-    useVehicleDetail()
-  const vehicleExpenses = allExpenses.filter((e) => e.vehicleId === vehicle.id)
+  const { open, setOpen } = useVehicleDetail()
 
   return (
     <>
@@ -25,23 +22,9 @@ export function VehicleDetailDialogs({ vehicle }: VehicleDetailDialogsProps) {
       <DeclareSoldDialog
         key='declare-sold'
         vehicle={vehicle}
-        expenses={vehicleExpenses}
         open={open === 'declare-sold'}
         onOpenChange={() => setOpen('declare-sold')}
       />
-
-      {currentExpense && (
-        <ExpenseMutateDrawer
-          key={`expense-edit-${currentExpense.id}`}
-          vehicle={vehicle}
-          currentExpense={currentExpense}
-          open={open === 'edit-expense'}
-          onOpenChange={() => {
-            setOpen('edit-expense')
-            setTimeout(() => setCurrentExpense(null), 500)
-          }}
-        />
-      )}
     </>
   )
 }

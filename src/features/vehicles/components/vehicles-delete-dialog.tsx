@@ -1,3 +1,4 @@
+import { toast } from 'sonner'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -8,6 +9,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { useDeleteVehicle } from '../api/vehicles-api'
 import { type Vehicle } from '../data/schema'
 
 type VehiclesDeleteDialogProps = {
@@ -21,9 +23,19 @@ export function VehiclesDeleteDialog({
   open,
   onOpenChange,
 }: VehiclesDeleteDialogProps) {
+  const { mutate: deleteVehicle, isPending } = useDeleteVehicle()
+
   const handleDelete = () => {
-    onOpenChange(false)
-    // appel API ici plus tard
+    deleteVehicle(currentRow.id, {
+      onSuccess: () => {
+        toast.success('Véhicule supprimé.')
+        onOpenChange(false)
+      },
+      onError: (error: any) =>
+        toast.error(
+          error?.response?.data?.message ?? 'Une erreur est survenue.'
+        ),
+    })
   }
 
   return (
@@ -34,7 +46,7 @@ export function VehiclesDeleteDialog({
           <AlertDialogDescription>
             Êtes-vous sûr de vouloir supprimer{' '}
             <span className='font-medium text-foreground'>
-              {currentRow.make} {currentRow.model} ({currentRow.year})
+              {currentRow.name}
             </span>{' '}
             ? Cette action est irréversible et supprimera toutes les dépenses
             associées.
@@ -44,9 +56,10 @@ export function VehiclesDeleteDialog({
           <AlertDialogCancel>Annuler</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
+            disabled={isPending}
             className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
           >
-            Supprimer
+            {isPending ? 'Suppression…' : 'Supprimer'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
