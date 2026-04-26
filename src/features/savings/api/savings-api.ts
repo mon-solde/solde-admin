@@ -20,7 +20,12 @@ const savingsHistoryItemSchema = z.object({
     .enum(['DEBT', 'REPAYMENT', 'BUDGET', 'MANUAL', 'VEHICLE_SALE'])
     .transform(
       (v) =>
-        v.toLowerCase() as 'debt' | 'repayment' | 'budget' | 'manual' | 'vehicle_sale'
+        v.toLowerCase() as
+          | 'debt'
+          | 'repayment'
+          | 'budget'
+          | 'manual'
+          | 'vehicle_sale'
     ),
 })
 

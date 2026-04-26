@@ -12,7 +12,6 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
 import {
   Select,
   SelectContent,
@@ -20,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
 import { useDeclareSale } from '../../api/vehicles-api'
 import { type VehicleDetail } from '../../data/schema'
 
@@ -43,17 +43,14 @@ export function DeclareSoldDialog({
   const { financialSummary } = vehicle
   const salePriceNum = parseFloat(salePrice) || 0
   const profit =
-    salePriceNum > 0
-      ? salePriceNum - financialSummary.totalExpenses
-      : null
+    salePriceNum > 0 ? salePriceNum - financialSummary.totalExpenses : null
 
   const breakdown = vehicle.participants.map((p) => {
-    const invested = financialSummary.participants.find(
-      (s) => s.userId === p.userId
-    )?.totalInvested ?? 0
-    const profitAmount = profit !== null && profit > 0
-      ? (profit * p.profitShare) / 100
-      : 0
+    const invested =
+      financialSummary.participants.find((s) => s.userId === p.userId)
+        ?.totalInvested ?? 0
+    const profitAmount =
+      profit !== null && profit > 0 ? (profit * p.profitShare) / 100 : 0
     return {
       ...p,
       invested,
@@ -140,7 +137,10 @@ export function DeclareSoldDialog({
 
           <div className='space-y-2'>
             <Label>Où est allé l&apos;argent ?</Label>
-            <Select value={source} onValueChange={(v) => setSource(v as 'BANK' | 'CASH')}>
+            <Select
+              value={source}
+              onValueChange={(v) => setSource(v as 'BANK' | 'CASH')}
+            >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -174,7 +174,11 @@ export function DeclareSoldDialog({
               <div className='flex items-center gap-2'>
                 <TrendingUp
                   size={14}
-                  className={profit !== null && profit >= 0 ? 'text-green-600' : 'text-red-500'}
+                  className={
+                    profit !== null && profit >= 0
+                      ? 'text-green-600'
+                      : 'text-red-500'
+                  }
                 />
                 <span className='text-sm font-medium'>
                   Bénéfice net :{' '}

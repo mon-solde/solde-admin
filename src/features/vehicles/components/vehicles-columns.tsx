@@ -56,7 +56,9 @@ export const vehiclesColumns: ColumnDef<Vehicle>[] = [
       <DataTableColumnHeader column={column} title='Statut' />
     ),
     cell: ({ row }) => {
-      const status = vehicleStatuses.find((s) => s.value === row.original.status)
+      const status = vehicleStatuses.find(
+        (s) => s.value === row.original.status
+      )
       return (
         <Badge
           variant='outline'

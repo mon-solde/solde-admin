@@ -41,7 +41,9 @@ export function DettesRemboursementsDrawer({
       remaining={dette.remaining}
       repayments={dette.repayments}
       isPending={addRepayment.isPending}
-      sourceSelectorLabel={isLender ? "D'où vient cet argent ?" : 'Où va cet argent ?'}
+      sourceSelectorLabel={
+        isLender ? "D'où vient cet argent ?" : 'Où va cet argent ?'
+      }
       paidLabel='Remboursé'
       remainingLabel='Reste à régler'
       onSubmit={(data) =>

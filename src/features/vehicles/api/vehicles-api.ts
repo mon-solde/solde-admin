@@ -1,3 +1,4 @@
+import { z } from 'zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import {
@@ -5,7 +6,6 @@ import {
   vehicleDetailSchema,
   type VehicleStatus,
 } from '../data/schema'
-import { z } from 'zod'
 
 const VEHICLES_KEY = ['vehicles'] as const
 const vehicleDetailKey = (id: string) => ['vehicles', id] as const
