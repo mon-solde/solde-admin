@@ -27,6 +27,7 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { useGetVehicleDetail, useDeleteExpense } from '../api/vehicles-api'
 import { statusColorMap } from '../data/data'
+import { PayersCell } from './components/payers-cell'
 import { ReversementsSection } from './components/reversements-section'
 import { VehicleDetailDialogs } from './components/vehicle-detail-dialogs'
 import {
@@ -312,14 +313,7 @@ function VehicleDetailContent() {
                           {expense.date.toLocaleDateString('fr-FR')}
                         </TableCell>
                         <TableCell>
-                          <span className='text-sm text-muted-foreground'>
-                            {expense.payers
-                              .map(
-                                (p) =>
-                                  `${p.firstName} ${p.amount.toLocaleString('fr-FR')} €`
-                              )
-                              .join(' · ')}
-                          </span>
+                          <PayersCell payers={expense.payers} />
                         </TableCell>
                         <TableCell className='text-end font-medium'>
                           {expense.totalAmount.toLocaleString('fr-FR')} €

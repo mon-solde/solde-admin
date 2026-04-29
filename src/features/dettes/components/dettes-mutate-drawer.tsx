@@ -30,7 +30,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
 import {
   Sheet,
@@ -211,7 +210,7 @@ export function DettesMutateDrawer({
         <Separator />
 
         {/* Body */}
-        <ScrollArea className='flex-1'>
+        <div className='min-h-0 flex-1 overflow-y-auto'>
           <Card className='gap-6 rounded-none border-0 bg-transparent px-6 py-6 shadow-none'>
             {/* Sélection du rôle */}
             <Card className='gap-2 border-0 bg-transparent p-0 shadow-none'>
@@ -482,7 +481,7 @@ export function DettesMutateDrawer({
               </Form>
             </Card>
           </Card>
-        </ScrollArea>
+        </div>
 
         <Separator />
 
