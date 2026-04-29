@@ -1,9 +1,7 @@
 import {
   Construction,
-  LayoutDashboard,
   Monitor,
   Bug,
-  ListTodo,
   FileX,
   HelpCircle,
   Lock,
@@ -25,7 +23,6 @@ import {
   Car,
   Handshake,
 } from 'lucide-react'
-import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
 
 export const sidebarData: SidebarData = {
@@ -56,40 +53,9 @@ export const sidebarData: SidebarData = {
       title: 'General',
       items: [
         {
-          title: 'Dashboard',
-          url: '/',
-          icon: LayoutDashboard,
-        },
-        {
-          title: 'Tasks',
-          url: '/tasks',
-          icon: ListTodo,
-        },
-        // {
-        //   title: 'Apps',
-        //   url: '/apps',
-        //   icon: Package,
-        // },
-        // {
-        //   title: 'Chats',
-        //   url: '/chats',
-        //   badge: '3',
-        //   icon: MessagesSquare,
-        // },
-        {
-          title: 'Véhicules',
-          url: '/vehicles',
-          icon: Car,
-        },
-        {
           title: 'Budget mensuel',
           url: '/budget',
           icon: Wallet,
-        },
-        {
-          title: 'Épargne',
-          url: '/savings',
-          icon: PiggyBank,
         },
         {
           title: 'Charges récurrentes',
@@ -102,27 +68,19 @@ export const sidebarData: SidebarData = {
           icon: Handshake,
         },
         {
+          title: 'Épargne',
+          url: '/savings',
+          icon: PiggyBank,
+        },
+        {
+          title: 'Véhicules',
+          url: '/vehicles',
+          icon: Car,
+        },
+        {
           title: 'Users',
           url: '/users',
           icon: Users,
-        },
-        {
-          title: 'Secured by Clerk',
-          icon: ClerkLogo,
-          items: [
-            {
-              title: 'Sign In',
-              url: '/clerk/sign-in',
-            },
-            {
-              title: 'Sign Up',
-              url: '/clerk/sign-up',
-            },
-            {
-              title: 'User Management',
-              url: '/clerk/user-management',
-            },
-          ],
         },
       ],
     },
