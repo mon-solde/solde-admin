@@ -78,10 +78,28 @@ export function useDeleteDette() {
   })
 }
 
+async function deleteRepayment({
+  debtId,
+  repaymentId,
+}: {
+  debtId: string
+  repaymentId: string
+}): Promise<void> {
+  return apiClient.delete(`/v1/debts/${debtId}/repayments/${repaymentId}`)
+}
+
 export function useAddRepayment() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: addRepayment,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: DEBTS_KEY }),
+  })
+}
+
+export function useDeleteRepayment() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: deleteRepayment,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: DEBTS_KEY }),
   })
 }
