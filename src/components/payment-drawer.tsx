@@ -4,7 +4,7 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { fr } from 'date-fns/locale'
-import { Plus, Banknote, Landmark, SplitSquareHorizontal } from 'lucide-react'
+import { Plus, Trash2, Banknote, Landmark, SplitSquareHorizontal } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
@@ -67,6 +67,7 @@ type PaymentDrawerProps = {
   paidLabel?: string
   remainingLabel?: string
   onSubmit: (data: PaymentDrawerSubmitData) => void
+  onDeleteRepayment?: (repaymentId: string) => void
 }
 
 const formSchema = z.object({
@@ -106,6 +107,7 @@ export function PaymentDrawer({
   paidLabel = 'Remboursé',
   remainingLabel = 'Reste à régler',
   onSubmit,
+  onDeleteRepayment,
 }: PaymentDrawerProps) {
   const [sourceType, setSourceType] = useState<SourceType | null>(null)
 
@@ -397,9 +399,20 @@ export function PaymentDrawer({
                         )}
                       </div>
                     </div>
-                    <span className='text-xs text-muted-foreground'>
-                      {format(new Date(r.date), 'd MMM yyyy', { locale: fr })}
-                    </span>
+                    <div className='flex items-center gap-2'>
+                      <span className='text-xs text-muted-foreground'>
+                        {format(new Date(r.date), 'd MMM yyyy', { locale: fr })}
+                      </span>
+                      {onDeleteRepayment && (
+                        <button
+                          type='button'
+                          onClick={() => onDeleteRepayment(r.id)}
+                          className='text-muted-foreground hover:text-destructive'
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      )}
+                    </div>
                   </li>
                 ))}
               </ul>

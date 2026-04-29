@@ -1,6 +1,6 @@
 import { toast } from 'sonner'
 import { PaymentDrawer } from '@/components/payment-drawer'
-import { useAddRepayment, useGetDettes } from '../api/dettes-api'
+import { useAddRepayment, useDeleteRepayment, useGetDettes } from '../api/dettes-api'
 import { type Dette } from '../data/schema'
 
 type DettesRemboursementsDrawerProps = {
@@ -15,6 +15,7 @@ export function DettesRemboursementsDrawer({
   currentRow,
 }: DettesRemboursementsDrawerProps) {
   const addRepayment = useAddRepayment()
+  const deleteRepayment = useDeleteRepayment()
   const { data: dettes = [] } = useGetDettes()
   const dette = dettes.find((d) => d.id === currentRow.id) ?? currentRow
   const isLender = dette.role === 'lent'
@@ -41,6 +42,18 @@ export function DettesRemboursementsDrawer({
       remaining={dette.remaining}
       repayments={dette.repayments}
       isPending={addRepayment.isPending}
+      onDeleteRepayment={(repaymentId) =>
+        deleteRepayment.mutate(
+          { debtId: dette.id, repaymentId },
+          {
+            onSuccess: () => toast.success('Versement supprimé.'),
+            onError: (error: any) =>
+              toast.error(
+                error?.response?.data?.message ?? 'Une erreur est survenue.'
+              ),
+          }
+        )
+      }
       sourceSelectorLabel={
         isLender ? "D'où vient cet argent ?" : 'Où va cet argent ?'
       }
