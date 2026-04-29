@@ -5,6 +5,15 @@ import { PlusIcon, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
   Form,
   FormControl,
   FormField,
@@ -21,15 +30,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet'
 import { SelectDropdown } from '@/components/select-dropdown'
 import { useAddExpense } from '../../api/vehicles-api'
 import { type VehicleDetail } from '../../data/schema'
@@ -106,24 +106,26 @@ export function ExpenseMutateDrawer({
   }
 
   return (
-    <Sheet
+    <Dialog
       open={open}
       onOpenChange={(v) => {
         onOpenChange(v)
         form.reset()
       }}
     >
-      <SheetContent className='flex flex-col'>
-        <SheetHeader className='text-start'>
-          <SheetTitle>Ajouter une dépense</SheetTitle>
-          <SheetDescription>{vehicle.name}</SheetDescription>
-        </SheetHeader>
+      <DialogContent className='flex max-h-[90dvh] flex-col gap-0 p-0 sm:max-w-md'>
+        <DialogHeader className='px-6 py-5'>
+          <DialogTitle>Ajouter une dépense</DialogTitle>
+          <DialogDescription>{vehicle.name}</DialogDescription>
+        </DialogHeader>
+
+        <Separator />
 
         <Form {...form}>
           <form
             id='expense-form'
             onSubmit={form.handleSubmit(onSubmit)}
-            className='min-h-0 flex-1 space-y-6 overflow-y-auto px-4'
+            className='min-h-0 flex-1 space-y-6 overflow-y-auto px-6 py-5'
           >
             <FormField
               control={form.control}
@@ -327,15 +329,17 @@ export function ExpenseMutateDrawer({
           </form>
         </Form>
 
-        <SheetFooter className='gap-2'>
-          <SheetClose asChild>
+        <Separator />
+
+        <DialogFooter className='px-6 py-4'>
+          <DialogClose asChild>
             <Button variant='outline'>Annuler</Button>
-          </SheetClose>
+          </DialogClose>
           <Button form='expense-form' type='submit' disabled={isPending}>
             {isPending ? 'Enregistrement…' : 'Ajouter'}
           </Button>
-        </SheetFooter>
-      </SheetContent>
-    </Sheet>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
