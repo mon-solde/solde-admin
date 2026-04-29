@@ -32,6 +32,9 @@ export const expensePayerSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
   amount: z.coerce.number().min(0),
+  imputedToId: z.string().nullable().optional(),
+  imputedToFirstName: z.string().nullable().optional(),
+  imputedToLastName: z.string().nullable().optional(),
 })
 export type ExpensePayer = z.infer<typeof expensePayerSchema>
 

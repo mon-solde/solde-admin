@@ -40,6 +40,7 @@ const payerSchema = z.object({
     .number({ error: 'Requis' })
     .min(0.01, 'Le montant doit être supérieur à 0'),
   source: z.enum(['BANK', 'CASH']),
+  imputedToId: z.string().optional(),
 })
 
 const formSchema = z.object({
@@ -68,7 +69,7 @@ export function ExpenseMutateDrawer({
     defaultValues: {
       label: '',
       date: new Date().toISOString().split('T')[0],
-      payers: [{ userId: '', amount: 0, source: 'BANK' as const }],
+      payers: [{ userId: '', amount: 0, source: 'BANK' as const, imputedToId: undefined }],
     },
   })
 
@@ -169,88 +170,146 @@ export function ExpenseMutateDrawer({
                 </span>
               </div>
 
-              {fields.map((field, index) => (
-                <div key={field.id} className='flex items-start gap-2'>
-                  <div className='flex-1'>
-                    <FormField
-                      control={form.control}
-                      name={`payers.${index}.userId`}
-                      render={({ field: f }) => (
-                        <FormItem className='space-y-1'>
-                          <SelectDropdown
-                            defaultValue={f.value}
-                            onValueChange={f.onChange}
-                            placeholder='Participant'
-                            items={vehicle.participants.map((p) => ({
-                              label: `${p.firstName} ${p.lastName}`,
-                              value: p.userId,
-                            }))}
-                          />
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className='w-24'>
-                    <FormField
-                      control={form.control}
-                      name={`payers.${index}.amount`}
-                      render={({ field: f }) => (
-                        <FormItem className='space-y-1'>
-                          <FormControl>
-                            <div className='relative'>
-                              <Input
-                                type='number'
-                                placeholder='0'
-                                step='0.01'
-                                className='pe-6'
-                                {...f}
-                                onChange={(e) =>
-                                  f.onChange(e.target.valueAsNumber)
-                                }
+              {fields.map((field, index) => {
+                const imputedToId = form.watch(`payers.${index}.imputedToId`)
+                const otherParticipants = vehicle.participants.filter(
+                  (p) => p.userId !== form.watch(`payers.${index}.userId`),
+                )
+                return (
+                  <div key={field.id} className='space-y-1.5'>
+                    <div className='flex items-start gap-2'>
+                      <div className='flex-1'>
+                        <FormField
+                          control={form.control}
+                          name={`payers.${index}.userId`}
+                          render={({ field: f }) => (
+                            <FormItem className='space-y-1'>
+                              <SelectDropdown
+                                defaultValue={f.value}
+                                onValueChange={(v) => {
+                                  f.onChange(v)
+                                  if (form.getValues(`payers.${index}.imputedToId`) === v) {
+                                    form.setValue(`payers.${index}.imputedToId`, undefined)
+                                  }
+                                }}
+                                placeholder='Participant'
+                                items={vehicle.participants.map((p) => ({
+                                  label: `${p.firstName} ${p.lastName}`,
+                                  value: p.userId,
+                                }))}
                               />
-                              <span className='pointer-events-none absolute end-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
-                                €
-                              </span>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className='w-24'>
+                        <FormField
+                          control={form.control}
+                          name={`payers.${index}.amount`}
+                          render={({ field: f }) => (
+                            <FormItem className='space-y-1'>
+                              <FormControl>
+                                <div className='relative'>
+                                  <Input
+                                    type='number'
+                                    placeholder='0'
+                                    step='0.01'
+                                    className='pe-6'
+                                    {...f}
+                                    onChange={(e) =>
+                                      f.onChange(e.target.valueAsNumber)
+                                    }
+                                  />
+                                  <span className='pointer-events-none absolute end-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
+                                    €
+                                  </span>
+                                </div>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div className='w-24'>
+                        <FormField
+                          control={form.control}
+                          name={`payers.${index}.source`}
+                          render={({ field: f }) => (
+                            <FormItem className='space-y-1'>
+                              <Select value={f.value} onValueChange={f.onChange}>
+                                <SelectTrigger className='h-9'>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value='BANK'>Banque</SelectItem>
+                                  <SelectItem value='CASH'>Espèces</SelectItem>
+                                </SelectContent>
+                              </Select>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <Button
+                        type='button'
+                        variant='ghost'
+                        size='icon'
+                        className='mt-0.5 shrink-0 text-muted-foreground hover:text-destructive'
+                        onClick={() => remove(index)}
+                        disabled={fields.length === 1}
+                      >
+                        <Trash2 size={16} />
+                      </Button>
+                    </div>
+
+                    {imputedToId ? (
+                      <FormField
+                        control={form.control}
+                        name={`payers.${index}.imputedToId`}
+                        render={({ field: f }) => (
+                          <FormItem className='ms-1 space-y-1'>
+                            <div className='flex items-center gap-2'>
+                              <span className='text-xs text-muted-foreground'>Pour le compte de</span>
+                              <div className='flex-1'>
+                                <SelectDropdown
+                                  defaultValue={f.value ?? ''}
+                                  onValueChange={f.onChange}
+                                  placeholder='Participant'
+                                  items={otherParticipants.map((p) => ({
+                                    label: `${p.firstName} ${p.lastName}`,
+                                    value: p.userId,
+                                  }))}
+                                />
+                              </div>
+                              <button
+                                type='button'
+                                onClick={() => form.setValue(`payers.${index}.imputedToId`, undefined)}
+                                className='text-xs text-muted-foreground hover:text-foreground'
+                              >
+                                Annuler
+                              </button>
                             </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                          </FormItem>
+                        )}
+                      />
+                    ) : (
+                      <button
+                        type='button'
+                        className='ms-1 text-xs text-muted-foreground hover:text-foreground'
+                        onClick={() =>
+                          form.setValue(
+                            `payers.${index}.imputedToId`,
+                            otherParticipants[0]?.userId ?? '',
+                          )
+                        }
+                      >
+                        Payé pour quelqu'un d'autre ?
+                      </button>
+                    )}
                   </div>
-                  <div className='w-24'>
-                    <FormField
-                      control={form.control}
-                      name={`payers.${index}.source`}
-                      render={({ field: f }) => (
-                        <FormItem className='space-y-1'>
-                          <Select value={f.value} onValueChange={f.onChange}>
-                            <SelectTrigger className='h-9'>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value='BANK'>Banque</SelectItem>
-                              <SelectItem value='CASH'>Espèces</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <Button
-                    type='button'
-                    variant='ghost'
-                    size='icon'
-                    className='mt-0.5 shrink-0 text-muted-foreground hover:text-destructive'
-                    onClick={() => remove(index)}
-                    disabled={fields.length === 1}
-                  >
-                    <Trash2 size={16} />
-                  </Button>
-                </div>
-              ))}
+                )
+              })}
 
               <Button
                 type='button'
@@ -258,7 +317,7 @@ export function ExpenseMutateDrawer({
                 size='sm'
                 className='w-full'
                 onClick={() =>
-                  append({ userId: '', amount: 0, source: 'BANK' as const })
+                  append({ userId: '', amount: 0, source: 'BANK' as const, imputedToId: undefined })
                 }
               >
                 <PlusIcon size={14} className='me-1' />
