@@ -123,7 +123,7 @@ export function ExpenseMutateDrawer({
           <form
             id='expense-form'
             onSubmit={form.handleSubmit(onSubmit)}
-            className='flex-1 space-y-6 overflow-y-auto px-4'
+            className='min-h-0 flex-1 space-y-6 overflow-y-auto px-4'
           >
             <FormField
               control={form.control}
