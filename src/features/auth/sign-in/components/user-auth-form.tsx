@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, useNavigate } from '@tanstack/react-router'
+import { FirebaseError } from 'firebase/app'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { Loader2, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
@@ -74,8 +75,24 @@ export function UserAuthForm({
 
       navigate({ to: redirectTo ?? '/', replace: true })
       toast.success(`Bienvenue !`)
-    } catch {
-      toast.error('Email ou mot de passe incorrect.')
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        if (error.code === 'auth/network-request-failed') {
+          toast.error('Erreur réseau. Vérifiez votre connexion.')
+        } else if (error.code === 'auth/too-many-requests') {
+          toast.error('Trop de tentatives. Réessayez plus tard.')
+        } else if (
+          error.code === 'auth/invalid-credential' ||
+          error.code === 'auth/wrong-password' ||
+          error.code === 'auth/user-not-found'
+        ) {
+          toast.error('Email ou mot de passe incorrect.')
+        } else {
+          toast.error(`Erreur: ${error.code}`)
+        }
+      } else {
+        toast.error('Une erreur inattendue est survenue.')
+      }
     } finally {
       setIsLoading(false)
     }
@@ -95,7 +112,14 @@ export function UserAuthForm({
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder='name@example.com' {...field} />
+                <Input
+                placeholder='name@example.com'
+                autoCapitalize='none'
+                autoCorrect='off'
+                autoComplete='email'
+                inputMode='email'
+                {...field}
+              />
               </FormControl>
               <FormMessage />
             </FormItem>

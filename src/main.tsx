@@ -7,10 +7,8 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
-import { onAuthStateChanged } from 'firebase/auth'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
-import { firebaseAuth } from '@/lib/firebase'
 import { handleServerError } from '@/lib/handle-server-error'
 import { DirectionProvider } from './context/direction-provider'
 import { FontProvider } from './context/font-provider'
@@ -88,28 +86,6 @@ declare module '@tanstack/react-router' {
     router: typeof router
   }
 }
-
-// Sync Firebase auth state — refreshes idToken automatically
-onAuthStateChanged(firebaseAuth, async (user) => {
-  const { auth } = useAuthStore.getState()
-  if (user) {
-    const idToken = await user.getIdToken()
-    auth.setAccessToken(idToken)
-    auth.setUser({
-      accountNo: user.uid,
-      email: user.email!,
-      role: ['user'],
-      exp: Date.now() + 60 * 60 * 1000,
-    })
-  } else {
-    auth.reset()
-    // If session is lost (deleted account, token revoked...), redirect to sign-in
-    const currentPath = router.history.location.href
-    if (!currentPath.includes('/sign-in')) {
-      router.navigate({ to: '/sign-in', search: { redirect: currentPath } })
-    }
-  }
-})
 
 // Render the app
 const rootElement = document.getElementById('root')!

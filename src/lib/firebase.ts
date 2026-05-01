@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { getAuth } from 'firebase/auth'
+import { initializeAuth, browserLocalPersistence } from 'firebase/auth'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDrsXtaNOHI21rsHZyEbbOHrvJPtHP-8p4',
@@ -11,4 +11,8 @@ const firebaseConfig = {
 }
 
 const app = initializeApp(firebaseConfig)
-export const firebaseAuth = getAuth(app)
+
+// Use localStorage instead of IndexedDB — IndexedDB hangs silently on iOS WebKit
+export const firebaseAuth = initializeAuth(app, {
+  persistence: [browserLocalPersistence],
+})
