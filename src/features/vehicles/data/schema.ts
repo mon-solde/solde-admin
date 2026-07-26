@@ -7,9 +7,9 @@ export const vehicleStatusSchema = z.union([
 export type VehicleStatus = z.infer<typeof vehicleStatusSchema>
 
 export const vehicleParticipantSchema = z.object({
-  userId: z.string(),
+  contactId: z.string(),
   firstName: z.string(),
-  lastName: z.string(),
+  lastName: z.string().nullable(),
   profitShare: z.number().min(0).max(100),
 })
 export type VehicleParticipant = z.infer<typeof vehicleParticipantSchema>
@@ -22,15 +22,16 @@ export const vehicleSchema = z.object({
   status: vehicleStatusSchema,
   totalExpenses: z.coerce.number(),
   participants: z.array(vehicleParticipantSchema),
+  ownerProfitShare: z.coerce.number().optional(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 })
 export type Vehicle = z.infer<typeof vehicleSchema>
 
 export const expensePayerSchema = z.object({
-  userId: z.string(),
+  payerId: z.string(),
   firstName: z.string(),
-  lastName: z.string(),
+  lastName: z.string().nullable(),
   amount: z.coerce.number().min(0),
   imputedToId: z.string().nullable().optional(),
   imputedToFirstName: z.string().nullable().optional(),
@@ -49,15 +50,23 @@ export const expenseSchema = z.object({
 export type Expense = z.infer<typeof expenseSchema>
 
 export const participantSummarySchema = z.object({
-  userId: z.string(),
+  contactId: z.string(),
   firstName: z.string(),
-  lastName: z.string(),
+  lastName: z.string().nullable(),
   profitShare: z.coerce.number(),
   totalInvested: z.coerce.number(),
   profitFromSale: z.coerce.number().nullable(),
   amountToReceive: z.coerce.number().nullable(),
 })
 export type ParticipantSummary = z.infer<typeof participantSummarySchema>
+
+export const ownerSummarySchema = z.object({
+  profitShare: z.coerce.number(),
+  totalInvested: z.coerce.number(),
+  profitFromSale: z.coerce.number().nullable(),
+  amountToReceive: z.coerce.number().nullable(),
+})
+export type OwnerSummary = z.infer<typeof ownerSummarySchema>
 
 export const reversementRepaymentSchema = z.object({
   id: z.string(),
@@ -70,7 +79,7 @@ export const reversementSchema = z.object({
   debtId: z.string(),
   recipientId: z.string(),
   recipientFirstName: z.string(),
-  recipientLastName: z.string(),
+  recipientLastName: z.string().nullable(),
   amountDue: z.coerce.number(),
   amountPaid: z.coerce.number(),
   remaining: z.coerce.number(),
@@ -93,6 +102,7 @@ export const vehicleDetailSchema = vehicleSchema.extend({
     totalExpenses: z.coerce.number(),
     profit: z.coerce.number().nullable(),
     cashierId: z.string().nullable(),
+    owner: ownerSummarySchema,
     participants: z.array(participantSummarySchema),
   }),
   reversements: z.array(reversementSchema).default([]),

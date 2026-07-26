@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import { Check, ChevronsUpDown, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -15,31 +15,31 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { useSearchUsers, type UserSearchResult } from '../api/users-api'
+import { useGetContacts } from '../api/contacts-api'
+import { type Contact } from '../data/schema'
 
-type UserComboboxProps = {
+type ContactComboboxProps = {
   value: string
   onChange: (id: string) => void
 }
 
-export function UserCombobox({ value, onChange }: UserComboboxProps) {
+export function ContactCombobox({ value, onChange }: ContactComboboxProps) {
   const [open, setOpen] = useState(false)
   const [inputValue, setInputValue] = useState('')
-  const [debouncedName, setDebouncedName] = useState('')
-  const [selectedUser, setSelectedUser] = useState<UserSearchResult | null>(
-    null
-  )
+  const { data: contacts = [], isFetching } = useGetContacts()
 
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedName(inputValue), 300)
-    return () => clearTimeout(timer)
-  }, [inputValue])
+  const selectedContact = contacts.find((c) => c.id === value) ?? null
 
-  const { data: users = [], isFetching } = useSearchUsers(debouncedName)
+  const filtered = useMemo(() => {
+    const query = inputValue.trim().toLowerCase()
+    if (!query) return contacts
+    return contacts.filter((c) =>
+      `${c.firstName} ${c.lastName ?? ''}`.toLowerCase().includes(query)
+    )
+  }, [contacts, inputValue])
 
-  const handleSelect = (user: UserSearchResult) => {
-    setSelectedUser(user)
-    onChange(user.id)
+  const handleSelect = (contact: Contact) => {
+    onChange(contact.id)
     setOpen(false)
   }
 
@@ -52,9 +52,9 @@ export function UserCombobox({ value, onChange }: UserComboboxProps) {
           aria-expanded={open}
           className='w-full justify-between font-normal'
         >
-          {selectedUser
-            ? `${selectedUser.firstName} ${selectedUser.lastName}`
-            : 'Rechercher un utilisateur...'}
+          {selectedContact
+            ? `${selectedContact.firstName} ${selectedContact.lastName ?? ''}`
+            : 'Rechercher un contact...'}
           <ChevronsUpDown className='ml-2 size-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>
@@ -71,29 +71,24 @@ export function UserCombobox({ value, onChange }: UserComboboxProps) {
                 <Loader2 className='size-4 animate-spin text-muted-foreground' />
               </div>
             )}
-            {!isFetching && debouncedName.length < 2 && (
-              <CommandEmpty>Tapez au moins 2 caractères.</CommandEmpty>
-            )}
-            {!isFetching && debouncedName.length >= 2 && users.length === 0 && (
-              <CommandEmpty>Aucun utilisateur trouvé.</CommandEmpty>
+            {!isFetching && filtered.length === 0 && (
+              <CommandEmpty>Aucun contact trouvé.</CommandEmpty>
             )}
             <CommandGroup>
-              {users.map((user) => (
-                <CommandItem key={user.id} onSelect={() => handleSelect(user)}>
+              {filtered.map((contact) => (
+                <CommandItem
+                  key={contact.id}
+                  onSelect={() => handleSelect(contact)}
+                >
                   <Check
                     className={cn(
                       'mr-2 size-4',
-                      value === user.id ? 'opacity-100' : 'opacity-0'
+                      value === contact.id ? 'opacity-100' : 'opacity-0'
                     )}
                   />
-                  <div>
-                    <p className='text-sm font-medium'>
-                      {user.firstName} {user.lastName}
-                    </p>
-                    <p className='text-xs text-muted-foreground'>
-                      {user.email}
-                    </p>
-                  </div>
+                  <p className='text-sm font-medium'>
+                    {contact.firstName} {contact.lastName ?? ''}
+                  </p>
                 </CommandItem>
               ))}
             </CommandGroup>
