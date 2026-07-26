@@ -78,8 +78,8 @@ export const sidebarData: SidebarData = {
           icon: Car,
         },
         {
-          title: 'Users',
-          url: '/users',
+          title: 'Mes contacts',
+          url: '/contacts',
           icon: Users,
         },
       ],

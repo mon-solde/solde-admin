@@ -1,5 +1,6 @@
 import { toast } from 'sonner'
 import { PaymentDrawer } from '@/components/payment-drawer'
+import { useAuthStore } from '@/stores/auth-store'
 import { useAddRepayment, useDeleteRepayment, useGetDettes } from '../api/dettes-api'
 import { type Dette } from '../data/schema'
 
@@ -17,8 +18,13 @@ export function DettesRemboursementsDrawer({
   const addRepayment = useAddRepayment()
   const deleteRepayment = useDeleteRepayment()
   const { data: dettes = [] } = useGetDettes()
+  const { auth } = useAuthStore()
+  const accountNo = auth.user?.accountNo ?? ''
   const dette = dettes.find((d) => d.id === currentRow.id) ?? currentRow
   const isLender = dette.role === 'lent'
+  const lenderLabel = dette.lenderId === accountNo ? 'Vous' : dette.lenderName
+  const borrowerLabel =
+    dette.borrowerId === accountNo ? 'Vous' : dette.borrowerName
 
   return (
     <PaymentDrawer
@@ -27,14 +33,14 @@ export function DettesRemboursementsDrawer({
       title='Remboursements'
       description={
         <>
-          <strong>{dette.lenderName}</strong> a prêté{' '}
+          <strong>{lenderLabel}</strong> a prêté{' '}
           <strong>
             {new Intl.NumberFormat('fr-FR', {
               style: 'currency',
               currency: 'EUR',
             }).format(dette.amount)}
           </strong>{' '}
-          à <strong>{dette.borrowerName}</strong>
+          à <strong>{borrowerLabel}</strong>
         </>
       }
       amountDue={dette.amount}
@@ -54,8 +60,13 @@ export function DettesRemboursementsDrawer({
           }
         )
       }
+      // A repayment reverses the original debt's money direction: on a debt
+      // you lent, the repayment flows back to you (same question as
+      // borrowing — "où va l'argent"), and vice versa. See the create-debt
+      // form (dettes-mutate-drawer.tsx) for the non-reversed version of this
+      // question.
       sourceSelectorLabel={
-        isLender ? "D'où vient cet argent ?" : 'Où va cet argent ?'
+        isLender ? 'Où avez-vous reçu cet argent ?' : "D'où vient cet argent ?"
       }
       paidLabel='Remboursé'
       remainingLabel='Reste à régler'

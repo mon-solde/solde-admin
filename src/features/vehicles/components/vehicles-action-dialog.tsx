@@ -22,11 +22,12 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
-import { UserCombobox } from '@/features/users/components/user-combobox'
+import { useAuthStore } from '@/stores/auth-store'
+import { ContactCombobox } from '@/features/contacts/components/contact-combobox'
 import { useCreateVehicle } from '../api/vehicles-api'
 
 const participantSchema = z.object({
-  userId: z.string().min(1, 'Sélectionner un participant'),
+  contactId: z.string().min(1, 'Sélectionner un participant'),
   profitShare: z
     .number({ error: 'Requis' })
     .min(1, 'Min 1%')
@@ -38,19 +39,18 @@ const formSchema = z
     name: z.string().min(1, 'Le nom est requis'),
     purchaseDate: z.string().min(1, "La date d'achat est requise"),
     purchasePrice: z.number({ error: 'Requis' }).min(0, 'Doit être positif'),
-    participants: z
-      .array(participantSchema)
-      .min(1, 'Au moins un participant requis'),
+    // Can be empty — the owner keeps whatever share the participants don't claim.
+    participants: z.array(participantSchema),
   })
   .refine(
-    // Same logic as the backend: allow up to 0.001 for machine rounding errors,
-    // but reject any human-visible gap like 55% + 44.99% = 99.99%.
+    // Same logic as the backend: participants' shares can add up to less
+    // than 100% (the owner keeps the rest), but not more than 100%. 0.001
+    // of slack absorbs machine rounding errors only.
     (data) =>
-      Math.abs(
-        data.participants.reduce((sum, p) => sum + p.profitShare, 0) - 100
-      ) <= 0.001,
+      data.participants.reduce((sum, p) => sum + p.profitShare, 0) - 100 <=
+      0.001,
     {
-      message: 'La somme des parts de bénéfices doit être égale à 100%',
+      message: 'La somme des parts des participants ne peut pas dépasser 100%',
       path: ['participants'],
     }
   )
@@ -67,6 +67,8 @@ export function VehiclesActionDialog({
   onOpenChange,
 }: VehiclesActionDialogProps) {
   const { mutate, isPending } = useCreateVehicle()
+  const { auth } = useAuthStore()
+  const ownerId = auth.user?.accountNo ?? ''
 
   const form = useForm<VehicleForm>({
     resolver: zodResolver(formSchema),
@@ -74,7 +76,7 @@ export function VehiclesActionDialog({
       name: '',
       purchaseDate: '',
       purchasePrice: 0,
-      participants: [{ userId: '', profitShare: 0 }],
+      participants: [],
     },
   })
 
@@ -88,15 +90,17 @@ export function VehiclesActionDialog({
     (sum, p) => sum + (Number(p.profitShare) || 0),
     0
   )
+  const ownerShare = Math.max(0, 100 - totalShare)
 
   const onSubmit = (values: VehicleForm) => {
     mutate(
       {
+        ownerId,
         name: values.name,
         purchaseDate: values.purchaseDate,
         purchasePrice: values.purchasePrice,
         participants: values.participants.map((p) => ({
-          userId: p.userId,
+          contactId: p.contactId,
           profitShare: p.profitShare,
         })),
       },
@@ -206,9 +210,16 @@ export function VehiclesActionDialog({
                 <div className='flex items-center justify-between'>
                   <p className='text-sm font-medium'>Participants</p>
                   <span
-                    className={`text-xs font-medium ${totalShare === 100 ? 'text-green-600' : 'text-muted-foreground'}`}
+                    className={`text-xs font-medium ${totalShare > 100 ? 'text-destructive' : 'text-muted-foreground'}`}
                   >
-                    Total : {totalShare}%
+                    Contacts : {totalShare}%
+                  </span>
+                </div>
+
+                <div className='flex items-center justify-between rounded-md border bg-muted/40 px-3 py-2'>
+                  <span className='text-sm font-medium'>Vous</span>
+                  <span className='text-sm font-medium tabular-nums'>
+                    {ownerShare}%
                   </span>
                 </div>
 
@@ -217,10 +228,10 @@ export function VehiclesActionDialog({
                     <div className='flex-1'>
                       <FormField
                         control={form.control}
-                        name={`participants.${index}.userId`}
+                        name={`participants.${index}.contactId`}
                         render={({ field: f }) => (
                           <FormItem className='space-y-1'>
-                            <UserCombobox
+                            <ContactCombobox
                               value={f.value}
                               onChange={f.onChange}
                             />
@@ -262,7 +273,6 @@ export function VehiclesActionDialog({
                       size='icon'
                       className='mt-0.5 shrink-0 text-muted-foreground hover:text-destructive'
                       onClick={() => remove(index)}
-                      disabled={fields.length === 1}
                     >
                       <Trash2 size={16} />
                     </Button>
@@ -280,7 +290,7 @@ export function VehiclesActionDialog({
                   variant='outline'
                   size='sm'
                   className='w-full'
-                  onClick={() => append({ userId: '', profitShare: 0 })}
+                  onClick={() => append({ contactId: '', profitShare: 0 })}
                 >
                   <PlusIcon size={14} className='me-1' />
                   Ajouter un participant

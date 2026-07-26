@@ -52,10 +52,11 @@ export function useCreateVehicle() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (data: {
+      ownerId: string
       name: string
       purchaseDate: string
       purchasePrice: number
-      participants: Array<{ userId: string; profitShare: number }>
+      participants: Array<{ contactId: string; profitShare: number }>
     }) => apiClient.post('/v1/vehicles', data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: VEHICLES_KEY }),
   })
@@ -67,7 +68,12 @@ export function useAddExpense(vehicleId: string) {
     mutationFn: (data: {
       label: string
       date: string
-      payers: Array<{ userId: string; amount: number; source: 'BANK' | 'CASH' }>
+      payers: Array<{
+        payerId: string
+        amount: number
+        source?: 'BANK' | 'CASH'
+        imputedToId?: string
+      }>
     }) => apiClient.post(`/v1/vehicles/${vehicleId}/expenses`, data),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: vehicleDetailKey(vehicleId) }),
@@ -114,7 +120,8 @@ export function useDeclareSale(vehicleId: string) {
       salePrice: number
       soldAt: string
       cashierId: string
-      source: 'BANK' | 'CASH'
+      bankAmount?: number
+      cashAmount?: number
     }) => apiClient.post(`/v1/vehicles/${vehicleId}/sale`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: VEHICLES_KEY })

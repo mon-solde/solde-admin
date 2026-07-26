@@ -41,7 +41,7 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import { Textarea } from '@/components/ui/textarea'
-import { UserCombobox } from '@/features/users/components/user-combobox'
+import { ContactCombobox } from '@/features/contacts/components/contact-combobox'
 import { useCreateDette } from '../api/dettes-api'
 
 type Role = 'lent' | 'borrowed'
@@ -324,7 +324,7 @@ export function DettesMutateDrawer({
                       <FormItem>
                         <FormLabel>À qui ?</FormLabel>
                         <FormControl>
-                          <UserCombobox
+                          <ContactCombobox
                             value={field.value}
                             onChange={field.onChange}
                           />
