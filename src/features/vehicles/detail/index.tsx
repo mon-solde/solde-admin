@@ -8,7 +8,7 @@ import {
   TrendingUp,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { cn } from '@/lib/utils'
+import { cn, formatPersonName } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -148,16 +148,22 @@ function VehicleDetailContent() {
                   </p>
                   {(() => {
                     const cashier = vehicle.participants.find(
-                      (p) => p.userId === vehicle.soldVehicle!.cashierId
+                      (p) => p.contactId === vehicle.soldVehicle!.cashierId
                     )
-                    return cashier ? (
+                    // No matching contact means the owner cashed it in — a
+                    // cashier is always either the owner or one of their
+                    // contacts.
+                    const cashierName = cashier
+                      ? formatPersonName(cashier.firstName, cashier.lastName)
+                      : 'Vous'
+                    return (
                       <p className='text-xs text-muted-foreground'>
                         Encaissé par{' '}
                         <span className='font-medium text-foreground'>
-                          {cashier.firstName} {cashier.lastName}
+                          {cashierName}
                         </span>
                       </p>
-                    ) : null
+                    )
                   })()}
                 </>
               ) : (
@@ -209,10 +215,12 @@ function VehicleDetailContent() {
             </CardHeader>
             <CardContent>
               <p className='text-2xl font-bold'>
-                {vehicle.participants.length}
+                {vehicle.participants.length + 1}
               </p>
               <p className='text-xs text-muted-foreground'>
-                {vehicle.participants.map((p) => p.firstName).join(', ')}
+                {['Vous', ...vehicle.participants.map((p) => p.firstName)].join(
+                  ', '
+                )}
               </p>
             </CardContent>
           </Card>
@@ -237,10 +245,31 @@ function VehicleDetailContent() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
+                  <TableRow>
+                    <TableCell className='font-medium'>Vous</TableCell>
+                    <TableCell className='text-end'>
+                      <Badge variant='outline'>
+                        {financialSummary.owner.profitShare}%
+                      </Badge>
+                    </TableCell>
+                    <TableCell className='text-end'>
+                      {financialSummary.owner.totalInvested.toLocaleString(
+                        'fr-FR'
+                      )}{' '}
+                      €
+                    </TableCell>
+                    {isSold && (
+                      <TableCell className='text-end font-medium text-green-600'>
+                        {financialSummary.owner.amountToReceive !== null
+                          ? `${financialSummary.owner.amountToReceive.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} €`
+                          : '—'}
+                      </TableCell>
+                    )}
+                  </TableRow>
                   {financialSummary.participants.map((p) => (
-                    <TableRow key={p.userId}>
+                    <TableRow key={p.contactId}>
                       <TableCell className='font-medium'>
-                        {p.firstName} {p.lastName}
+                        {formatPersonName(p.firstName, p.lastName)}
                       </TableCell>
                       <TableCell className='text-end'>
                         <Badge variant='outline'>{p.profitShare}%</Badge>

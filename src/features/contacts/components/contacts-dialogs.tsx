@@ -1,28 +1,21 @@
-import { UsersActionDialog } from './users-action-dialog'
-import { UsersDeleteDialog } from './users-delete-dialog'
-import { UsersInviteDialog } from './users-invite-dialog'
-import { useUsers } from './users-provider'
+import { ContactsActionDialog } from './contacts-action-dialog'
+import { ContactsDeleteDialog } from './contacts-delete-dialog'
+import { useContacts } from './contacts-provider'
 
-export function UsersDialogs() {
-  const { open, setOpen, currentRow, setCurrentRow } = useUsers()
+export function ContactsDialogs() {
+  const { open, setOpen, currentRow, setCurrentRow } = useContacts()
   return (
     <>
-      <UsersActionDialog
-        key='user-add'
+      <ContactsActionDialog
+        key='contact-add'
         open={open === 'add'}
         onOpenChange={() => setOpen('add')}
       />
 
-      <UsersInviteDialog
-        key='user-invite'
-        open={open === 'invite'}
-        onOpenChange={() => setOpen('invite')}
-      />
-
       {currentRow && (
         <>
-          <UsersActionDialog
-            key={`user-edit-${currentRow.id}`}
+          <ContactsActionDialog
+            key={`contact-edit-${currentRow.id}`}
             open={open === 'edit'}
             onOpenChange={() => {
               setOpen('edit')
@@ -33,8 +26,8 @@ export function UsersDialogs() {
             currentRow={currentRow}
           />
 
-          <UsersDeleteDialog
-            key={`user-delete-${currentRow.id}`}
+          <ContactsDeleteDialog
+            key={`contact-delete-${currentRow.id}`}
             open={open === 'delete'}
             onOpenChange={() => {
               setOpen('delete')

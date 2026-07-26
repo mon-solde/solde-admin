@@ -30,12 +30,14 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
+import { formatPersonName } from '@/lib/utils'
 import { SelectDropdown } from '@/components/select-dropdown'
+import { useAuthStore } from '@/stores/auth-store'
 import { useAddExpense } from '../../api/vehicles-api'
 import { type VehicleDetail } from '../../data/schema'
 
 const payerSchema = z.object({
-  userId: z.string().min(1, 'Sélectionner un participant'),
+  payerId: z.string().min(1, 'Sélectionner un participant'),
   amount: z
     .number({ error: 'Requis' })
     .min(0.01, 'Le montant doit être supérieur à 0'),
@@ -63,13 +65,19 @@ export function ExpenseMutateDrawer({
   onOpenChange,
 }: ExpenseMutateDrawerProps) {
   const { mutate: addExpense, isPending } = useAddExpense(vehicle.id)
+  const { auth } = useAuthStore()
+  const ownerId = auth.user?.accountNo ?? ''
+  const payerOptions = [
+    { contactId: ownerId, firstName: 'Vous', lastName: null as string | null },
+    ...vehicle.participants,
+  ]
 
   const form = useForm<ExpenseForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       label: '',
       date: new Date().toISOString().split('T')[0],
-      payers: [{ userId: '', amount: 0, source: 'BANK' as const, imputedToId: undefined }],
+      payers: [{ payerId: '', amount: 0, source: 'BANK' as const, imputedToId: undefined }],
     },
   })
 
@@ -89,7 +97,12 @@ export function ExpenseMutateDrawer({
       {
         label: data.label,
         date: data.date,
-        payers: data.payers,
+        // Banque/Espèces only means something for your own payment — a
+        // contact's money never touches your tracked balances.
+        payers: data.payers.map((p) => ({
+          ...p,
+          source: p.payerId === ownerId ? p.source : undefined,
+        })),
       },
       {
         onSuccess: () => {
@@ -174,8 +187,10 @@ export function ExpenseMutateDrawer({
 
               {fields.map((field, index) => {
                 const imputedToId = form.watch(`payers.${index}.imputedToId`)
-                const otherParticipants = vehicle.participants.filter(
-                  (p) => p.userId !== form.watch(`payers.${index}.userId`),
+                const isOwnerPayer =
+                  form.watch(`payers.${index}.payerId`) === ownerId
+                const otherParticipants = payerOptions.filter(
+                  (p) => p.contactId !== form.watch(`payers.${index}.payerId`),
                 )
                 return (
                   <div key={field.id} className='space-y-1.5'>
@@ -183,7 +198,7 @@ export function ExpenseMutateDrawer({
                       <div className='flex-1'>
                         <FormField
                           control={form.control}
-                          name={`payers.${index}.userId`}
+                          name={`payers.${index}.payerId`}
                           render={({ field: f }) => (
                             <FormItem className='space-y-1'>
                               <SelectDropdown
@@ -195,9 +210,9 @@ export function ExpenseMutateDrawer({
                                   }
                                 }}
                                 placeholder='Participant'
-                                items={vehicle.participants.map((p) => ({
-                                  label: `${p.firstName} ${p.lastName}`,
-                                  value: p.userId,
+                                items={payerOptions.map((p) => ({
+                                  label: formatPersonName(p.firstName, p.lastName),
+                                  value: p.contactId,
                                 }))}
                               />
                               <FormMessage />
@@ -233,26 +248,28 @@ export function ExpenseMutateDrawer({
                           )}
                         />
                       </div>
-                      <div className='w-24'>
-                        <FormField
-                          control={form.control}
-                          name={`payers.${index}.source`}
-                          render={({ field: f }) => (
-                            <FormItem className='space-y-1'>
-                              <Select value={f.value} onValueChange={f.onChange}>
-                                <SelectTrigger className='h-9'>
-                                  <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value='BANK'>Banque</SelectItem>
-                                  <SelectItem value='CASH'>Espèces</SelectItem>
-                                </SelectContent>
-                              </Select>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
+                      {isOwnerPayer && (
+                        <div className='w-24'>
+                          <FormField
+                            control={form.control}
+                            name={`payers.${index}.source`}
+                            render={({ field: f }) => (
+                              <FormItem className='space-y-1'>
+                                <Select value={f.value} onValueChange={f.onChange}>
+                                  <SelectTrigger className='h-9'>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value='BANK'>Banque</SelectItem>
+                                    <SelectItem value='CASH'>Espèces</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                      )}
                       <Button
                         type='button'
                         variant='ghost'
@@ -279,8 +296,8 @@ export function ExpenseMutateDrawer({
                                   onValueChange={f.onChange}
                                   placeholder='Participant'
                                   items={otherParticipants.map((p) => ({
-                                    label: `${p.firstName} ${p.lastName}`,
-                                    value: p.userId,
+                                    label: formatPersonName(p.firstName, p.lastName),
+                                    value: p.contactId,
                                   }))}
                                 />
                               </div>
@@ -302,7 +319,7 @@ export function ExpenseMutateDrawer({
                         onClick={() =>
                           form.setValue(
                             `payers.${index}.imputedToId`,
-                            otherParticipants[0]?.userId ?? '',
+                            otherParticipants[0]?.contactId ?? '',
                           )
                         }
                       >
@@ -319,7 +336,7 @@ export function ExpenseMutateDrawer({
                 size='sm'
                 className='w-full'
                 onClick={() =>
-                  append({ userId: '', amount: 0, source: 'BANK' as const, imputedToId: undefined })
+                  append({ payerId: '', amount: 0, source: 'BANK' as const, imputedToId: undefined })
                 }
               >
                 <PlusIcon size={14} className='me-1' />

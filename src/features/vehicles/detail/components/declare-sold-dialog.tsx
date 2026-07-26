@@ -20,8 +20,12 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
+import { formatPersonName } from '@/lib/utils'
+import { useAuthStore } from '@/stores/auth-store'
 import { useDeclareSale } from '../../api/vehicles-api'
 import { type VehicleDetail } from '../../data/schema'
+
+type SourceType = 'BANK' | 'CASH' | 'BOTH'
 
 type DeclareSoldDialogProps = {
   vehicle: VehicleDetail
@@ -37,17 +41,27 @@ export function DeclareSoldDialog({
   const [salePrice, setSalePrice] = useState('')
   const [soldAt, setSoldAt] = useState(new Date().toISOString().split('T')[0])
   const [cashierId, setCashierId] = useState('')
-  const [source, setSource] = useState<'BANK' | 'CASH'>('BANK')
+  const [sourceType, setSourceType] = useState<SourceType | null>(null)
+  const [bankSplit, setBankSplit] = useState('')
   const { mutate: declareSale, isPending } = useDeclareSale(vehicle.id)
+  const { auth } = useAuthStore()
+  const ownerId = auth.user?.accountNo ?? ''
+  const cashierOptions = [
+    { contactId: ownerId, firstName: 'Vous', lastName: null as string | null },
+    ...vehicle.participants,
+  ]
+  const cashierIsOwner = cashierId === ownerId
 
   const { financialSummary } = vehicle
   const salePriceNum = parseFloat(salePrice) || 0
+  const bankSplitNum = parseFloat(bankSplit) || 0
+  const cashComputed = Math.max(0, salePriceNum - bankSplitNum)
   const profit =
     salePriceNum > 0 ? salePriceNum - financialSummary.totalExpenses : null
 
   const breakdown = vehicle.participants.map((p) => {
     const invested =
-      financialSummary.participants.find((s) => s.userId === p.userId)
+      financialSummary.participants.find((s) => s.contactId === p.contactId)
         ?.totalInvested ?? 0
     const profitAmount =
       profit !== null && profit > 0 ? (profit * p.profitShare) / 100 : 0
@@ -59,11 +73,22 @@ export function DeclareSoldDialog({
     }
   })
 
+  const ownerProfitAmount =
+    profit !== null && profit > 0
+      ? (profit * financialSummary.owner.profitShare) / 100
+      : 0
+  const ownerBreakdown = {
+    invested: financialSummary.owner.totalInvested,
+    profitAmount: ownerProfitAmount,
+    total: financialSummary.owner.totalInvested + ownerProfitAmount,
+  }
+
   const reset = () => {
     setSalePrice('')
     setSoldAt(new Date().toISOString().split('T')[0])
     setCashierId('')
-    setSource('BANK')
+    setSourceType(null)
+    setBankSplit('')
   }
 
   const handleConfirm = () => {
@@ -71,8 +96,44 @@ export function DeclareSoldDialog({
       toast.error('Sélectionnez qui a encaissé la vente.')
       return
     }
+
+    if (!cashierIsOwner) {
+      declareSale(
+        { salePrice: salePriceNum, soldAt, cashierId },
+        {
+          onSuccess: () => {
+            toast.success('Vente déclarée.')
+            reset()
+            onOpenChange(false)
+          },
+          onError: (error: any) =>
+            toast.error(
+              error?.response?.data?.message ?? 'Une erreur est survenue.'
+            ),
+        }
+      )
+      return
+    }
+
+    if (!sourceType) {
+      toast.error("Veuillez indiquer où est allé l'argent.")
+      return
+    }
+
+    if (sourceType === 'BOTH' && (bankSplitNum <= 0 || bankSplitNum >= salePriceNum)) {
+      toast.error(
+        'Le montant Banque doit être compris entre 0 et le prix de vente.'
+      )
+      return
+    }
+
+    const bankAmount =
+      sourceType === 'BANK' ? salePriceNum : sourceType === 'CASH' ? 0 : bankSplitNum
+    const cashAmount =
+      sourceType === 'CASH' ? salePriceNum : sourceType === 'BANK' ? 0 : cashComputed
+
     declareSale(
-      { salePrice: salePriceNum, soldAt, cashierId, source },
+      { salePrice: salePriceNum, soldAt, cashierId, bankAmount, cashAmount },
       {
         onSuccess: () => {
           toast.success('Vente déclarée.')
@@ -136,36 +197,73 @@ export function DeclareSoldDialog({
           </div>
 
           <div className='space-y-2'>
-            <Label>Où est allé l&apos;argent ?</Label>
-            <Select
-              value={source}
-              onValueChange={(v) => setSource(v as 'BANK' | 'CASH')}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='BANK'>Banque</SelectItem>
-                <SelectItem value='CASH'>Espèces</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className='space-y-2'>
             <Label>Qui a encaissé ?</Label>
-            <Select value={cashierId} onValueChange={setCashierId}>
+            <Select
+              value={cashierId}
+              onValueChange={(v) => {
+                setCashierId(v)
+                setSourceType(null)
+                setBankSplit('')
+              }}
+            >
               <SelectTrigger>
                 <SelectValue placeholder='Sélectionner un participant' />
               </SelectTrigger>
               <SelectContent>
-                {vehicle.participants.map((p) => (
-                  <SelectItem key={p.userId} value={p.userId}>
-                    {p.firstName} {p.lastName}
+                {cashierOptions.map((p) => (
+                  <SelectItem key={p.contactId} value={p.contactId}>
+                    {formatPersonName(p.firstName, p.lastName)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
+
+          {cashierIsOwner && (
+            <div className='space-y-2'>
+              <Label>Où est allé l&apos;argent ?</Label>
+              <Select
+                value={sourceType ?? ''}
+                onValueChange={(v) => setSourceType(v as SourceType)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder='Sélectionner' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='BANK'>Banque</SelectItem>
+                  <SelectItem value='CASH'>Espèces</SelectItem>
+                  <SelectItem value='BOTH'>Les deux</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {sourceType === 'BOTH' && (
+                <div className='space-y-2 rounded-md border p-3'>
+                  <Label htmlFor='bank-split'>Montant reçu en banque</Label>
+                  <div className='relative'>
+                    <Input
+                      id='bank-split'
+                      type='number'
+                      placeholder='0'
+                      step='0.01'
+                      max={salePriceNum}
+                      className='pe-6'
+                      value={bankSplit}
+                      onChange={(e) => setBankSplit(e.target.value)}
+                    />
+                    <span className='pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground'>
+                      €
+                    </span>
+                  </div>
+                  <div className='flex items-center justify-between text-sm text-muted-foreground'>
+                    <span>Espèces</span>
+                    <span className='font-medium text-foreground'>
+                      {cashComputed.toLocaleString('fr-FR')} €
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {salePriceNum > 0 && (
             <>
@@ -200,14 +298,33 @@ export function DeclareSoldDialog({
 
               <div className='space-y-3'>
                 <p className='text-sm font-medium'>Répartition</p>
+                <div className='flex items-center justify-between rounded-md border bg-muted/40 p-3'>
+                  <div>
+                    <p className='text-sm font-medium'>Vous</p>
+                    <p className='text-xs text-muted-foreground'>
+                      Mise : {ownerBreakdown.invested.toLocaleString('fr-FR')}{' '}
+                      € · Bénéf :{' '}
+                      {ownerBreakdown.profitAmount.toLocaleString('fr-FR', {
+                        maximumFractionDigits: 2,
+                      })}{' '}
+                      €
+                    </p>
+                  </div>
+                  <span className='text-base font-bold'>
+                    {ownerBreakdown.total.toLocaleString('fr-FR', {
+                      maximumFractionDigits: 2,
+                    })}{' '}
+                    €
+                  </span>
+                </div>
                 {breakdown.map((p) => (
                   <div
-                    key={p.userId}
+                    key={p.contactId}
                     className='flex items-center justify-between rounded-md border p-3'
                   >
                     <div>
                       <p className='text-sm font-medium'>
-                        {p.firstName} {p.lastName}
+                        {formatPersonName(p.firstName, p.lastName)}
                       </p>
                       <p className='text-xs text-muted-foreground'>
                         Mise : {p.invested.toLocaleString('fr-FR')} € · Bénéf :{' '}

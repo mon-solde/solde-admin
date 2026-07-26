@@ -79,7 +79,7 @@ export const vehiclesColumns: ColumnDef<Vehicle>[] = [
       <div className='flex flex-wrap gap-1'>
         {row.original.participants.map((p) => (
           <span
-            key={p.userId}
+            key={p.contactId}
             className='inline-flex items-center rounded-full border px-2 py-0.5 text-xs text-muted-foreground'
           >
             {p.firstName}
