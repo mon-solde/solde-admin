@@ -118,6 +118,20 @@ export const dettesColumns: ColumnDef<Dette>[] = [
     },
   },
   {
+    accessorKey: 'description',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Note' />
+    ),
+    cell: ({ row }) => {
+      const note = row.getValue<string | undefined>('description')
+      return (
+        <Label className='cursor-default font-normal text-muted-foreground'>
+          {note ?? '—'}
+        </Label>
+      )
+    },
+  },
+  {
     accessorKey: 'isRepaid',
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Statut' />
