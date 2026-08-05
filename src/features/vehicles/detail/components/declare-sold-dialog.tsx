@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { TrendingUp } from 'lucide-react'
+import { TrendingDown, TrendingUp } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
 import { formatPersonName } from '@/lib/utils'
@@ -27,6 +27,46 @@ import { useDeclareSale } from '../../api/vehicles-api'
 import { type VehicleDetail } from '../../data/schema'
 
 type SourceType = 'BANK' | 'CASH' | 'BOTH'
+
+type ProfitShareBeneficiary = { contactId: string; profitShare: number }
+
+// A sale in profit is split proportionally to ownership (profitShare) — the
+// more of the car someone owns, the more of the gain they get. A deficit is
+// split equally instead: an unexpected loss isn't scaled by ownership,
+// everyone bears the same amount regardless of profitShare or what they
+// personally invested.
+function computeProfitShares(
+  profit: number,
+  beneficiaries: ProfitShareBeneficiary[]
+): Map<string, number> {
+  if (profit >= 0) {
+    return new Map(
+      beneficiaries.map((b) => [b.contactId, (profit * b.profitShare) / 100])
+    )
+  }
+
+  const deficit = -profit
+  const rawShare = deficit / beneficiaries.length
+  const roundedShare = Math.round(rawShare * 100) / 100
+  const roundingRemainder =
+    Math.round((deficit - roundedShare * beneficiaries.length) * 100) / 100
+
+  return new Map(
+    beneficiaries.map((b, index) => [
+      b.contactId,
+      -(index === beneficiaries.length - 1
+        ? roundedShare + roundingRemainder
+        : roundedShare),
+    ])
+  )
+}
+
+function formatSettlementAmount(total: number): string {
+  const amount = Math.abs(total).toLocaleString('fr-FR', {
+    maximumFractionDigits: 2,
+  })
+  return total < 0 ? `− ${amount} €` : `${amount} €`
+}
 
 type DeclareSoldDialogProps = {
   vehicle: VehicleDetail
@@ -59,13 +99,27 @@ export function DeclareSoldDialog({
   const cashComputed = Math.max(0, salePriceNum - bankSplitNum)
   const profit =
     salePriceNum > 0 ? salePriceNum - financialSummary.totalExpenses : null
+  const isDeficit = profit !== null && profit < 0
+
+  const profitShareBeneficiaries: ProfitShareBeneficiary[] = [
+    ...vehicle.participants.map((p) => ({
+      contactId: p.contactId,
+      profitShare: p.profitShare,
+    })),
+    ...(financialSummary.owner.profitShare > 0.001
+      ? [{ contactId: ownerId, profitShare: financialSummary.owner.profitShare }]
+      : []),
+  ]
+  const profitShareById =
+    profit !== null
+      ? computeProfitShares(profit, profitShareBeneficiaries)
+      : new Map<string, number>()
 
   const breakdown = vehicle.participants.map((p) => {
     const invested =
       financialSummary.participants.find((s) => s.contactId === p.contactId)
         ?.totalInvested ?? 0
-    const profitAmount =
-      profit !== null && profit > 0 ? (profit * p.profitShare) / 100 : 0
+    const profitAmount = profitShareById.get(p.contactId) ?? 0
     return {
       ...p,
       invested,
@@ -74,10 +128,7 @@ export function DeclareSoldDialog({
     }
   })
 
-  const ownerProfitAmount =
-    profit !== null && profit > 0
-      ? (profit * financialSummary.owner.profitShare) / 100
-      : 0
+  const ownerProfitAmount = profitShareById.get(ownerId) ?? 0
   const ownerBreakdown = {
     invested: financialSummary.owner.totalInvested,
     profitAmount: ownerProfitAmount,
@@ -277,25 +328,18 @@ export function DeclareSoldDialog({
               <Separator />
 
               <div className='flex items-center gap-2'>
-                <TrendingUp
-                  size={14}
-                  className={
-                    profit !== null && profit >= 0
-                      ? 'text-green-600'
-                      : 'text-red-500'
-                  }
-                />
+                {isDeficit ? (
+                  <TrendingDown size={14} className='text-red-500' />
+                ) : (
+                  <TrendingUp size={14} className='text-green-600' />
+                )}
                 <span className='text-sm font-medium'>
-                  Bénéfice net :{' '}
-                  <span
-                    className={
-                      profit !== null && profit >= 0
-                        ? 'text-green-600'
-                        : 'text-red-500'
-                    }
-                  >
+                  {isDeficit ? 'Déficit : ' : 'Bénéfice net : '}
+                  <span className={isDeficit ? 'text-red-500' : 'text-green-600'}>
                     {profit !== null
-                      ? `${profit >= 0 ? '+' : ''}${profit.toLocaleString('fr-FR')} €`
+                      ? isDeficit
+                        ? `${Math.abs(profit).toLocaleString('fr-FR')} €`
+                        : `+${profit.toLocaleString('fr-FR')} €`
                       : '—'}
                   </span>
                 </span>
@@ -317,11 +361,10 @@ export function DeclareSoldDialog({
                       €
                     </p>
                   </div>
-                  <span className='text-base font-bold'>
-                    {ownerBreakdown.total.toLocaleString('fr-FR', {
-                      maximumFractionDigits: 2,
-                    })}{' '}
-                    €
+                  <span
+                    className={`text-base font-bold ${ownerBreakdown.total < 0 ? 'text-red-500' : ''}`}
+                  >
+                    {formatSettlementAmount(ownerBreakdown.total)}
                   </span>
                 </div>
                 {breakdown.map((p) => (
@@ -341,11 +384,10 @@ export function DeclareSoldDialog({
                         €
                       </p>
                     </div>
-                    <span className='text-base font-bold'>
-                      {p.total.toLocaleString('fr-FR', {
-                        maximumFractionDigits: 2,
-                      })}{' '}
-                      €
+                    <span
+                      className={`text-base font-bold ${p.total < 0 ? 'text-red-500' : ''}`}
+                    >
+                      {formatSettlementAmount(p.total)}
                     </span>
                   </div>
                 ))}

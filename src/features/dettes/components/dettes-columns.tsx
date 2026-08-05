@@ -80,7 +80,7 @@ export const dettesColumns: ColumnDef<Dette>[] = [
         <Label className='cursor-default font-medium'>
           {getValue<string>()}
         </Label>
-        {row.original.type === 'VEHICLE' && row.original.vehicleId && (
+        {row.original.type === 'SOLD_VEHICLE' && row.original.vehicleId && (
           <Link
             to='/vehicles/$vehicleId'
             params={{ vehicleId: row.original.vehicleId }}
