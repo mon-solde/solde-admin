@@ -24,8 +24,8 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type Contact } from '../data/schema'
-import { DataTableBulkActions } from './data-table-bulk-actions'
 import { contactsColumns as columns } from './contacts-columns'
+import { DataTableBulkActions } from './data-table-bulk-actions'
 
 type DataTableProps = {
   data: Contact[]

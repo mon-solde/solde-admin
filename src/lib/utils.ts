@@ -9,10 +9,7 @@ export function sleep(ms: number = 1000) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-export function formatPersonName(
-  firstName: string,
-  lastName?: string | null
-) {
+export function formatPersonName(firstName: string, lastName?: string | null) {
   return lastName ? `${firstName} ${lastName}` : firstName
 }
 

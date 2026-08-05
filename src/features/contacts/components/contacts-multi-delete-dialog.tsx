@@ -108,9 +108,9 @@ export function ContactsMultiDeleteDialog<TData>({
           <Alert variant='destructive'>
             <AlertTitle>Attention !</AlertTitle>
             <AlertDescription>
-              Cette opération ne peut pas être annulée. Les contacts ayant
-              des dettes ou dépenses associées seront masqués plutôt que
-              supprimés pour garder l'historique lisible.
+              Cette opération ne peut pas être annulée. Les contacts ayant des
+              dettes ou dépenses associées seront masqués plutôt que supprimés
+              pour garder l'historique lisible.
             </AlertDescription>
           </Alert>
         </div>

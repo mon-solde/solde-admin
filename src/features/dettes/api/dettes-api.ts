@@ -5,8 +5,27 @@ import { detteSchema, type Dette } from '../data/schema'
 
 const DEBTS_KEY = ['debts'] as const
 
-async function fetchDebts(): Promise<Dette[]> {
-  const data = await apiClient.get('/v1/debts')
+export type DettesFilters = {
+  contactId?: string
+  type?: 'prêté' | 'emprunté'
+  status?: 'en cours' | 'remboursé' | 'tous'
+  vehicleId?: string
+}
+
+async function fetchDebts(filters: DettesFilters = {}): Promise<Dette[]> {
+  const { contactId, type, status, vehicleId } = filters
+  const params: Record<string, string> = {}
+  if (contactId) params.contactId = contactId
+  if (type) params.role = type === 'prêté' ? 'LENDER' : 'BORROWER'
+  // Absent status means "not specified yet", which defaults to 'en cours' —
+  // only an explicit 'tous' should skip the status filter entirely.
+  if (status !== 'tous')
+    params.status = status === 'remboursé' ? 'REPAID' : 'ONGOING'
+  if (vehicleId) params.vehicleId = vehicleId
+
+  const data = await apiClient.get('/v1/debts', {
+    params: Object.keys(params).length ? params : undefined,
+  })
   return z.array(detteSchema).parse(data)
 }
 
@@ -55,10 +74,17 @@ async function addRepayment({
   return apiClient.post(`/v1/debts/${debtId}/repayments`, body)
 }
 
-export function useGetDettes() {
+export function useGetDettes(filters: DettesFilters = {}) {
+  const { contactId, type, status, vehicleId } = filters
   return useQuery({
-    queryKey: DEBTS_KEY,
-    queryFn: fetchDebts,
+    queryKey: [
+      ...DEBTS_KEY,
+      contactId ?? '',
+      type ?? '',
+      status ?? '',
+      vehicleId ?? '',
+    ],
+    queryFn: () => fetchDebts({ contactId, type, status, vehicleId }),
   })
 }
 

@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
 import { Trash2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Button } from '@/components/ui/button'
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
 import { ContactsMultiDeleteDialog } from './contacts-multi-delete-dialog'
 

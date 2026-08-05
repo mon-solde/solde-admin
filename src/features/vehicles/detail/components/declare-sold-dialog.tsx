@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { TrendingUp } from 'lucide-react'
 import { toast } from 'sonner'
+import { useAuthStore } from '@/stores/auth-store'
+import { formatPersonName } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -20,8 +22,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
-import { formatPersonName } from '@/lib/utils'
-import { useAuthStore } from '@/stores/auth-store'
 import { useDeclareSale } from '../../api/vehicles-api'
 import { type VehicleDetail } from '../../data/schema'
 
@@ -120,7 +120,10 @@ export function DeclareSoldDialog({
       return
     }
 
-    if (sourceType === 'BOTH' && (bankSplitNum <= 0 || bankSplitNum >= salePriceNum)) {
+    if (
+      sourceType === 'BOTH' &&
+      (bankSplitNum <= 0 || bankSplitNum >= salePriceNum)
+    ) {
       toast.error(
         'Le montant Banque doit être compris entre 0 et le prix de vente.'
       )
@@ -128,9 +131,17 @@ export function DeclareSoldDialog({
     }
 
     const bankAmount =
-      sourceType === 'BANK' ? salePriceNum : sourceType === 'CASH' ? 0 : bankSplitNum
+      sourceType === 'BANK'
+        ? salePriceNum
+        : sourceType === 'CASH'
+          ? 0
+          : bankSplitNum
     const cashAmount =
-      sourceType === 'CASH' ? salePriceNum : sourceType === 'BANK' ? 0 : cashComputed
+      sourceType === 'CASH'
+        ? salePriceNum
+        : sourceType === 'BANK'
+          ? 0
+          : cashComputed
 
     declareSale(
       { salePrice: salePriceNum, soldAt, cashierId, bankAmount, cashAmount },
@@ -302,8 +313,8 @@ export function DeclareSoldDialog({
                   <div>
                     <p className='text-sm font-medium'>Vous</p>
                     <p className='text-xs text-muted-foreground'>
-                      Mise : {ownerBreakdown.invested.toLocaleString('fr-FR')}{' '}
-                      € · Bénéf :{' '}
+                      Mise : {ownerBreakdown.invested.toLocaleString('fr-FR')} €
+                      · Bénéf :{' '}
                       {ownerBreakdown.profitAmount.toLocaleString('fr-FR', {
                         maximumFractionDigits: 2,
                       })}{' '}

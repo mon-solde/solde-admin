@@ -1,7 +1,11 @@
 import { toast } from 'sonner'
-import { PaymentDrawer } from '@/components/payment-drawer'
 import { useAuthStore } from '@/stores/auth-store'
-import { useAddRepayment, useDeleteRepayment, useGetDettes } from '../api/dettes-api'
+import { PaymentDrawer } from '@/components/payment-drawer'
+import {
+  useAddRepayment,
+  useDeleteRepayment,
+  useGetDettes,
+} from '../api/dettes-api'
 import { type Dette } from '../data/schema'
 
 type DettesRemboursementsDrawerProps = {

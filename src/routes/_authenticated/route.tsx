@@ -1,13 +1,20 @@
 import { useEffect, useState } from 'react'
-import { createFileRoute, Navigate, Outlet, useLocation } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  Navigate,
+  Outlet,
+  useLocation,
+} from '@tanstack/react-router'
 import { onAuthStateChanged } from 'firebase/auth'
 import { Loader2 } from 'lucide-react'
-import { firebaseAuth } from '@/lib/firebase'
 import { useAuthStore } from '@/stores/auth-store'
+import { firebaseAuth } from '@/lib/firebase'
 import { AuthenticatedLayout } from '@/components/layout/authenticated-layout'
 
 function AuthGuard() {
-  const [status, setStatus] = useState<'loading' | 'authed' | 'guest'>('loading')
+  const [status, setStatus] = useState<'loading' | 'authed' | 'guest'>(
+    'loading'
+  )
   const { auth } = useAuthStore()
   const location = useLocation()
 
@@ -47,10 +54,16 @@ function AuthGuard() {
   }
 
   if (status === 'guest') {
-    return <Navigate to='/sign-in' search={{ redirect: location.href }} replace />
+    return (
+      <Navigate to='/sign-in' search={{ redirect: location.href }} replace />
+    )
   }
 
-  return <AuthenticatedLayout><Outlet /></AuthenticatedLayout>
+  return (
+    <AuthenticatedLayout>
+      <Outlet />
+    </AuthenticatedLayout>
+  )
 }
 
 export const Route = createFileRoute('/_authenticated')({

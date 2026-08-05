@@ -113,13 +113,13 @@ export function UserAuthForm({
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input
-                placeholder='name@example.com'
-                autoCapitalize='none'
-                autoCorrect='off'
-                autoComplete='email'
-                inputMode='email'
-                {...field}
-              />
+                  placeholder='name@example.com'
+                  autoCapitalize='none'
+                  autoCorrect='off'
+                  autoComplete='email'
+                  inputMode='email'
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

@@ -1,10 +1,10 @@
 import { ArrowRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { Button } from '@/components/ui/button'
 import type { ExpensePayer } from '../../data/schema'
 
 type PayersCellProps = {
@@ -21,9 +21,7 @@ export function PayersCell({ payers }: PayersCellProps) {
         : `${payers.length} payeurs`
 
   if (payers.length === 1 && delegations.length === 0) {
-    return (
-      <span className='text-sm text-muted-foreground'>{summary}</span>
-    )
+    return <span className='text-sm text-muted-foreground'>{summary}</span>
   }
 
   return (

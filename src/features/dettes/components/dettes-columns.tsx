@@ -5,9 +5,16 @@ import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type Dette } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+
+const NOTE_COLUMN_MAX_WIDTH = 'max-w-40 sm:max-w-64'
 
 const fmt = new Intl.NumberFormat('fr-FR', {
   style: 'currency',
@@ -65,11 +72,11 @@ export const dettesColumns: ColumnDef<Dette>[] = [
   },
   {
     id: 'personne',
-    header: 'À qui ?',
+    header: () => <span className='ps-3'>À qui ?</span>,
     accessorFn: (row) =>
       row.role === 'lent' ? row.borrowerName : row.lenderName,
     cell: ({ row, getValue }) => (
-      <div className='flex flex-col gap-0.5'>
+      <div className='flex flex-col gap-0.5 ps-3'>
         <Label className='cursor-default font-medium'>
           {getValue<string>()}
         </Label>
@@ -85,6 +92,12 @@ export const dettesColumns: ColumnDef<Dette>[] = [
         )}
       </div>
     ),
+    meta: {
+      className: cn(
+        'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
+        'ps-0.5 max-md:sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
+      ),
+    },
   },
   {
     accessorKey: 'amount',
@@ -124,12 +137,32 @@ export const dettesColumns: ColumnDef<Dette>[] = [
     ),
     cell: ({ row }) => {
       const note = row.getValue<string | undefined>('description')
+      if (!note)
+        return (
+          <Label className='cursor-default font-normal text-muted-foreground'>
+            —
+          </Label>
+        )
       return (
-        <Label className='cursor-default font-normal text-muted-foreground'>
-          {note ?? '—'}
-        </Label>
+        <Popover>
+          <PopoverTrigger asChild>
+            <button
+              type='button'
+              className={cn(
+                'block truncate text-start text-sm font-normal text-muted-foreground hover:text-foreground',
+                NOTE_COLUMN_MAX_WIDTH
+              )}
+            >
+              {note}
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className='text-sm whitespace-pre-wrap'>
+            {note}
+          </PopoverContent>
+        </Popover>
       )
     },
+    enableSorting: false,
   },
   {
     accessorKey: 'isRepaid',

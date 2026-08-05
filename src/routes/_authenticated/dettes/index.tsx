@@ -1,20 +1,18 @@
 import z from 'zod'
 import { createFileRoute } from '@tanstack/react-router'
 import { Dettes } from '@/features/dettes'
-import { detteTypes, detteStatuses } from '@/features/dettes/data/data'
 
 const dettesSearchSchema = z.object({
   page: z.number().optional().catch(1),
   pageSize: z.number().optional().catch(10),
-  type: z
-    .array(z.enum(detteTypes.map((t) => t.value) as [string, ...string[]]))
-    .optional()
-    .catch([]),
-  status: z
-    .array(z.enum(detteStatuses.map((s) => s.value) as [string, ...string[]]))
-    .optional()
-    .catch([]),
-  filter: z.string().optional().catch(''),
+  type: z.enum(['prêté', 'emprunté']).optional().catch(undefined),
+  // Kept optional so `navigate({ search: (prev) => ({ ...prev }) })` calls
+  // elsewhere don't have to always carry `status`. Absent means "not
+  // specified yet" here; the debts page treats that as 'en cours' — 'tous'
+  // is its own explicit choice, only reachable by actually picking it.
+  status: z.enum(['en cours', 'remboursé', 'tous']).optional().catch(undefined),
+  contactId: z.string().optional().catch(''),
+  vehicleId: z.string().optional().catch(''),
 })
 
 export const Route = createFileRoute('/_authenticated/dettes/')({

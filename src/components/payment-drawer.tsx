@@ -4,7 +4,13 @@ import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { fr } from 'date-fns/locale'
-import { Plus, Trash2, Banknote, Landmark, SplitSquareHorizontal } from 'lucide-react'
+import {
+  Plus,
+  Trash2,
+  Banknote,
+  Landmark,
+  SplitSquareHorizontal,
+} from 'lucide-react'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'

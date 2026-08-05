@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Cross2Icon } from '@radix-ui/react-icons'
 import {
   type SortingState,
   type VisibilityState,
@@ -13,6 +14,14 @@ import {
 } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
 import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
+import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
@@ -22,10 +31,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
+import { DataTablePagination } from '@/components/data-table'
+import { DataTableViewOptions } from '@/components/data-table/view-options'
+import { ContactCombobox } from '@/features/contacts/components/contact-combobox'
+import { useGetVehicles } from '@/features/vehicles/api/vehicles-api'
+import { detteTypes, detteStatuses } from '../data/data'
 import { type Dette } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { dettesColumns as columns } from './dettes-columns'
+
+const FILTER_ALL = 'all'
 
 type DataTableProps = {
   data: Dette[]
@@ -45,8 +60,6 @@ export function DettesTable({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
 
   const {
-    globalFilter,
-    onGlobalFilterChange,
     columnFilters,
     onColumnFiltersChange,
     pagination,
@@ -56,9 +69,66 @@ export function DettesTable({
     search,
     navigate,
     pagination: { defaultPage: 1, defaultPageSize: 10 },
-    globalFilter: { enabled: true, key: 'filter' },
+    globalFilter: { enabled: false },
     columnFilters: [],
   })
+
+  // What the debt list is filtered by — the backend does the actual
+  // filtering (see useGetDettes), this just reflects/updates the URL.
+  // 'en cours' is the default view, not "no filter", so it's only
+  // considered a filter once the user picks something else.
+  const contactId = (search.contactId as string) || ''
+  const type = (search.type as string) || ''
+  const status = (search.status as string) || 'en cours'
+  const vehicleId = (search.vehicleId as string) || ''
+  const isFiltered = Boolean(
+    contactId || type || status !== 'en cours' || vehicleId
+  )
+  const { data: vehicles = [] } = useGetVehicles()
+
+  const onContactIdChange = (id: string) =>
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        page: undefined,
+        contactId: id || undefined,
+      }),
+    })
+  const onVehicleIdChange = (id: string) =>
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        page: undefined,
+        vehicleId: id === FILTER_ALL ? undefined : id,
+      }),
+    })
+  const onTypeChange = (value: string) =>
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        page: undefined,
+        type: value === FILTER_ALL ? undefined : value,
+      }),
+    })
+  const onStatusChange = (value: string) =>
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        page: undefined,
+        status: value === 'en cours' ? undefined : value,
+      }),
+    })
+  const resetFilters = () =>
+    navigate({
+      search: (prev) => ({
+        ...prev,
+        page: undefined,
+        contactId: undefined,
+        type: undefined,
+        status: undefined,
+        vehicleId: undefined,
+      }),
+    })
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -69,20 +139,12 @@ export function DettesTable({
       columnVisibility,
       rowSelection,
       columnFilters,
-      globalFilter,
       pagination,
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
-    globalFilterFn: (row, _columnId, filterValue) => {
-      const { role, lenderName, borrowerName } = row.original
-      const personName = role === 'lent' ? borrowerName : lenderName
-      return personName
-        .toLowerCase()
-        .includes(String(filterValue).toLowerCase())
-    },
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -90,7 +152,6 @@ export function DettesTable({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     onPaginationChange,
-    onGlobalFilterChange,
     onColumnFiltersChange,
   })
 
@@ -105,11 +166,66 @@ export function DettesTable({
         'flex flex-1 flex-col gap-4'
       )}
     >
-      <DataTableToolbar
-        table={table}
-        searchPlaceholder='Filtrer par prêteur ou emprunteur...'
-        filters={[]}
-      />
+      <div className='flex items-center justify-between'>
+        <div className='flex flex-1 flex-wrap items-center gap-2'>
+          <div className='w-[220px]'>
+            <ContactCombobox value={contactId} onChange={onContactIdChange} />
+          </div>
+          <Select value={type || FILTER_ALL} onValueChange={onTypeChange}>
+            <SelectTrigger className='h-8 w-[150px]'>
+              <SelectValue placeholder='Direction' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={FILTER_ALL}>Toutes les directions</SelectItem>
+              {detteTypes.map((t) => (
+                <SelectItem key={t.value} value={t.value}>
+                  {t.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={status} onValueChange={onStatusChange}>
+            <SelectTrigger className='h-8 w-[150px]'>
+              <SelectValue placeholder='Statut' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='tous'>Tous les statuts</SelectItem>
+              {detteStatuses.map((s) => (
+                <SelectItem key={s.value} value={s.value}>
+                  {s.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={vehicleId || FILTER_ALL}
+            onValueChange={onVehicleIdChange}
+          >
+            <SelectTrigger className='h-8 w-[180px]'>
+              <SelectValue placeholder='Véhicule' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={FILTER_ALL}>Tous les véhicules</SelectItem>
+              {vehicles.map((v) => (
+                <SelectItem key={v.id} value={v.id}>
+                  {v.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {isFiltered && (
+            <Button
+              variant='ghost'
+              onClick={resetFilters}
+              className='h-8 px-2 lg:px-3'
+            >
+              Réinitialiser
+              <Cross2Icon className='ms-2 h-4 w-4' />
+            </Button>
+          )}
+        </div>
+        <DataTableViewOptions table={table} />
+      </div>
       <div className='overflow-hidden rounded-md border'>
         <Table>
           <TableHeader>

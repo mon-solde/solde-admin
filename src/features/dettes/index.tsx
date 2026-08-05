@@ -24,7 +24,12 @@ const fmt = new Intl.NumberFormat('fr-FR', {
 export function Dettes() {
   const search = route.useSearch()
   const navigate = route.useNavigate()
-  const { data: rawDettes = [], isLoading } = useGetDettes()
+  const { data: rawDettes = [], isLoading } = useGetDettes({
+    contactId: search.contactId,
+    type: search.type,
+    status: search.status,
+    vehicleId: search.vehicleId,
+  })
   const { auth } = useAuthStore()
   const accountNo = auth.user?.accountNo ?? ''
 

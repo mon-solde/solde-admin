@@ -3,6 +3,8 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusIcon, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useAuthStore } from '@/stores/auth-store'
+import { formatPersonName } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -30,9 +32,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
-import { formatPersonName } from '@/lib/utils'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { useAuthStore } from '@/stores/auth-store'
 import { useAddExpense } from '../../api/vehicles-api'
 import { type VehicleDetail } from '../../data/schema'
 
@@ -77,7 +77,14 @@ export function ExpenseMutateDrawer({
     defaultValues: {
       label: '',
       date: new Date().toISOString().split('T')[0],
-      payers: [{ payerId: '', amount: 0, source: 'BANK' as const, imputedToId: undefined }],
+      payers: [
+        {
+          payerId: '',
+          amount: 0,
+          source: 'BANK' as const,
+          imputedToId: undefined,
+        },
+      ],
     },
   })
 
@@ -190,7 +197,7 @@ export function ExpenseMutateDrawer({
                 const isOwnerPayer =
                   form.watch(`payers.${index}.payerId`) === ownerId
                 const otherParticipants = payerOptions.filter(
-                  (p) => p.contactId !== form.watch(`payers.${index}.payerId`),
+                  (p) => p.contactId !== form.watch(`payers.${index}.payerId`)
                 )
                 return (
                   <div key={field.id} className='space-y-1.5'>
@@ -205,13 +212,23 @@ export function ExpenseMutateDrawer({
                                 defaultValue={f.value}
                                 onValueChange={(v) => {
                                   f.onChange(v)
-                                  if (form.getValues(`payers.${index}.imputedToId`) === v) {
-                                    form.setValue(`payers.${index}.imputedToId`, undefined)
+                                  if (
+                                    form.getValues(
+                                      `payers.${index}.imputedToId`
+                                    ) === v
+                                  ) {
+                                    form.setValue(
+                                      `payers.${index}.imputedToId`,
+                                      undefined
+                                    )
                                   }
                                 }}
                                 placeholder='Participant'
                                 items={payerOptions.map((p) => ({
-                                  label: formatPersonName(p.firstName, p.lastName),
+                                  label: formatPersonName(
+                                    p.firstName,
+                                    p.lastName
+                                  ),
                                   value: p.contactId,
                                 }))}
                               />
@@ -255,13 +272,18 @@ export function ExpenseMutateDrawer({
                             name={`payers.${index}.source`}
                             render={({ field: f }) => (
                               <FormItem className='space-y-1'>
-                                <Select value={f.value} onValueChange={f.onChange}>
+                                <Select
+                                  value={f.value}
+                                  onValueChange={f.onChange}
+                                >
                                   <SelectTrigger className='h-9'>
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
                                     <SelectItem value='BANK'>Banque</SelectItem>
-                                    <SelectItem value='CASH'>Espèces</SelectItem>
+                                    <SelectItem value='CASH'>
+                                      Espèces
+                                    </SelectItem>
                                   </SelectContent>
                                 </Select>
                                 <FormMessage />
@@ -289,21 +311,31 @@ export function ExpenseMutateDrawer({
                         render={({ field: f }) => (
                           <FormItem className='ms-1 space-y-1'>
                             <div className='flex items-center gap-2'>
-                              <span className='text-xs text-muted-foreground'>Pour le compte de</span>
+                              <span className='text-xs text-muted-foreground'>
+                                Pour le compte de
+                              </span>
                               <div className='flex-1'>
                                 <SelectDropdown
                                   defaultValue={f.value ?? ''}
                                   onValueChange={f.onChange}
                                   placeholder='Participant'
                                   items={otherParticipants.map((p) => ({
-                                    label: formatPersonName(p.firstName, p.lastName),
+                                    label: formatPersonName(
+                                      p.firstName,
+                                      p.lastName
+                                    ),
                                     value: p.contactId,
                                   }))}
                                 />
                               </div>
                               <button
                                 type='button'
-                                onClick={() => form.setValue(`payers.${index}.imputedToId`, undefined)}
+                                onClick={() =>
+                                  form.setValue(
+                                    `payers.${index}.imputedToId`,
+                                    undefined
+                                  )
+                                }
                                 className='text-xs text-muted-foreground hover:text-foreground'
                               >
                                 Annuler
@@ -319,7 +351,7 @@ export function ExpenseMutateDrawer({
                         onClick={() =>
                           form.setValue(
                             `payers.${index}.imputedToId`,
-                            otherParticipants[0]?.contactId ?? '',
+                            otherParticipants[0]?.contactId ?? ''
                           )
                         }
                       >
@@ -336,7 +368,12 @@ export function ExpenseMutateDrawer({
                 size='sm'
                 className='w-full'
                 onClick={() =>
-                  append({ payerId: '', amount: 0, source: 'BANK' as const, imputedToId: undefined })
+                  append({
+                    payerId: '',
+                    amount: 0,
+                    source: 'BANK' as const,
+                    imputedToId: undefined,
+                  })
                 }
               >
                 <PlusIcon size={14} className='me-1' />
