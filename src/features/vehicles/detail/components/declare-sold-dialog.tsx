@@ -12,6 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { DecimalInput } from '@/components/ui/decimal-input'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -38,11 +39,11 @@ export function DeclareSoldDialog({
   open,
   onOpenChange,
 }: DeclareSoldDialogProps) {
-  const [salePrice, setSalePrice] = useState('')
+  const [salePrice, setSalePrice] = useState<number>(NaN)
   const [soldAt, setSoldAt] = useState(new Date().toISOString().split('T')[0])
   const [cashierId, setCashierId] = useState('')
   const [sourceType, setSourceType] = useState<SourceType | null>(null)
-  const [bankSplit, setBankSplit] = useState('')
+  const [bankSplit, setBankSplit] = useState<number>(NaN)
   const { mutate: declareSale, isPending } = useDeclareSale(vehicle.id)
   const { auth } = useAuthStore()
   const ownerId = auth.user?.accountNo ?? ''
@@ -53,8 +54,8 @@ export function DeclareSoldDialog({
   const cashierIsOwner = cashierId === ownerId
 
   const { financialSummary } = vehicle
-  const salePriceNum = parseFloat(salePrice) || 0
-  const bankSplitNum = parseFloat(bankSplit) || 0
+  const salePriceNum = Number.isNaN(salePrice) ? 0 : salePrice
+  const bankSplitNum = Number.isNaN(bankSplit) ? 0 : bankSplit
   const cashComputed = Math.max(0, salePriceNum - bankSplitNum)
   const profit =
     salePriceNum > 0 ? salePriceNum - financialSummary.totalExpenses : null
@@ -84,11 +85,11 @@ export function DeclareSoldDialog({
   }
 
   const reset = () => {
-    setSalePrice('')
+    setSalePrice(NaN)
     setSoldAt(new Date().toISOString().split('T')[0])
     setCashierId('')
     setSourceType(null)
-    setBankSplit('')
+    setBankSplit(NaN)
   }
 
   const handleConfirm = () => {
@@ -182,14 +183,12 @@ export function DeclareSoldDialog({
           <div className='space-y-2'>
             <Label htmlFor='sale-price'>Prix de vente</Label>
             <div className='relative'>
-              <Input
+              <DecimalInput
                 id='sale-price'
-                type='number'
                 placeholder='0'
-                step='0.01'
                 className='pe-6'
                 value={salePrice}
-                onChange={(e) => setSalePrice(e.target.value)}
+                onChange={setSalePrice}
               />
               <span className='pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground'>
                 €
@@ -214,7 +213,7 @@ export function DeclareSoldDialog({
               onValueChange={(v) => {
                 setCashierId(v)
                 setSourceType(null)
-                setBankSplit('')
+                setBankSplit(NaN)
               }}
             >
               <SelectTrigger>
@@ -251,15 +250,12 @@ export function DeclareSoldDialog({
                 <div className='space-y-2 rounded-md border p-3'>
                   <Label htmlFor='bank-split'>Montant reçu en banque</Label>
                   <div className='relative'>
-                    <Input
+                    <DecimalInput
                       id='bank-split'
-                      type='number'
                       placeholder='0'
-                      step='0.01'
-                      max={salePriceNum}
                       className='pe-6'
                       value={bankSplit}
-                      onChange={(e) => setBankSplit(e.target.value)}
+                      onChange={setBankSplit}
                     />
                     <span className='pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground'>
                       €

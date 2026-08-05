@@ -18,7 +18,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+import { DecimalInput } from '@/components/ui/decimal-input'
 import { useUpdateSalary } from '../api/budget-api'
 
 const editSalaryFormSchema = z.object({
@@ -90,15 +90,7 @@ export function BudgetEditSalaryDialog({
                   </FormLabel>
                   <FormControl>
                     <div className='relative col-span-4'>
-                      <Input
-                        type='number'
-                        step='0.01'
-                        min='0'
-                        placeholder='1 384,17'
-                        {...field}
-                        value={field.value ?? ''}
-                        onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                      />
+                      <DecimalInput placeholder='1 384,17' {...field} />
                       <span className='pointer-events-none absolute end-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
                         €
                       </span>

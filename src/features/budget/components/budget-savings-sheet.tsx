@@ -11,6 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { DecimalInput } from '@/components/ui/decimal-input'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -183,16 +184,7 @@ export function BudgetSavingsSheet({
                       <FormLabel className='text-xs'>Montant</FormLabel>
                       <FormControl>
                         <div className='relative'>
-                          <Input
-                            type='number'
-                            step='0.01'
-                            min='0'
-                            placeholder='0'
-                            {...field}
-                            onChange={(e) =>
-                              field.onChange(e.target.valueAsNumber)
-                            }
-                          />
+                          <DecimalInput placeholder='0' {...field} />
                           <span className='pointer-events-none absolute end-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
                             €
                           </span>

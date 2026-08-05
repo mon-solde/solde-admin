@@ -29,6 +29,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { DecimalInput } from '@/components/ui/decimal-input'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
@@ -234,16 +235,7 @@ export function PaymentDrawer({
                     <FormItem>
                       <FormLabel>Montant (€)</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          type='number'
-                          min='0'
-                          step='0.01'
-                          placeholder='0.00'
-                          onChange={(e) =>
-                            field.onChange(e.target.valueAsNumber)
-                          }
-                        />
+                        <DecimalInput {...field} placeholder='0,00' />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -300,17 +292,7 @@ export function PaymentDrawer({
                               <Landmark size={13} /> Banque (€)
                             </FormLabel>
                             <FormControl>
-                              <Input
-                                {...field}
-                                type='number'
-                                min='0'
-                                max={amount}
-                                step='0.01'
-                                placeholder='0,00'
-                                onChange={(e) =>
-                                  field.onChange(e.target.valueAsNumber)
-                                }
-                              />
+                              <DecimalInput {...field} placeholder='0,00' />
                             </FormControl>
                             <FormMessage />
                           </FormItem>

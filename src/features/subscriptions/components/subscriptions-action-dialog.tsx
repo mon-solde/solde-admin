@@ -18,6 +18,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { DecimalInput } from '@/components/ui/decimal-input'
 import { Input } from '@/components/ui/input'
 import { SelectDropdown } from '@/components/select-dropdown'
 import { useCreateRecurringCharge } from '../api/subscriptions-api'
@@ -128,14 +129,7 @@ export function SubscriptionsActionDialog({
                   <FormLabel className='col-span-2 text-end'>Montant</FormLabel>
                   <FormControl>
                     <div className='relative col-span-4'>
-                      <Input
-                        type='number'
-                        step='0.01'
-                        min='0'
-                        placeholder='0,00'
-                        {...field}
-                        onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                      />
+                      <DecimalInput placeholder='0,00' {...field} />
                       <span className='pointer-events-none absolute end-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
                         €
                       </span>

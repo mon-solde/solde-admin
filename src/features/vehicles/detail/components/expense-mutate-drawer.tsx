@@ -23,6 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { DecimalInput } from '@/components/ui/decimal-input'
 import { Input } from '@/components/ui/input'
 import {
   Select,
@@ -245,15 +246,10 @@ export function ExpenseMutateDrawer({
                             <FormItem className='space-y-1'>
                               <FormControl>
                                 <div className='relative'>
-                                  <Input
-                                    type='number'
+                                  <DecimalInput
                                     placeholder='0'
-                                    step='0.01'
                                     className='pe-6'
                                     {...f}
-                                    onChange={(e) =>
-                                      f.onChange(e.target.valueAsNumber)
-                                    }
                                   />
                                   <span className='pointer-events-none absolute end-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
                                     €
