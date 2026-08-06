@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { DecimalInput } from '@/components/ui/decimal-input'
 import {
   Dialog,
   DialogContent,
@@ -20,7 +21,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { DecimalInput } from '@/components/ui/decimal-input'
 import { Input } from '@/components/ui/input'
 import {
   Select,

@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { DecimalInput } from '@/components/ui/decimal-input'
 import {
   Form,
   FormControl,
@@ -11,7 +12,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { DecimalInput } from '@/components/ui/decimal-input'
 import { Input } from '@/components/ui/input'
 import {
   Select,

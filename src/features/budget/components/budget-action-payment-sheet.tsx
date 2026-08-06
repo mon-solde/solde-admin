@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { DecimalInput } from '@/components/ui/decimal-input'
 import {
   Form,
   FormControl,
@@ -12,7 +13,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { DecimalInput } from '@/components/ui/decimal-input'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import {

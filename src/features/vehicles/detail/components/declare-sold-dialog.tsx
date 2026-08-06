@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
 import { formatPersonName } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { DecimalInput } from '@/components/ui/decimal-input'
 import {
   Dialog,
   DialogContent,
@@ -12,7 +13,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { DecimalInput } from '@/components/ui/decimal-input'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -107,7 +107,12 @@ export function DeclareSoldDialog({
       profitShare: p.profitShare,
     })),
     ...(financialSummary.owner.profitShare > 0.001
-      ? [{ contactId: ownerId, profitShare: financialSummary.owner.profitShare }]
+      ? [
+          {
+            contactId: ownerId,
+            profitShare: financialSummary.owner.profitShare,
+          },
+        ]
       : []),
   ]
   const profitShareById =
@@ -322,12 +327,11 @@ export function DeclareSoldDialog({
                     <div className='flex items-start gap-2 rounded-md bg-muted/40 p-2 text-xs text-muted-foreground'>
                       <Info size={14} className='mt-0.5 shrink-0' />
                       <span>
-                        Comme l&apos;argent est réparti entre banque et
-                        espèces, votre épargne comptera votre part
-                        entièrement en banque par défaut. Une fois la
-                        répartition réelle connue avec les autres
-                        participants, corrigez si besoin avec un mouvement
-                        manuel dans l&apos;épargne.
+                        Comme l&apos;argent est réparti entre banque et espèces,
+                        votre épargne comptera votre part entièrement en banque
+                        par défaut. Une fois la répartition réelle connue avec
+                        les autres participants, corrigez si besoin avec un
+                        mouvement manuel dans l&apos;épargne.
                       </span>
                     </div>
                   )}
@@ -348,7 +352,9 @@ export function DeclareSoldDialog({
                 )}
                 <span className='text-sm font-medium'>
                   {isDeficit ? 'Déficit : ' : 'Bénéfice net : '}
-                  <span className={isDeficit ? 'text-red-500' : 'text-green-600'}>
+                  <span
+                    className={isDeficit ? 'text-red-500' : 'text-green-600'}
+                  >
                     {profit !== null
                       ? isDeficit
                         ? `${Math.abs(profit).toLocaleString('fr-FR')} €`

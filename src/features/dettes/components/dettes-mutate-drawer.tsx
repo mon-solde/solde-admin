@@ -20,6 +20,7 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/ui/card'
+import { DecimalInput } from '@/components/ui/decimal-input'
 import {
   Form,
   FormControl,
@@ -28,7 +29,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { DecimalInput } from '@/components/ui/decimal-input'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'

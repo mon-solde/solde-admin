@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
 import { formatPersonName } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { DecimalInput } from '@/components/ui/decimal-input'
 import {
   Dialog,
   DialogClose,
@@ -23,7 +24,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { DecimalInput } from '@/components/ui/decimal-input'
 import { Input } from '@/components/ui/input'
 import {
   Select,

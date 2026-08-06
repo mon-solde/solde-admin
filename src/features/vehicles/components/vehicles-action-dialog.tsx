@@ -5,6 +5,7 @@ import { PlusIcon, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
 import { Button } from '@/components/ui/button'
+import { DecimalInput } from '@/components/ui/decimal-input'
 import {
   Dialog,
   DialogContent,
@@ -21,7 +22,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { DecimalInput } from '@/components/ui/decimal-input'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { ContactCombobox } from '@/features/contacts/components/contact-combobox'
