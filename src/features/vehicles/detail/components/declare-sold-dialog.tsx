@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { TrendingDown, TrendingUp } from 'lucide-react'
+import { Info, TrendingDown, TrendingUp } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
 import { formatPersonName } from '@/lib/utils'
@@ -318,6 +318,19 @@ export function DeclareSoldDialog({
                       {cashComputed.toLocaleString('fr-FR')} €
                     </span>
                   </div>
+                  {vehicle.participants.length > 0 && (
+                    <div className='flex items-start gap-2 rounded-md bg-muted/40 p-2 text-xs text-muted-foreground'>
+                      <Info size={14} className='mt-0.5 shrink-0' />
+                      <span>
+                        Comme l&apos;argent est réparti entre banque et
+                        espèces, votre épargne comptera votre part
+                        entièrement en banque par défaut. Une fois la
+                        répartition réelle connue avec les autres
+                        participants, corrigez si besoin avec un mouvement
+                        manuel dans l&apos;épargne.
+                      </span>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
