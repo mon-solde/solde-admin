@@ -93,7 +93,7 @@ export function useDeleteExpense(vehicleId: string) {
 export function useAddVehicleEvent(vehicleId: string) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (data: { note: string; date: string }) =>
+    mutationFn: (data: { note: string }) =>
       apiClient.post(`/v1/vehicles/${vehicleId}/events`, data),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: vehicleDetailKey(vehicleId) }),
@@ -109,7 +109,6 @@ export function useUpdateVehicleEvent(vehicleId: string) {
     }: {
       eventId: string
       note: string
-      date: string
     }) => apiClient.put(`/v1/vehicles/${vehicleId}/events/${eventId}`, data),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: vehicleDetailKey(vehicleId) }),

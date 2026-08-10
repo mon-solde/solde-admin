@@ -19,14 +19,12 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { useAddVehicleEvent, useUpdateVehicleEvent } from '../../api/vehicles-api'
 import { type VehicleEvent } from '../../data/schema'
 
 const formSchema = z.object({
   note: z.string().min(1, 'La note est requise'),
-  date: z.string().min(1, 'La date est requise'),
 })
 type EventForm = z.infer<typeof formSchema>
 
@@ -50,15 +48,7 @@ export function EventMutateDialog({
 
   const form = useForm<EventForm>({
     resolver: zodResolver(formSchema),
-    defaultValues: currentEvent
-      ? {
-          note: currentEvent.note,
-          date: currentEvent.date.toISOString().split('T')[0],
-        }
-      : {
-          note: '',
-          date: new Date().toISOString().split('T')[0],
-        },
+    defaultValues: { note: currentEvent?.note ?? '' },
   })
 
   const onSubmit = (values: EventForm) => {
@@ -117,19 +107,6 @@ export function EventMutateDialog({
                       rows={4}
                       {...field}
                     />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name='date'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Date</FormLabel>
-                  <FormControl>
-                    <Input type='date' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

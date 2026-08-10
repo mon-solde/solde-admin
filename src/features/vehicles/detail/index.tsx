@@ -4,7 +4,6 @@ import {
   ArrowLeft,
   CheckCircle2,
   CircleDashed,
-  MessageSquare,
   Pencil,
   PlusIcon,
   Trash2,
@@ -49,9 +48,7 @@ import {
   useVehicleDetail,
 } from './components/vehicle-detail-provider'
 
-type TimelineRow =
-  | { kind: 'expense'; date: Date; createdAt: Date; data: Expense }
-  | { kind: 'event'; date: Date; createdAt: Date; data: VehicleEvent }
+type ExpenseGroup = { dateKey: string; date: Date; expenses: Expense[] }
 
 const route = getRouteApi('/_authenticated/vehicles/$vehicleId')
 
@@ -131,43 +128,17 @@ function VehicleDetailContent() {
     })
   }
 
-  // `date` only carries day precision — createdAt breaks ties between
-  // same-day entries, most recent first, consistently (same rule as the
-  // rest of the app).
-  const timeline: TimelineRow[] = [
-    ...vehicle.expenses.map(
-      (e): TimelineRow => ({
-        kind: 'expense',
-        date: e.date,
-        createdAt: e.createdAt,
-        data: e,
-      })
-    ),
-    ...vehicle.events.map(
-      (e): TimelineRow => ({
-        kind: 'event',
-        date: e.date,
-        createdAt: e.createdAt,
-        data: e,
-      })
-    ),
-  ].sort(
-    (a, b) =>
-      b.date.getTime() - a.date.getTime() ||
-      b.createdAt.getTime() - a.createdAt.getTime()
-  )
-
-  // `timeline` is already sorted by date, so consecutive same-day rows
-  // always land in the same group here.
-  const timelineGroups: { dateKey: string; date: Date; rows: TimelineRow[] }[] =
-    []
-  for (const row of timeline) {
-    const dateKey = row.date.toDateString()
-    const lastGroup = timelineGroups[timelineGroups.length - 1]
+  // `vehicle.expenses` is already sorted by the backend (date desc, then
+  // createdAt desc as a same-day tie-break), so consecutive same-day
+  // expenses always land in the same group here.
+  const expenseGroups: ExpenseGroup[] = []
+  for (const expense of vehicle.expenses) {
+    const dateKey = expense.date.toDateString()
+    const lastGroup = expenseGroups[expenseGroups.length - 1]
     if (lastGroup?.dateKey === dateKey) {
-      lastGroup.rows.push(row)
+      lastGroup.expenses.push(expense)
     } else {
-      timelineGroups.push({ dateKey, date: row.date, rows: [row] })
+      expenseGroups.push({ dateKey, date: expense.date, expenses: [expense] })
     }
   }
 
@@ -383,10 +354,10 @@ function VehicleDetailContent() {
             </div>
           </div>
 
-          {/* Historique (dépenses + événements libres) */}
+          {/* Dépenses */}
           <div className='min-w-0 space-y-3 lg:col-span-2'>
             <div className='flex items-center justify-between'>
-              <h3 className='font-semibold'>Historique</h3>
+              <h3 className='font-semibold'>Dépenses</h3>
               <div className='flex gap-2'>
                 {!isSold && (
                   <Button
@@ -399,15 +370,6 @@ function VehicleDetailContent() {
                     Déclarer vendu
                   </Button>
                 )}
-                <Button
-                  variant='outline'
-                  size='sm'
-                  className='gap-1'
-                  onClick={() => setOpen('add-event')}
-                >
-                  <MessageSquare size={14} />
-                  Note
-                </Button>
                 {!isSold && (
                   <Button
                     size='sm'
@@ -421,9 +383,9 @@ function VehicleDetailContent() {
               </div>
             </div>
 
-            {timelineGroups.length > 0 ? (
+            {expenseGroups.length > 0 ? (
               <div className='space-y-4'>
-                {timelineGroups.map((group) => (
+                {expenseGroups.map((group) => (
                   <div key={group.dateKey} className='space-y-2'>
                     <p className='text-xs font-semibold text-muted-foreground capitalize'>
                       {group.date.toLocaleDateString('fr-FR', {
@@ -433,104 +395,119 @@ function VehicleDetailContent() {
                       })}
                     </p>
                     <div className='space-y-2'>
-                      {group.rows.map((row) =>
-                        row.kind === 'expense' ? (
-                          <div
-                            key={`expense-${row.data.id}`}
-                            className='flex items-start justify-between gap-3 rounded-md border p-3'
-                          >
-                            <div className='min-w-0 flex-1 space-y-1'>
-                              <Popover>
-                                <PopoverTrigger asChild>
-                                  <button
-                                    type='button'
-                                    className='line-clamp-2 break-words text-start font-medium hover:text-muted-foreground'
-                                  >
-                                    {row.data.label}
-                                  </button>
-                                </PopoverTrigger>
-                                <PopoverContent className='whitespace-pre-wrap text-sm'>
-                                  {row.data.label}
-                                </PopoverContent>
-                              </Popover>
-                              <PayersCell payers={row.data.payers} />
-                            </div>
-                            <div className='flex shrink-0 items-center gap-1'>
-                              <span className='font-medium tabular-nums'>
-                                {row.data.totalAmount.toLocaleString('fr-FR')}{' '}
-                                €
-                              </span>
-                              {!isSold && (
-                                <Button
-                                  variant='ghost'
-                                  size='icon'
-                                  className='h-8 w-8 text-muted-foreground hover:text-destructive'
-                                  onClick={() =>
-                                    setPendingDeleteExpense(row.data)
-                                  }
-                                >
-                                  <Trash2 size={14} />
-                                </Button>
-                              )}
-                            </div>
-                          </div>
-                        ) : (
-                          <div
-                            key={`event-${row.data.id}`}
-                            className='flex items-start justify-between gap-3 rounded-md border p-3'
-                          >
+                      {group.expenses.map((expense) => (
+                        <div
+                          key={expense.id}
+                          className='flex items-start justify-between gap-3 rounded-md border p-3'
+                        >
+                          <div className='min-w-0 flex-1 space-y-1'>
                             <Popover>
                               <PopoverTrigger asChild>
                                 <button
                                   type='button'
-                                  className='flex min-w-0 flex-1 items-start gap-1.5 text-start text-sm italic text-muted-foreground hover:text-foreground'
+                                  className='line-clamp-2 break-words text-start font-medium hover:text-muted-foreground'
                                 >
-                                  <MessageSquare
-                                    size={13}
-                                    className='mt-0.5 shrink-0'
-                                  />
-                                  <span className='line-clamp-2 break-words'>
-                                    {row.data.note}
-                                  </span>
+                                  {expense.label}
                                 </button>
                               </PopoverTrigger>
-                              <PopoverContent className='whitespace-pre-wrap text-sm not-italic'>
-                                {row.data.note}
+                              <PopoverContent className='whitespace-pre-wrap text-sm'>
+                                {expense.label}
                               </PopoverContent>
                             </Popover>
-                            <div className='flex shrink-0 items-center gap-1'>
-                              <Button
-                                variant='ghost'
-                                size='icon'
-                                className='h-8 w-8 text-muted-foreground hover:text-foreground'
-                                onClick={() => handleEditEvent(row.data)}
-                              >
-                                <Pencil size={14} />
-                              </Button>
+                            <PayersCell payers={expense.payers} />
+                          </div>
+                          <div className='flex shrink-0 items-center gap-1'>
+                            <span className='font-medium tabular-nums'>
+                              {expense.totalAmount.toLocaleString('fr-FR')} €
+                            </span>
+                            {!isSold && (
                               <Button
                                 variant='ghost'
                                 size='icon'
                                 className='h-8 w-8 text-muted-foreground hover:text-destructive'
                                 onClick={() =>
-                                  setPendingDeleteEvent(row.data)
+                                  setPendingDeleteExpense(expense)
                                 }
                               >
                                 <Trash2 size={14} />
                               </Button>
-                            </div>
+                            )}
                           </div>
-                        )
-                      )}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
               <div className='rounded-md border py-12 text-center text-sm text-muted-foreground'>
-                Aucun historique enregistré.
+                Aucune dépense enregistrée.
               </div>
             )}
           </div>
+        </div>
+
+        {/* Notes libres */}
+        <div className='space-y-3'>
+          <div className='flex items-center justify-between'>
+            <h3 className='font-semibold'>Notes</h3>
+            <Button
+              variant='outline'
+              size='sm'
+              className='gap-1'
+              onClick={() => setOpen('add-event')}
+            >
+              <PlusIcon size={14} />
+              Ajouter
+            </Button>
+          </div>
+
+          {vehicle.events.length > 0 ? (
+            <div className='space-y-2'>
+              {vehicle.events.map((event) => (
+                <div
+                  key={event.id}
+                  className='flex items-start justify-between gap-3 rounded-md border p-3'
+                >
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button
+                        type='button'
+                        className='line-clamp-2 min-w-0 flex-1 break-words text-start text-sm italic text-muted-foreground hover:text-foreground'
+                      >
+                        {event.note}
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className='whitespace-pre-wrap text-sm not-italic'>
+                      {event.note}
+                    </PopoverContent>
+                  </Popover>
+                  <div className='flex shrink-0 items-center gap-1'>
+                    <Button
+                      variant='ghost'
+                      size='icon'
+                      className='h-8 w-8 text-muted-foreground hover:text-foreground'
+                      onClick={() => handleEditEvent(event)}
+                    >
+                      <Pencil size={14} />
+                    </Button>
+                    <Button
+                      variant='ghost'
+                      size='icon'
+                      className='h-8 w-8 text-muted-foreground hover:text-destructive'
+                      onClick={() => setPendingDeleteEvent(event)}
+                    >
+                      <Trash2 size={14} />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className='rounded-md border py-8 text-center text-sm text-muted-foreground'>
+              Aucune note enregistrée.
+            </div>
+          )}
         </div>
       </Main>
 

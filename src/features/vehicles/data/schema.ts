@@ -53,7 +53,6 @@ export type Expense = z.infer<typeof expenseSchema>
 export const vehicleEventSchema = z.object({
   id: z.string(),
   note: z.string(),
-  date: z.coerce.date(),
   createdAt: z.coerce.date(),
 })
 export type VehicleEvent = z.infer<typeof vehicleEventSchema>
