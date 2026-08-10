@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { getRouteApi, Link } from '@tanstack/react-router'
 import {
   ArrowLeft,
@@ -11,6 +12,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn, formatPersonName } from '@/lib/utils'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -57,8 +59,14 @@ function VehicleDetailContent() {
   const { vehicleId } = route.useParams()
   const { setOpen, setCurrentVehicleEvent } = useVehicleDetail()
   const { data: vehicle, isLoading } = useGetVehicleDetail(vehicleId)
-  const { mutate: deleteExpense } = useDeleteExpense(vehicleId)
-  const { mutate: deleteVehicleEvent } = useDeleteVehicleEvent(vehicleId)
+  const { mutate: deleteExpense, isPending: isDeletingExpense } =
+    useDeleteExpense(vehicleId)
+  const { mutate: deleteVehicleEvent, isPending: isDeletingEvent } =
+    useDeleteVehicleEvent(vehicleId)
+  const [pendingDeleteExpense, setPendingDeleteExpense] =
+    useState<Expense | null>(null)
+  const [pendingDeleteEvent, setPendingDeleteEvent] =
+    useState<VehicleEvent | null>(null)
 
   if (isLoading) {
     return (
@@ -86,13 +94,19 @@ function VehicleDetailContent() {
   const { financialSummary } = vehicle
   const isSold = vehicle.status === 'SOLD'
 
-  const handleDeleteExpense = (expenseId: string) => {
-    deleteExpense(expenseId, {
-      onSuccess: () => toast.success('Dépense supprimée.'),
-      onError: (error: any) =>
+  const confirmDeleteExpense = () => {
+    if (!pendingDeleteExpense) return
+    deleteExpense(pendingDeleteExpense.id, {
+      onSuccess: () => {
+        toast.success('Dépense supprimée.')
+        setPendingDeleteExpense(null)
+      },
+      onError: (error: any) => {
         toast.error(
           error?.response?.data?.message ?? 'Une erreur est survenue.'
-        ),
+        )
+        setPendingDeleteExpense(null)
+      },
     })
   }
 
@@ -101,13 +115,19 @@ function VehicleDetailContent() {
     setOpen('edit-event')
   }
 
-  const handleDeleteEvent = (eventId: string) => {
-    deleteVehicleEvent(eventId, {
-      onSuccess: () => toast.success('Événement supprimé.'),
-      onError: (error: any) =>
+  const confirmDeleteEvent = () => {
+    if (!pendingDeleteEvent) return
+    deleteVehicleEvent(pendingDeleteEvent.id, {
+      onSuccess: () => {
+        toast.success('Événement supprimé.')
+        setPendingDeleteEvent(null)
+      },
+      onError: (error: any) => {
         toast.error(
           error?.response?.data?.message ?? 'Une erreur est survenue.'
-        ),
+        )
+        setPendingDeleteEvent(null)
+      },
     })
   }
 
@@ -420,9 +440,19 @@ function VehicleDetailContent() {
                             className='flex items-start justify-between gap-3 rounded-md border p-3'
                           >
                             <div className='min-w-0 flex-1 space-y-1'>
-                              <p className='font-medium break-words'>
-                                {row.data.label}
-                              </p>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <button
+                                    type='button'
+                                    className='line-clamp-2 break-words text-start font-medium hover:text-muted-foreground'
+                                  >
+                                    {row.data.label}
+                                  </button>
+                                </PopoverTrigger>
+                                <PopoverContent className='whitespace-pre-wrap text-sm'>
+                                  {row.data.label}
+                                </PopoverContent>
+                              </Popover>
                               <PayersCell payers={row.data.payers} />
                             </div>
                             <div className='flex shrink-0 items-center gap-1'>
@@ -436,7 +466,7 @@ function VehicleDetailContent() {
                                   size='icon'
                                   className='h-8 w-8 text-muted-foreground hover:text-destructive'
                                   onClick={() =>
-                                    handleDeleteExpense(row.data.id)
+                                    setPendingDeleteExpense(row.data)
                                   }
                                 >
                                   <Trash2 size={14} />
@@ -482,7 +512,7 @@ function VehicleDetailContent() {
                                 size='icon'
                                 className='h-8 w-8 text-muted-foreground hover:text-destructive'
                                 onClick={() =>
-                                  handleDeleteEvent(row.data.id)
+                                  setPendingDeleteEvent(row.data)
                                 }
                               >
                                 <Trash2 size={14} />
@@ -513,6 +543,49 @@ function VehicleDetailContent() {
       )}
 
       <VehicleDetailDialogs vehicle={vehicle} />
+
+      {pendingDeleteExpense && (
+        <ConfirmDialog
+          open={!!pendingDeleteExpense}
+          onOpenChange={(state) => {
+            if (!state) setPendingDeleteExpense(null)
+          }}
+          handleConfirm={confirmDeleteExpense}
+          isLoading={isDeletingExpense}
+          title='Supprimer cette dépense'
+          desc={
+            <p>
+              Êtes-vous sûr de vouloir supprimer{' '}
+              <span className='font-bold'>{pendingDeleteExpense.label}</span>{' '}
+              (
+              {pendingDeleteExpense.totalAmount.toLocaleString('fr-FR')} €) ?
+              Cette action est irréversible.
+            </p>
+          }
+          confirmText='Supprimer'
+          destructive
+        />
+      )}
+
+      {pendingDeleteEvent && (
+        <ConfirmDialog
+          open={!!pendingDeleteEvent}
+          onOpenChange={(state) => {
+            if (!state) setPendingDeleteEvent(null)
+          }}
+          handleConfirm={confirmDeleteEvent}
+          isLoading={isDeletingEvent}
+          title='Supprimer cet événement'
+          desc={
+            <p>
+              Êtes-vous sûr de vouloir supprimer cette note ? Cette action est
+              irréversible.
+            </p>
+          }
+          confirmText='Supprimer'
+          destructive
+        />
+      )}
     </>
   )
 }
