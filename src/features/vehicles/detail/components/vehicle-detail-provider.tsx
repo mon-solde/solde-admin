@@ -1,14 +1,22 @@
 import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
-import { type Expense } from '../../data/schema'
+import { type Expense, type VehicleEvent } from '../../data/schema'
 
-type VehicleDetailDialogType = 'add-expense' | 'declare-sold'
+type VehicleDetailDialogType =
+  | 'add-expense'
+  | 'add-event'
+  | 'edit-event'
+  | 'declare-sold'
 
 type VehicleDetailContextType = {
   open: VehicleDetailDialogType | null
   setOpen: (str: VehicleDetailDialogType | null) => void
   currentExpense: Expense | null
   setCurrentExpense: React.Dispatch<React.SetStateAction<Expense | null>>
+  currentVehicleEvent: VehicleEvent | null
+  setCurrentVehicleEvent: React.Dispatch<
+    React.SetStateAction<VehicleEvent | null>
+  >
 }
 
 const VehicleDetailContext =
@@ -21,10 +29,19 @@ export function VehicleDetailProvider({
 }) {
   const [open, setOpen] = useDialogState<VehicleDetailDialogType>(null)
   const [currentExpense, setCurrentExpense] = useState<Expense | null>(null)
+  const [currentVehicleEvent, setCurrentVehicleEvent] =
+    useState<VehicleEvent | null>(null)
 
   return (
     <VehicleDetailContext
-      value={{ open, setOpen, currentExpense, setCurrentExpense }}
+      value={{
+        open,
+        setOpen,
+        currentExpense,
+        setCurrentExpense,
+        currentVehicleEvent,
+        setCurrentVehicleEvent,
+      }}
     >
       {children}
     </VehicleDetailContext>

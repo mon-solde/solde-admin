@@ -44,10 +44,19 @@ export const expenseSchema = z.object({
   vehicleId: z.string().optional(),
   label: z.string(),
   date: z.coerce.date(),
+  createdAt: z.coerce.date(),
   totalAmount: z.coerce.number().min(0),
   payers: z.array(expensePayerSchema),
 })
 export type Expense = z.infer<typeof expenseSchema>
+
+export const vehicleEventSchema = z.object({
+  id: z.string(),
+  note: z.string(),
+  date: z.coerce.date(),
+  createdAt: z.coerce.date(),
+})
+export type VehicleEvent = z.infer<typeof vehicleEventSchema>
 
 export const participantSummarySchema = z.object({
   contactId: z.string(),
@@ -91,6 +100,7 @@ export type Reversement = z.infer<typeof reversementSchema>
 export const vehicleDetailSchema = vehicleSchema.extend({
   totalExpenses: z.coerce.number().optional().default(0),
   expenses: z.array(expenseSchema),
+  events: z.array(vehicleEventSchema).default([]),
   soldVehicle: z
     .object({
       salePrice: z.coerce.number(),

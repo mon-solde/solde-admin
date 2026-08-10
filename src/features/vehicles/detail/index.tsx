@@ -3,6 +3,8 @@ import {
   ArrowLeft,
   CheckCircle2,
   CircleDashed,
+  MessageSquare,
+  Pencil,
   PlusIcon,
   Trash2,
   TrendingUp,
@@ -12,6 +14,11 @@ import { cn, formatPersonName } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { Separator } from '@/components/ui/separator'
 import {
   Table,
@@ -25,8 +32,13 @@ import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { useGetVehicleDetail, useDeleteExpense } from '../api/vehicles-api'
+import {
+  useGetVehicleDetail,
+  useDeleteExpense,
+  useDeleteVehicleEvent,
+} from '../api/vehicles-api'
 import { statusColorMap } from '../data/data'
+import { type Expense, type VehicleEvent } from '../data/schema'
 import { PayersCell } from './components/payers-cell'
 import { ReversementsSection } from './components/reversements-section'
 import { VehicleDetailDialogs } from './components/vehicle-detail-dialogs'
@@ -35,13 +47,18 @@ import {
   useVehicleDetail,
 } from './components/vehicle-detail-provider'
 
+type TimelineRow =
+  | { kind: 'expense'; date: Date; createdAt: Date; data: Expense }
+  | { kind: 'event'; date: Date; createdAt: Date; data: VehicleEvent }
+
 const route = getRouteApi('/_authenticated/vehicles/$vehicleId')
 
 function VehicleDetailContent() {
   const { vehicleId } = route.useParams()
-  const { setOpen } = useVehicleDetail()
+  const { setOpen, setCurrentVehicleEvent } = useVehicleDetail()
   const { data: vehicle, isLoading } = useGetVehicleDetail(vehicleId)
   const { mutate: deleteExpense } = useDeleteExpense(vehicleId)
+  const { mutate: deleteVehicleEvent } = useDeleteVehicleEvent(vehicleId)
 
   if (isLoading) {
     return (
@@ -77,6 +94,61 @@ function VehicleDetailContent() {
           error?.response?.data?.message ?? 'Une erreur est survenue.'
         ),
     })
+  }
+
+  const handleEditEvent = (event: VehicleEvent) => {
+    setCurrentVehicleEvent(event)
+    setOpen('edit-event')
+  }
+
+  const handleDeleteEvent = (eventId: string) => {
+    deleteVehicleEvent(eventId, {
+      onSuccess: () => toast.success('Événement supprimé.'),
+      onError: (error: any) =>
+        toast.error(
+          error?.response?.data?.message ?? 'Une erreur est survenue.'
+        ),
+    })
+  }
+
+  // `date` only carries day precision — createdAt breaks ties between
+  // same-day entries, most recent first, consistently (same rule as the
+  // rest of the app).
+  const timeline: TimelineRow[] = [
+    ...vehicle.expenses.map(
+      (e): TimelineRow => ({
+        kind: 'expense',
+        date: e.date,
+        createdAt: e.createdAt,
+        data: e,
+      })
+    ),
+    ...vehicle.events.map(
+      (e): TimelineRow => ({
+        kind: 'event',
+        date: e.date,
+        createdAt: e.createdAt,
+        data: e,
+      })
+    ),
+  ].sort(
+    (a, b) =>
+      b.date.getTime() - a.date.getTime() ||
+      b.createdAt.getTime() - a.createdAt.getTime()
+  )
+
+  // `timeline` is already sorted by date, so consecutive same-day rows
+  // always land in the same group here.
+  const timelineGroups: { dateKey: string; date: Date; rows: TimelineRow[] }[] =
+    []
+  for (const row of timeline) {
+    const dateKey = row.date.toDateString()
+    const lastGroup = timelineGroups[timelineGroups.length - 1]
+    if (lastGroup?.dateKey === dateKey) {
+      lastGroup.rows.push(row)
+    } else {
+      timelineGroups.push({ dateKey, date: row.date, rows: [row] })
+    }
   }
 
   return (
@@ -291,10 +363,10 @@ function VehicleDetailContent() {
             </div>
           </div>
 
-          {/* Dépenses */}
-          <div className='space-y-3 lg:col-span-2'>
+          {/* Historique (dépenses + événements libres) */}
+          <div className='min-w-0 space-y-3 lg:col-span-2'>
             <div className='flex items-center justify-between'>
-              <h3 className='font-semibold'>Dépenses</h3>
+              <h3 className='font-semibold'>Historique</h3>
               <div className='flex gap-2'>
                 {!isSold && (
                   <Button
@@ -307,6 +379,15 @@ function VehicleDetailContent() {
                     Déclarer vendu
                   </Button>
                 )}
+                <Button
+                  variant='outline'
+                  size='sm'
+                  className='gap-1'
+                  onClick={() => setOpen('add-event')}
+                >
+                  <MessageSquare size={14} />
+                  Note
+                </Button>
                 {!isSold && (
                   <Button
                     size='sm'
@@ -320,60 +401,105 @@ function VehicleDetailContent() {
               </div>
             </div>
 
-            <div className='overflow-hidden rounded-md border'>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Libellé</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Payeurs</TableHead>
-                    <TableHead className='text-end'>Total</TableHead>
-                    {!isSold && <TableHead />}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {vehicle.expenses.length > 0 ? (
-                    vehicle.expenses.map((expense) => (
-                      <TableRow key={expense.id}>
-                        <TableCell className='font-medium'>
-                          {expense.label}
-                        </TableCell>
-                        <TableCell className='text-muted-foreground'>
-                          {expense.date.toLocaleDateString('fr-FR')}
-                        </TableCell>
-                        <TableCell>
-                          <PayersCell payers={expense.payers} />
-                        </TableCell>
-                        <TableCell className='text-end font-medium'>
-                          {expense.totalAmount.toLocaleString('fr-FR')} €
-                        </TableCell>
-                        {!isSold && (
-                          <TableCell className='text-end'>
-                            <Button
-                              variant='ghost'
-                              size='icon'
-                              className='h-8 w-8 text-muted-foreground hover:text-destructive'
-                              onClick={() => handleDeleteExpense(expense.id)}
-                            >
-                              <Trash2 size={14} />
-                            </Button>
-                          </TableCell>
-                        )}
-                      </TableRow>
-                    ))
-                  ) : (
-                    <TableRow>
-                      <TableCell
-                        colSpan={isSold ? 4 : 5}
-                        className='h-24 text-center text-muted-foreground'
-                      >
-                        Aucune dépense enregistrée.
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+            {timelineGroups.length > 0 ? (
+              <div className='space-y-4'>
+                {timelineGroups.map((group) => (
+                  <div key={group.dateKey} className='space-y-2'>
+                    <p className='text-xs font-semibold text-muted-foreground capitalize'>
+                      {group.date.toLocaleDateString('fr-FR', {
+                        weekday: 'long',
+                        day: 'numeric',
+                        month: 'long',
+                      })}
+                    </p>
+                    <div className='space-y-2'>
+                      {group.rows.map((row) =>
+                        row.kind === 'expense' ? (
+                          <div
+                            key={`expense-${row.data.id}`}
+                            className='flex items-start justify-between gap-3 rounded-md border p-3'
+                          >
+                            <div className='min-w-0 flex-1 space-y-1'>
+                              <p className='font-medium break-words'>
+                                {row.data.label}
+                              </p>
+                              <PayersCell payers={row.data.payers} />
+                            </div>
+                            <div className='flex shrink-0 items-center gap-1'>
+                              <span className='font-medium tabular-nums'>
+                                {row.data.totalAmount.toLocaleString('fr-FR')}{' '}
+                                €
+                              </span>
+                              {!isSold && (
+                                <Button
+                                  variant='ghost'
+                                  size='icon'
+                                  className='h-8 w-8 text-muted-foreground hover:text-destructive'
+                                  onClick={() =>
+                                    handleDeleteExpense(row.data.id)
+                                  }
+                                >
+                                  <Trash2 size={14} />
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        ) : (
+                          <div
+                            key={`event-${row.data.id}`}
+                            className='flex items-start justify-between gap-3 rounded-md border p-3'
+                          >
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <button
+                                  type='button'
+                                  className='flex min-w-0 flex-1 items-start gap-1.5 text-start text-sm italic text-muted-foreground hover:text-foreground'
+                                >
+                                  <MessageSquare
+                                    size={13}
+                                    className='mt-0.5 shrink-0'
+                                  />
+                                  <span className='line-clamp-2 break-words'>
+                                    {row.data.note}
+                                  </span>
+                                </button>
+                              </PopoverTrigger>
+                              <PopoverContent className='whitespace-pre-wrap text-sm not-italic'>
+                                {row.data.note}
+                              </PopoverContent>
+                            </Popover>
+                            <div className='flex shrink-0 items-center gap-1'>
+                              <Button
+                                variant='ghost'
+                                size='icon'
+                                className='h-8 w-8 text-muted-foreground hover:text-foreground'
+                                onClick={() => handleEditEvent(row.data)}
+                              >
+                                <Pencil size={14} />
+                              </Button>
+                              <Button
+                                variant='ghost'
+                                size='icon'
+                                className='h-8 w-8 text-muted-foreground hover:text-destructive'
+                                onClick={() =>
+                                  handleDeleteEvent(row.data.id)
+                                }
+                              >
+                                <Trash2 size={14} />
+                              </Button>
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className='rounded-md border py-12 text-center text-sm text-muted-foreground'>
+                Aucun historique enregistré.
+              </div>
+            )}
           </div>
         </div>
       </Main>

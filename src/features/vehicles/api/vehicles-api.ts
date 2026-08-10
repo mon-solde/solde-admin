@@ -90,6 +90,42 @@ export function useDeleteExpense(vehicleId: string) {
   })
 }
 
+export function useAddVehicleEvent(vehicleId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (data: { note: string; date: string }) =>
+      apiClient.post(`/v1/vehicles/${vehicleId}/events`, data),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: vehicleDetailKey(vehicleId) }),
+  })
+}
+
+export function useUpdateVehicleEvent(vehicleId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({
+      eventId,
+      ...data
+    }: {
+      eventId: string
+      note: string
+      date: string
+    }) => apiClient.put(`/v1/vehicles/${vehicleId}/events/${eventId}`, data),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: vehicleDetailKey(vehicleId) }),
+  })
+}
+
+export function useDeleteVehicleEvent(vehicleId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (eventId: string) =>
+      apiClient.delete(`/v1/vehicles/${vehicleId}/events/${eventId}`),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: vehicleDetailKey(vehicleId) }),
+  })
+}
+
 export function useAddReversement(vehicleId: string) {
   const queryClient = useQueryClient()
   return useMutation({
