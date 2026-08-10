@@ -125,6 +125,17 @@ export function useDeleteVehicleEvent(vehicleId: string) {
   })
 }
 
+export function useUpdateVehicleParticipants(vehicleId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (data: {
+      participants: Array<{ contactId: string; profitShare: number }>
+    }) => apiClient.put(`/v1/vehicles/${vehicleId}/participants`, data),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: vehicleDetailKey(vehicleId) }),
+  })
+}
+
 export function useAddReversement(vehicleId: string) {
   const queryClient = useQueryClient()
   return useMutation({

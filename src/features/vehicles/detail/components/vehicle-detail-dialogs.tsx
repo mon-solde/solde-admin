@@ -1,5 +1,6 @@
 import { type VehicleDetail } from '../../data/schema'
 import { DeclareSoldDialog } from './declare-sold-dialog'
+import { EditParticipantsDialog } from './edit-participants-dialog'
 import { EventMutateDialog } from './event-mutate-dialog'
 import { ExpenseMutateDrawer } from './expense-mutate-drawer'
 import { useVehicleDetail } from './vehicle-detail-provider'
@@ -40,6 +41,13 @@ export function VehicleDetailDialogs({ vehicle }: VehicleDetailDialogsProps) {
           }}
         />
       )}
+
+      <EditParticipantsDialog
+        key='edit-participants'
+        vehicle={vehicle}
+        open={open === 'edit-participants'}
+        onOpenChange={() => setOpen('edit-participants')}
+      />
 
       <DeclareSoldDialog
         key='declare-sold'

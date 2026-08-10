@@ -292,9 +292,22 @@ function VehicleDetailContent() {
         <div className='grid gap-6 lg:grid-cols-3'>
           {/* Participants / Répartition */}
           <div className='space-y-3'>
-            <h3 className='font-semibold'>
-              {isSold ? 'Répartition de la vente' : 'Participants'}
-            </h3>
+            <div className='flex items-center justify-between'>
+              <h3 className='font-semibold'>
+                {isSold ? 'Répartition de la vente' : 'Participants'}
+              </h3>
+              {!isSold && (
+                <Button
+                  variant='outline'
+                  size='sm'
+                  className='gap-1'
+                  onClick={() => setOpen('edit-participants')}
+                >
+                  <Pencil size={14} />
+                  Modifier
+                </Button>
+              )}
+            </div>
             <div className='overflow-hidden rounded-md border'>
               <Table>
                 <TableHeader>

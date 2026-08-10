@@ -6,6 +6,7 @@ type VehicleDetailDialogType =
   | 'add-expense'
   | 'add-event'
   | 'edit-event'
+  | 'edit-participants'
   | 'declare-sold'
 
 type VehicleDetailContextType = {
