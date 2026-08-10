@@ -473,9 +473,11 @@ function VehicleDetailContent() {
                     <PopoverTrigger asChild>
                       <button
                         type='button'
-                        className='line-clamp-2 min-w-0 flex-1 break-words text-start text-sm italic text-muted-foreground hover:text-foreground'
+                        className='min-w-0 flex-1 text-start hover:text-foreground'
                       >
-                        {event.note}
+                        <span className='line-clamp-2 block break-words text-sm text-muted-foreground italic'>
+                          {event.note}
+                        </span>
                       </button>
                     </PopoverTrigger>
                     <PopoverContent className='whitespace-pre-wrap text-sm not-italic'>
