@@ -34,8 +34,8 @@ import {
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { useAddExpense } from '../../api/vehicles-api'
-import { type VehicleDetail } from '../../data/schema'
+import { useAddExpense, useUpdateExpense } from '../../api/vehicles-api'
+import { type Expense, type VehicleDetail } from '../../data/schema'
 
 const payerSchema = z.object({
   payerId: z.string().min(1, 'Sélectionner un participant'),
@@ -56,16 +56,21 @@ type ExpenseForm = z.infer<typeof formSchema>
 
 type ExpenseMutateDrawerProps = {
   vehicle: VehicleDetail
+  currentExpense?: Expense
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
 export function ExpenseMutateDrawer({
   vehicle,
+  currentExpense,
   open,
   onOpenChange,
 }: ExpenseMutateDrawerProps) {
-  const { mutate: addExpense, isPending } = useAddExpense(vehicle.id)
+  const isEdit = !!currentExpense
+  const addExpense = useAddExpense(vehicle.id)
+  const updateExpense = useUpdateExpense(vehicle.id)
+  const isPending = addExpense.isPending || updateExpense.isPending
   const { auth } = useAuthStore()
   const ownerId = auth.user?.accountNo ?? ''
   const payerOptions = [
@@ -75,18 +80,29 @@ export function ExpenseMutateDrawer({
 
   const form = useForm<ExpenseForm>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      label: '',
-      date: new Date().toISOString().split('T')[0],
-      payers: [
-        {
-          payerId: '',
-          amount: 0,
-          source: 'BANK' as const,
-          imputedToId: undefined,
+    defaultValues: currentExpense
+      ? {
+          label: currentExpense.label,
+          date: currentExpense.date.toISOString().split('T')[0],
+          payers: currentExpense.payers.map((p) => ({
+            payerId: p.payerId,
+            amount: p.amount,
+            source: p.source ?? ('BANK' as const),
+            imputedToId: p.imputedToId ?? undefined,
+          })),
+        }
+      : {
+          label: '',
+          date: new Date().toISOString().split('T')[0],
+          payers: [
+            {
+              payerId: '',
+              amount: 0,
+              source: 'BANK' as const,
+              imputedToId: undefined,
+            },
+          ],
         },
-      ],
-    },
   })
 
   const { fields, append, remove } = useFieldArray({
@@ -101,29 +117,33 @@ export function ExpenseMutateDrawer({
   )
 
   const onSubmit = (data: ExpenseForm) => {
-    addExpense(
-      {
-        label: data.label,
-        date: data.date,
-        // Banque/Espèces only means something for your own payment — a
-        // contact's money never touches your tracked balances.
-        payers: data.payers.map((p) => ({
-          ...p,
-          source: p.payerId === ownerId ? p.source : undefined,
-        })),
-      },
-      {
-        onSuccess: () => {
-          toast.success('Dépense ajoutée.')
-          form.reset()
-          onOpenChange(false)
-        },
-        onError: (error: any) =>
-          toast.error(
-            error?.response?.data?.message ?? 'Une erreur est survenue.'
-          ),
-      }
-    )
+    const payload = {
+      label: data.label,
+      date: data.date,
+      // Banque/Espèces only means something for your own payment — a
+      // contact's money never touches your tracked balances.
+      payers: data.payers.map((p) => ({
+        ...p,
+        source: p.payerId === ownerId ? p.source : undefined,
+      })),
+    }
+    const onSuccess = () => {
+      toast.success(isEdit ? 'Dépense modifiée.' : 'Dépense ajoutée.')
+      form.reset()
+      onOpenChange(false)
+    }
+    const onError = (error: any) =>
+      toast.error(error?.response?.data?.message ?? 'Une erreur est survenue.')
+
+    if (currentExpense) {
+      updateExpense.mutate(
+        { expenseId: currentExpense.id, ...payload },
+        { onSuccess, onError }
+      )
+      return
+    }
+
+    addExpense.mutate(payload, { onSuccess, onError })
   }
 
   return (
@@ -136,7 +156,9 @@ export function ExpenseMutateDrawer({
     >
       <DialogContent className='flex max-h-[90dvh] flex-col gap-0 p-0 sm:max-w-md'>
         <DialogHeader className='px-6 py-5'>
-          <DialogTitle>Ajouter une dépense</DialogTitle>
+          <DialogTitle>
+            {isEdit ? 'Modifier la dépense' : 'Ajouter une dépense'}
+          </DialogTitle>
           <DialogDescription>{vehicle.name}</DialogDescription>
         </DialogHeader>
 
@@ -386,7 +408,11 @@ export function ExpenseMutateDrawer({
             <Button variant='outline'>Annuler</Button>
           </DialogClose>
           <Button form='expense-form' type='submit' disabled={isPending}>
-            {isPending ? 'Enregistrement…' : 'Ajouter'}
+            {isPending
+              ? 'Enregistrement…'
+              : isEdit
+                ? 'Modifier'
+                : 'Ajouter'}
           </Button>
         </DialogFooter>
       </DialogContent>

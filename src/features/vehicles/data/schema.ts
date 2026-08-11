@@ -33,6 +33,7 @@ export const expensePayerSchema = z.object({
   firstName: z.string(),
   lastName: z.string().nullable(),
   amount: z.coerce.number().min(0),
+  source: z.union([z.literal('BANK'), z.literal('CASH')]).nullable(),
   imputedToId: z.string().nullable().optional(),
   imputedToFirstName: z.string().nullable().optional(),
   imputedToLastName: z.string().nullable().optional(),

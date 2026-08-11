@@ -54,7 +54,8 @@ const route = getRouteApi('/_authenticated/vehicles/$vehicleId')
 
 function VehicleDetailContent() {
   const { vehicleId } = route.useParams()
-  const { setOpen, setCurrentVehicleEvent } = useVehicleDetail()
+  const { setOpen, setCurrentExpense, setCurrentVehicleEvent } =
+    useVehicleDetail()
   const { data: vehicle, isLoading } = useGetVehicleDetail(vehicleId)
   const { mutate: deleteExpense, isPending: isDeletingExpense } =
     useDeleteExpense(vehicleId)
@@ -105,6 +106,11 @@ function VehicleDetailContent() {
         setPendingDeleteExpense(null)
       },
     })
+  }
+
+  const handleEditExpense = (expense: Expense) => {
+    setCurrentExpense(expense)
+    setOpen('edit-expense')
   }
 
   const handleEditEvent = (event: VehicleEvent) => {
@@ -434,16 +440,26 @@ function VehicleDetailContent() {
                               {expense.totalAmount.toLocaleString('fr-FR')} €
                             </span>
                             {!isSold && (
-                              <Button
-                                variant='ghost'
-                                size='icon'
-                                className='h-8 w-8 text-muted-foreground hover:text-destructive'
-                                onClick={() =>
-                                  setPendingDeleteExpense(expense)
-                                }
-                              >
-                                <Trash2 size={14} />
-                              </Button>
+                              <>
+                                <Button
+                                  variant='ghost'
+                                  size='icon'
+                                  className='h-8 w-8 text-muted-foreground hover:text-foreground'
+                                  onClick={() => handleEditExpense(expense)}
+                                >
+                                  <Pencil size={14} />
+                                </Button>
+                                <Button
+                                  variant='ghost'
+                                  size='icon'
+                                  className='h-8 w-8 text-muted-foreground hover:text-destructive'
+                                  onClick={() =>
+                                    setPendingDeleteExpense(expense)
+                                  }
+                                >
+                                  <Trash2 size={14} />
+                                </Button>
+                              </>
                             )}
                           </div>
                         </div>

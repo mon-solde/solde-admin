@@ -10,8 +10,14 @@ type VehicleDetailDialogsProps = {
 }
 
 export function VehicleDetailDialogs({ vehicle }: VehicleDetailDialogsProps) {
-  const { open, setOpen, currentVehicleEvent, setCurrentVehicleEvent } =
-    useVehicleDetail()
+  const {
+    open,
+    setOpen,
+    currentExpense,
+    setCurrentExpense,
+    currentVehicleEvent,
+    setCurrentVehicleEvent,
+  } = useVehicleDetail()
 
   return (
     <>
@@ -21,6 +27,19 @@ export function VehicleDetailDialogs({ vehicle }: VehicleDetailDialogsProps) {
         open={open === 'add-expense'}
         onOpenChange={() => setOpen('add-expense')}
       />
+
+      {currentExpense && (
+        <ExpenseMutateDrawer
+          key={`expense-edit-${currentExpense.id}`}
+          vehicle={vehicle}
+          currentExpense={currentExpense}
+          open={open === 'edit-expense'}
+          onOpenChange={() => {
+            setOpen('edit-expense')
+            setTimeout(() => setCurrentExpense(null), 500)
+          }}
+        />
+      )}
 
       <EventMutateDialog
         key='event-add'

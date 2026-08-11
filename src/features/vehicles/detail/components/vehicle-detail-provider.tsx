@@ -4,6 +4,7 @@ import { type Expense, type VehicleEvent } from '../../data/schema'
 
 type VehicleDetailDialogType =
   | 'add-expense'
+  | 'edit-expense'
   | 'add-event'
   | 'edit-event'
   | 'edit-participants'

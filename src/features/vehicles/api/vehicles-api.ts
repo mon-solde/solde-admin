@@ -80,6 +80,28 @@ export function useAddExpense(vehicleId: string) {
   })
 }
 
+export function useUpdateExpense(vehicleId: string) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({
+      expenseId,
+      ...data
+    }: {
+      expenseId: string
+      label: string
+      date: string
+      payers: Array<{
+        payerId: string
+        amount: number
+        source?: 'BANK' | 'CASH'
+        imputedToId?: string
+      }>
+    }) => apiClient.put(`/v1/vehicles/${vehicleId}/expenses/${expenseId}`, data),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: vehicleDetailKey(vehicleId) }),
+  })
+}
+
 export function useDeleteExpense(vehicleId: string) {
   const queryClient = useQueryClient()
   return useMutation({
