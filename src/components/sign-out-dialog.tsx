@@ -1,4 +1,6 @@
+import { signOut } from 'firebase/auth'
 import { useNavigate, useLocation } from '@tanstack/react-router'
+import { firebaseAuth } from '@/lib/firebase'
 import { useAuthStore } from '@/stores/auth-store'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 
@@ -12,7 +14,11 @@ export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
   const location = useLocation()
   const { auth } = useAuthStore()
 
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
+    // Without this, Firebase's own persisted session stays valid — the
+    // route guard reads straight from Firebase, so typing a protected URL
+    // after "signing out" would silently re-authenticate.
+    await signOut(firebaseAuth)
     auth.reset()
     // Preserve current location for redirect after sign-in
     const currentPath = location.href
