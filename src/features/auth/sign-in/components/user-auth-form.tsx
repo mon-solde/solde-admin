@@ -87,8 +87,7 @@ export function UserAuthForm({
       })
       auth.setAccessToken(idToken)
 
-      const target =
-        redirectTo && isSafeRedirect(redirectTo) ? redirectTo : '/'
+      const target = redirectTo && isSafeRedirect(redirectTo) ? redirectTo : '/'
       navigate({ to: target, replace: true })
       toast.success(`Bienvenue !`)
     } catch (error) {
