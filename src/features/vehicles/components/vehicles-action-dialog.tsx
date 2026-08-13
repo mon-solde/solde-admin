@@ -3,7 +3,6 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusIcon, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { useAuthStore } from '@/stores/auth-store'
 import { Button } from '@/components/ui/button'
 import { DecimalInput } from '@/components/ui/decimal-input'
 import {
@@ -68,8 +67,6 @@ export function VehiclesActionDialog({
   onOpenChange,
 }: VehiclesActionDialogProps) {
   const { mutate, isPending } = useCreateVehicle()
-  const { auth } = useAuthStore()
-  const ownerId = auth.user?.accountNo ?? ''
 
   const form = useForm<VehicleForm>({
     resolver: zodResolver(formSchema),
@@ -96,7 +93,6 @@ export function VehiclesActionDialog({
   const onSubmit = (values: VehicleForm) => {
     mutate(
       {
-        ownerId,
         name: values.name,
         purchaseDate: values.purchaseDate,
         purchasePrice: values.purchasePrice,

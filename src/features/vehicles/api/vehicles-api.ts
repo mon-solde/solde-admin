@@ -52,7 +52,6 @@ export function useCreateVehicle() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (data: {
-      ownerId: string
       name: string
       purchaseDate: string
       purchasePrice: number
