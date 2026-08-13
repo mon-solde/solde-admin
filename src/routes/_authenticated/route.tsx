@@ -54,8 +54,15 @@ function AuthGuard() {
   }
 
   if (status === 'guest') {
+    // pathname only, never location.href — href can itself already carry a
+    // ?redirect=... from a previous bounce, which would nest one level
+    // deeper on every redirect instead of ever resolving.
     return (
-      <Navigate to='/sign-in' search={{ redirect: location.href }} replace />
+      <Navigate
+        to='/sign-in'
+        search={{ redirect: location.pathname }}
+        replace
+      />
     )
   }
 

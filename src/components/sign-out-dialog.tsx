@@ -20,8 +20,10 @@ export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
     // after "signing out" would silently re-authenticate.
     await signOut(firebaseAuth)
     auth.reset()
-    // Preserve current location for redirect after sign-in
-    const currentPath = location.href
+    // Preserve current location for redirect after sign-in — pathname only,
+    // never location.href, which could itself already carry a ?redirect=...
+    // and nest one level deeper on every sign-out/sign-in cycle.
+    const currentPath = location.pathname
     navigate({
       to: '/sign-in',
       search: { redirect: currentPath },

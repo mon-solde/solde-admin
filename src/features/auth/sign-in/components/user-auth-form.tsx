@@ -38,6 +38,20 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLFormElement> {
   redirectTo?: string
 }
 
+// `redirectTo` comes straight from the URL, so it must never be trusted as
+// a navigation target as-is — a crafted link like
+// /sign-in?redirect=https://phishing-site.com would otherwise send a user
+// who just entered their password straight to an attacker's page. Only a
+// same-app relative path is allowed, and never back to /sign-in itself
+// (which would just bounce the user right back).
+function isSafeRedirect(path: string): boolean {
+  return (
+    path.startsWith('/') &&
+    !path.startsWith('//') &&
+    !path.startsWith('/sign-in')
+  )
+}
+
 export function UserAuthForm({
   className,
   redirectTo,
@@ -73,7 +87,9 @@ export function UserAuthForm({
       })
       auth.setAccessToken(idToken)
 
-      navigate({ to: redirectTo ?? '/', replace: true })
+      const target =
+        redirectTo && isSafeRedirect(redirectTo) ? redirectTo : '/'
+      navigate({ to: target, replace: true })
       toast.success(`Bienvenue !`)
     } catch (error) {
       if (error instanceof FirebaseError) {
