@@ -27,6 +27,17 @@ async function createRecurringCharge(
   return apiClient.post('/v1/recurring-charges', body)
 }
 
+export type UpdateRecurringChargePayload = CreateRecurringChargePayload & {
+  id: string
+}
+
+async function updateRecurringCharge({
+  id,
+  ...body
+}: UpdateRecurringChargePayload): Promise<void> {
+  return apiClient.put(`/v1/recurring-charges/${id}`, body)
+}
+
 async function deleteRecurringCharge(id: string): Promise<void> {
   return apiClient.delete(`/v1/recurring-charges/${id}`)
 }
@@ -50,6 +61,15 @@ export function useCreateRecurringCharge() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: createRecurringCharge,
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: RECURRING_CHARGES_KEY }),
+  })
+}
+
+export function useUpdateRecurringCharge() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: updateRecurringCharge,
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: RECURRING_CHARGES_KEY }),
   })

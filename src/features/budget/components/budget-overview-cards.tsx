@@ -2,7 +2,7 @@ import { Pencil } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { type AutomaticDeduction } from '../data/schema'
+import { type MonthlyRecurringCharge } from '../data/schema'
 
 function formatEuros(amount: number) {
   return (
@@ -15,8 +15,7 @@ function formatEuros(amount: number) {
 
 type BudgetOverviewCardsProps = {
   receivedSalary: number
-  automaticDeductions: AutomaticDeduction[]
-  manualActionsCount: number
+  recurringCharges: MonthlyRecurringCharge[]
   totalCharges: number
   availableAfterDeductions: number
   onEditSalaryClick: () => void
@@ -24,13 +23,18 @@ type BudgetOverviewCardsProps = {
 
 export function BudgetOverviewCards({
   receivedSalary,
-  automaticDeductions,
-  manualActionsCount,
+  recurringCharges,
   totalCharges,
   availableAfterDeductions,
   onEditSalaryClick,
 }: BudgetOverviewCardsProps) {
-  const totalCount = automaticDeductions.length + manualActionsCount
+  const automaticCount = recurringCharges.filter(
+    (c) => c.type === 'AUTOMATIC'
+  ).length
+  const manualCount = recurringCharges.filter(
+    (c) => c.type === 'MANUAL'
+  ).length
+  const totalCount = recurringCharges.length
 
   return (
     <div className='grid grid-cols-1 gap-4 sm:grid-cols-3'>
@@ -65,11 +69,11 @@ export function BudgetOverviewCards({
           </p>
           <p className='mt-1 text-xs text-muted-foreground'>
             {totalCount} charge{totalCount > 1 ? 's' : ''}
-            {automaticDeductions.length > 0 && manualActionsCount > 0 && (
+            {automaticCount > 0 && manualCount > 0 && (
               <span>
                 {' '}
-                ({automaticDeductions.length} auto · {manualActionsCount}{' '}
-                manuelle{manualActionsCount > 1 ? 's' : ''})
+                ({automaticCount} auto · {manualCount} manuelle
+                {manualCount > 1 ? 's' : ''})
               </span>
             )}
           </p>

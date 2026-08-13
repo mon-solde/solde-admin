@@ -1,19 +1,13 @@
-import { useAddActionPayment, useAddSavingsWithdrawal } from '../api/budget-api'
+import { useAddSavingsWithdrawal } from '../api/budget-api'
 import { type MonthlyBudget, type SavingsDestination } from '../data/schema'
 
 export function useBudgetState(budget: MonthlyBudget) {
-  const { mutate: mutateAddPayment } = useAddActionPayment()
   const { mutate: mutateAddWithdrawal } = useAddSavingsWithdrawal()
 
-  const totalAutomaticDeductions = budget.automaticDeductions.reduce(
-    (sum, d) => sum + d.amount,
+  const totalCharges = budget.recurringCharges.reduce(
+    (sum, c) => sum + c.amount,
     0
   )
-  const totalManualPlanned = budget.manualActions.reduce(
-    (sum, a) => sum + a.plannedAmount,
-    0
-  )
-  const totalCharges = totalAutomaticDeductions + totalManualPlanned
   const availableAfterDeductions = budget.receivedSalary - totalCharges
   const availableForSavings = availableAfterDeductions
 
@@ -22,18 +16,6 @@ export function useBudgetState(budget: MonthlyBudget) {
     0
   )
   const remainingToSave = availableForSavings - totalSaved
-
-  function addPayment(
-    actionId: string,
-    payment: { amount: number; paymentDate: Date }
-  ) {
-    mutateAddPayment({
-      budgetId: budget.id,
-      actionId,
-      amount: payment.amount,
-      paymentDate: payment.paymentDate.toISOString().split('T')[0],
-    })
-  }
 
   function addSavingsWithdrawal(withdrawal: {
     amount: number
@@ -49,13 +31,12 @@ export function useBudgetState(budget: MonthlyBudget) {
   }
 
   return {
-    automaticDeductions: budget.automaticDeductions,
+    recurringCharges: budget.recurringCharges,
     totalCharges,
     availableAfterDeductions,
     availableForSavings,
     totalSaved,
     remainingToSave,
-    addPayment,
     addSavingsWithdrawal,
   }
 }

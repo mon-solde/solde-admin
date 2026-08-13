@@ -9,8 +9,8 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { useGetMonthlyBudget } from './api/budget-api'
+import { BudgetChargesCard } from './components/budget-charges-card'
 import { BudgetDialogs } from './components/budget-dialogs'
-import { BudgetManualActionsCard } from './components/budget-manual-actions-card'
 import { BudgetMonthNavigator } from './components/budget-month-navigator'
 import { BudgetOverviewCards } from './components/budget-overview-cards'
 import { BudgetProvider, useBudget } from './components/budget-provider'
@@ -29,8 +29,7 @@ type BudgetMonthContentProps = {
 function BudgetMonthContent({ budget, month, year }: BudgetMonthContentProps) {
   const { setOpen } = useBudget()
   const {
-    automaticDeductions,
-    addPayment,
+    recurringCharges,
     addSavingsWithdrawal,
     totalCharges,
     availableAfterDeductions,
@@ -43,18 +42,12 @@ function BudgetMonthContent({ budget, month, year }: BudgetMonthContentProps) {
     <div className='flex flex-col gap-6'>
       <BudgetOverviewCards
         receivedSalary={budget.receivedSalary}
-        automaticDeductions={automaticDeductions}
-        manualActionsCount={budget.manualActions.length}
+        recurringCharges={recurringCharges}
         totalCharges={totalCharges}
         availableAfterDeductions={availableAfterDeductions}
         onEditSalaryClick={() => setOpen('editSalary')}
       />
-      <BudgetManualActionsCard
-        entries={budget.manualActions}
-        month={month}
-        year={year}
-        onAddPayment={(actionId, payment) => addPayment(actionId, payment)}
-      />
+      <BudgetChargesCard entries={recurringCharges} />
       <BudgetSavingsCard
         availableForSavings={availableForSavings}
         totalSaved={totalSaved}

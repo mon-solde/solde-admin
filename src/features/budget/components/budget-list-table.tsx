@@ -23,7 +23,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { budgetStatuses } from '../data/data'
 import { budgetListColumns as columns } from './budget-list-columns'
 import { useBudgetList } from './budget-list-provider'
 
@@ -51,7 +50,6 @@ export function BudgetListTable({ search, navigate }: BudgetListTableProps) {
     navigate,
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: false },
-    columnFilters: [{ columnId: 'status', searchKey: 'status', type: 'array' }],
   })
 
   // eslint-disable-next-line react-hooks/incompatible-library
@@ -90,16 +88,7 @@ export function BudgetListTable({ search, navigate }: BudgetListTableProps) {
         'flex flex-1 flex-col gap-4'
       )}
     >
-      <DataTableToolbar
-        table={table}
-        filters={[
-          {
-            columnId: 'status',
-            title: 'Statut',
-            options: budgetStatuses,
-          },
-        ]}
-      />
+      <DataTableToolbar table={table} />
       <div className='overflow-hidden rounded-md border'>
         <Table>
           <TableHeader>

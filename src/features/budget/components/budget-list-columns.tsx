@@ -1,13 +1,9 @@
 import { Link } from '@tanstack/react-router'
 import { type ColumnDef } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
-import { Badge } from '@/components/ui/badge'
 import { DataTableColumnHeader } from '@/components/data-table'
 import {
   FRENCH_MONTHS,
-  budgetStatusColorMap,
-  budgetStatuses,
-  computeBudgetStatus,
   computeAvailableForSavings,
   formatEuros,
 } from '../data/data'
@@ -56,25 +52,6 @@ export const budgetListColumns: ColumnDef<MonthlyBudget>[] = [
       )
     },
     enableSorting: true,
-  },
-  {
-    id: 'status',
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Statut' />
-    ),
-    accessorFn: (row) => computeBudgetStatus(row),
-    cell: ({ row }) => {
-      const status = computeBudgetStatus(row.original)
-      const label =
-        budgetStatuses.find((s) => s.value === status)?.label ?? status
-      return (
-        <Badge variant='outline' className={cn(budgetStatusColorMap[status])}>
-          {label}
-        </Badge>
-      )
-    },
-    filterFn: (row, id, value) => value.includes(row.getValue(id)),
-    enableSorting: false,
   },
   {
     id: 'actions',

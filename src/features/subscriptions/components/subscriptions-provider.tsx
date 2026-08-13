@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { type Subscription } from '../data/schema'
 
-type SubscriptionsDialogType = 'add' | 'delete'
+type SubscriptionsDialogType = 'add' | 'edit' | 'delete'
 
 type SubscriptionsContextType = {
   open: SubscriptionsDialogType | null

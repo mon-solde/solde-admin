@@ -14,6 +14,18 @@ export function SubscriptionsDialogs() {
       />
 
       {currentRow && (
+        <SubscriptionsActionDialog
+          key={`subscription-edit-${currentRow.id}`}
+          currentRow={currentRow}
+          open={open === 'edit'}
+          onOpenChange={() => {
+            setOpen('edit')
+            setTimeout(() => setCurrentRow(null), 500)
+          }}
+        />
+      )}
+
+      {currentRow && (
         <SubscriptionsDeleteDialog
           key={`subscription-delete-${currentRow.id}`}
           open={open === 'delete'}

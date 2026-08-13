@@ -1,6 +1,7 @@
 import { type Row } from '@tanstack/react-table'
 import {
   MoreHorizontal,
+  Pencil,
   Trash2,
   PlayCircle,
   PauseCircle,
@@ -34,6 +35,11 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
 
   const charge = row.original
   const isToggling = isActivating || isDeactivating
+
+  function openEditDialog() {
+    setCurrentRow(charge)
+    setOpen('edit')
+  }
 
   function openDeleteDialog() {
     setCurrentRow(charge)
@@ -77,6 +83,10 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
               Activer
             </>
           )}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={openEditDialog}>
+          <Pencil size={14} className='me-2' />
+          Modifier
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem

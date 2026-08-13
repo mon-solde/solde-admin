@@ -58,24 +58,6 @@ async function updateSalary({
   return apiClient.patch(`/v1/monthly-budgets/${id}/salary`, body)
 }
 
-export type AddActionPaymentPayload = {
-  budgetId: string
-  actionId: string
-  amount: number
-  paymentDate: string
-}
-
-async function addActionPayment({
-  budgetId,
-  actionId,
-  ...body
-}: AddActionPaymentPayload): Promise<{ id: string }> {
-  return apiClient.post(
-    `/v1/monthly-budgets/${budgetId}/actions/${actionId}/payments`,
-    body
-  )
-}
-
 export type AddSavingsWithdrawalPayload = {
   budgetId: string
   amount: number
@@ -129,15 +111,6 @@ export function useUpdateSalary() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: updateSalary,
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: MONTHLY_BUDGETS_KEY }),
-  })
-}
-
-export function useAddActionPayment() {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: addActionPayment,
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: MONTHLY_BUDGETS_KEY }),
   })

@@ -1,28 +1,16 @@
 import { z } from 'zod'
 
-const actionPaymentSchema = z.object({
-  id: z.string(),
-  amount: z.number(),
-  paymentDate: z.coerce.date(),
-})
-export type ActionPayment = z.infer<typeof actionPaymentSchema>
-
-const automaticDeductionSchema = z.object({
+const monthlyRecurringChargeSchema = z.object({
   id: z.string(),
   recurringChargeId: z.string().optional(),
   label: z.string(),
   amount: z.number(),
+  type: z.enum(['AUTOMATIC', 'MANUAL']),
+  dueDay: z.number().min(1).max(31).optional(),
 })
-export type AutomaticDeduction = z.infer<typeof automaticDeductionSchema>
-
-const monthlyManualActionSchema = z.object({
-  id: z.string(),
-  recurringChargeId: z.string().optional(),
-  label: z.string(),
-  plannedAmount: z.number(),
-  payments: z.array(actionPaymentSchema),
-})
-export type MonthlyManualAction = z.infer<typeof monthlyManualActionSchema>
+export type MonthlyRecurringCharge = z.infer<
+  typeof monthlyRecurringChargeSchema
+>
 
 const savingsDestinationSchema = z.union([z.literal('BANK'), z.literal('CASH')])
 export type SavingsDestination = z.infer<typeof savingsDestinationSchema>
@@ -42,8 +30,7 @@ export const monthlyBudgetSchema = z.object({
   month: z.number().min(1).max(12),
   year: z.number(),
   receivedSalary: z.number(),
-  automaticDeductions: z.array(automaticDeductionSchema),
-  manualActions: z.array(monthlyManualActionSchema),
+  recurringCharges: z.array(monthlyRecurringChargeSchema),
   savingsWithdrawals: z.array(budgetSavingsWithdrawalSchema).default([]),
 })
 export type MonthlyBudget = z.infer<typeof monthlyBudgetSchema>

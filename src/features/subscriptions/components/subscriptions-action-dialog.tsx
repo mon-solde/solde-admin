@@ -21,8 +21,12 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { useCreateRecurringCharge } from '../api/subscriptions-api'
+import {
+  useCreateRecurringCharge,
+  useUpdateRecurringCharge,
+} from '../api/subscriptions-api'
 import { subscriptionTypes } from '../data/data'
+import { type Subscription } from '../data/schema'
 
 const subscriptionFormSchema = z.object({
   name: z.string().min(1, 'Le nom est requis'),
@@ -40,44 +44,59 @@ const subscriptionFormSchema = z.object({
 type SubscriptionFormValues = z.infer<typeof subscriptionFormSchema>
 
 type SubscriptionsActionDialogProps = {
+  currentRow?: Subscription
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
 export function SubscriptionsActionDialog({
+  currentRow,
   open,
   onOpenChange,
 }: SubscriptionsActionDialogProps) {
-  const { mutate: createCharge, isPending } = useCreateRecurringCharge()
+  const isEdit = !!currentRow
+  const createCharge = useCreateRecurringCharge()
+  const updateCharge = useUpdateRecurringCharge()
+  const isPending = createCharge.isPending || updateCharge.isPending
 
   const form = useForm<SubscriptionFormValues>({
     resolver: zodResolver(subscriptionFormSchema),
-    defaultValues: {
-      name: '',
-      amount: 0,
-      type: 'AUTOMATIC',
-      dueDay: 1,
-    },
+    defaultValues: currentRow
+      ? {
+          name: currentRow.name,
+          amount: currentRow.amount,
+          type: currentRow.type,
+          dueDay: currentRow.dueDay ?? 1,
+        }
+      : {
+          name: '',
+          amount: 0,
+          type: 'AUTOMATIC',
+          dueDay: 1,
+        },
   })
 
   const selectedType = form.watch('type')
   const isManual = selectedType === 'MANUAL'
 
   function handleSubmit(values: SubscriptionFormValues) {
-    createCharge(
-      {
-        name: values.name,
-        amount: values.amount,
-        type: values.type,
-        dueDay: isManual ? undefined : values.dueDay,
-      },
-      {
-        onSuccess: () => {
-          form.reset()
-          onOpenChange(false)
-        },
-      }
-    )
+    const payload = {
+      name: values.name,
+      amount: values.amount,
+      type: values.type,
+      dueDay: isManual ? undefined : values.dueDay,
+    }
+    const onSuccess = () => {
+      form.reset()
+      onOpenChange(false)
+    }
+
+    if (currentRow) {
+      updateCharge.mutate({ id: currentRow.id, ...payload }, { onSuccess })
+      return
+    }
+
+    createCharge.mutate(payload, { onSuccess })
   }
 
   return (
@@ -90,9 +109,13 @@ export function SubscriptionsActionDialog({
     >
       <DialogContent className='sm:max-w-lg'>
         <DialogHeader className='text-start'>
-          <DialogTitle>Nouvelle charge récurrente</DialogTitle>
+          <DialogTitle>
+            {isEdit ? 'Modifier la charge récurrente' : 'Nouvelle charge récurrente'}
+          </DialogTitle>
           <DialogDescription>
-            Renseignez les informations de la nouvelle charge récurrente.
+            {isEdit
+              ? "Les mois déjà générés ne sont pas affectés par cette modification — seuls les futurs mois en tiendront compte."
+              : 'Renseignez les informations de la nouvelle charge récurrente.'}
           </DialogDescription>
         </DialogHeader>
 
@@ -199,7 +222,11 @@ export function SubscriptionsActionDialog({
 
         <DialogFooter>
           <Button type='submit' form='subscription-form' disabled={isPending}>
-            Créer la charge
+            {isPending
+              ? 'Enregistrement…'
+              : isEdit
+                ? 'Enregistrer'
+                : 'Créer la charge'}
           </Button>
         </DialogFooter>
       </DialogContent>
