@@ -80,16 +80,18 @@ export const dettesColumns: ColumnDef<Dette>[] = [
         <Label className='cursor-default font-medium'>
           {getValue<string>()}
         </Label>
-        {row.original.type === 'SOLD_VEHICLE' && row.original.vehicleId && (
-          <Link
-            to='/vehicles/$vehicleId'
-            params={{ vehicleId: row.original.vehicleId }}
-            className='flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground'
-          >
-            <Car size={11} />
-            {row.original.vehicleName ?? 'Véhicule'}
-          </Link>
-        )}
+        {(row.original.type === 'SOLD_VEHICLE' ||
+          row.original.type === 'EXPENSE') &&
+          row.original.vehicleId && (
+            <Link
+              to='/vehicles/$vehicleId'
+              params={{ vehicleId: row.original.vehicleId }}
+              className='flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground'
+            >
+              <Car size={11} />
+              {row.original.vehicleName ?? 'Véhicule'}
+            </Link>
+          )}
       </div>
     ),
     meta: {
