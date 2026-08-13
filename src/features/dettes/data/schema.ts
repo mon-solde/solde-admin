@@ -21,7 +21,7 @@ export const detteSchema = z.object({
   role: z.enum(['lent', 'borrowed']).default('lent'),
   amount: z.coerce.number(),
   date: z.coerce.date(),
-  type: z.enum(['MANUAL', 'SOLD_VEHICLE']).default('MANUAL'),
+  type: z.enum(['MANUAL', 'SOLD_VEHICLE', 'EXPENSE']).default('MANUAL'),
   description: z.string().optional(),
   vehicleId: z.string().optional(),
   vehicleName: z.string().optional(),
