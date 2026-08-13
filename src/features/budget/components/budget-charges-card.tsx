@@ -14,6 +14,10 @@ type BudgetChargesCardProps = {
 }
 
 export function BudgetChargesCard({ entries }: BudgetChargesCardProps) {
+  const sortedEntries = [...entries].sort((a, b) =>
+    a.label.localeCompare(b.label, 'fr')
+  )
+
   return (
     <Card>
       <CardHeader className='pb-3'>
@@ -22,7 +26,7 @@ export function BudgetChargesCard({ entries }: BudgetChargesCardProps) {
         </CardTitle>
       </CardHeader>
       <CardContent className='space-y-2'>
-        {entries.map((entry) => (
+        {sortedEntries.map((entry) => (
           <div
             key={entry.id}
             className='flex items-center justify-between rounded-md border px-4 py-3'
