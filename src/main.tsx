@@ -64,9 +64,6 @@ const queryClient = new QueryClient({
             router.navigate({ to: '/500' })
           }
         }
-        if (error.response?.status === 403) {
-          // router.navigate("/forbidden", { replace: true });
-        }
       }
     },
   }),
