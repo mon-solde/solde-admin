@@ -13,6 +13,10 @@ export function formatPersonName(firstName: string, lastName?: string | null) {
   return lastName ? `${firstName} ${lastName}` : firstName
 }
 
+export function getInitialsFromEmail(email: string): string {
+  return email.slice(0, 2).toUpperCase()
+}
+
 /**
  * Generates page numbers for pagination with ellipsis
  * @param currentPage - Current page number (1-based)
