@@ -1,18 +1,12 @@
 import { useEffect, useState } from 'react'
 import {
-  type SortingState,
   type VisibilityState,
   flexRender,
   getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
-import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
+import { type UseTableUrlStateReturn } from '@/hooks/use-table-url-state'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table,
@@ -22,59 +16,51 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
+import { DataTablePagination } from '@/components/data-table'
 import { budgetListColumns as columns } from './budget-list-columns'
-import { useBudgetList } from './budget-list-provider'
+import { type MonthlyBudget } from '../data/schema'
 
-type BudgetListTableProps = {
-  search: Record<string, unknown>
-  navigate: NavigateFn
+type BudgetListTableProps = Pick<
+  UseTableUrlStateReturn,
+  'pagination' | 'onPaginationChange' | 'sorting' | 'onSortingChange' | 'ensurePageInRange'
+> & {
+  data: MonthlyBudget[]
+  rowCount: number
+  isLoading?: boolean
 }
 
-export function BudgetListTable({ search, navigate }: BudgetListTableProps) {
-  const { budgets, isLoading } = useBudgetList()
+export function BudgetListTable({
+  data,
+  rowCount,
+  isLoading,
+  pagination,
+  onPaginationChange,
+  sorting,
+  onSortingChange,
+  ensurePageInRange,
+}: BudgetListTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: 'mois', desc: true },
-  ])
-
-  const {
-    columnFilters,
-    onColumnFiltersChange,
-    pagination,
-    onPaginationChange,
-    ensurePageInRange,
-  } = useTableUrlState({
-    search,
-    navigate,
-    pagination: { defaultPage: 1, defaultPageSize: 10 },
-    globalFilter: { enabled: false },
-  })
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
-    data: budgets,
+    data,
     columns,
+    rowCount,
+    manualPagination: true,
+    manualSorting: true,
     state: {
       sorting,
-      pagination,
-      rowSelection,
-      columnFilters,
       columnVisibility,
+      rowSelection,
+      pagination,
     },
     enableRowSelection: true,
-    onPaginationChange,
-    onColumnFiltersChange,
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
+    onSortingChange,
     onColumnVisibilityChange: setColumnVisibility,
-    getPaginationRowModel: getPaginationRowModel(),
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
+    onPaginationChange,
   })
 
   useEffect(() => {
@@ -82,13 +68,7 @@ export function BudgetListTable({ search, navigate }: BudgetListTableProps) {
   }, [table, ensurePageInRange])
 
   return (
-    <div
-      className={cn(
-        'max-sm:has-[div[role="toolbar"]]:mb-16',
-        'flex flex-1 flex-col gap-4'
-      )}
-    >
-      <DataTableToolbar table={table} />
+    <div className='flex flex-1 flex-col gap-4'>
       <div className='overflow-hidden rounded-md border'>
         <Table>
           <TableHeader>

@@ -51,7 +51,9 @@ export const budgetListColumns: ColumnDef<MonthlyBudget>[] = [
         </span>
       )
     },
-    enableSorting: true,
+    // Computed from receivedSalary minus recurringCharges/savingsWithdrawals
+    // sums — not a Prisma column, so the backend can't sort on it.
+    enableSorting: false,
   },
   {
     id: 'actions',

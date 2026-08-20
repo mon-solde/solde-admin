@@ -1,10 +1,11 @@
-import { z } from 'zod'
 import { isAxiosError } from 'axios'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 import {
   monthlyBudgetSchema,
+  monthlyBudgetsPageSchema,
   type MonthlyBudget,
+  type MonthlyBudgetsPage,
   type SavingsDestination,
 } from '../data/schema'
 
@@ -14,9 +15,31 @@ function budgetByYearMonthKey(year: number, month: number) {
   return [...MONTHLY_BUDGETS_KEY, year, month] as const
 }
 
-async function fetchMonthlyBudgets(): Promise<MonthlyBudget[]> {
-  const data = await apiClient.get('/v1/monthly-budgets')
-  return z.array(monthlyBudgetSchema).parse(data)
+// Single source of truth for "how many rows per page by default" — reused
+// by useTableUrlState (features/budget/budget-list.tsx) so the table's
+// resolved page size and the value actually sent to the backend can never
+// disagree.
+export const DEFAULT_PAGE_SIZE = 10
+
+export type MonthlyBudgetsFilters = {
+  pageIndex?: number
+  pageSize?: number
+  sortBy?: 'month' | 'receivedSalary'
+  sortOrder?: 'asc' | 'desc'
+}
+
+async function fetchMonthlyBudgets(
+  filters: MonthlyBudgetsFilters = {}
+): Promise<MonthlyBudgetsPage> {
+  const { pageIndex, pageSize, sortBy, sortOrder } = filters
+  const params: Record<string, string | number> = {}
+  params.page = pageIndex ?? 0
+  params.limit = pageSize ?? DEFAULT_PAGE_SIZE
+  if (sortBy) params.sortBy = sortBy
+  if (sortOrder) params.sortOrder = sortOrder
+
+  const data = await apiClient.get('/v1/monthly-budgets', { params })
+  return monthlyBudgetsPageSchema.parse(data)
 }
 
 async function fetchMonthlyBudget(
@@ -89,10 +112,17 @@ async function addRecurringChargeToBudget({
   })
 }
 
-export function useGetMonthlyBudgets() {
+export function useGetMonthlyBudgets(filters: MonthlyBudgetsFilters = {}) {
+  const { pageIndex, pageSize, sortBy, sortOrder } = filters
   return useQuery({
-    queryKey: MONTHLY_BUDGETS_KEY,
-    queryFn: fetchMonthlyBudgets,
+    queryKey: [
+      ...MONTHLY_BUDGETS_KEY,
+      pageIndex ?? 0,
+      pageSize ?? DEFAULT_PAGE_SIZE,
+      sortBy ?? '',
+      sortOrder ?? '',
+    ],
+    queryFn: () => fetchMonthlyBudgets({ pageIndex, pageSize, sortBy, sortOrder }),
   })
 }
 

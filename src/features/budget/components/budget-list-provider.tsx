@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import useDialogState from '@/hooks/use-dialog-state'
-import { useGetMonthlyBudgets } from '../api/budget-api'
 import { type MonthlyBudget } from '../data/schema'
 
 type BudgetListDialogType = 'add' | 'delete'
@@ -10,8 +9,6 @@ type BudgetListContextType = {
   setOpen: (str: BudgetListDialogType | null) => void
   currentRow: MonthlyBudget | null
   setCurrentRow: React.Dispatch<React.SetStateAction<MonthlyBudget | null>>
-  budgets: MonthlyBudget[]
-  isLoading: boolean
 }
 
 const BudgetListContext = React.createContext<BudgetListContextType | null>(
@@ -25,7 +22,6 @@ export function BudgetListProvider({
 }) {
   const [open, setOpen] = useDialogState<BudgetListDialogType>(null)
   const [currentRow, setCurrentRow] = useState<MonthlyBudget | null>(null)
-  const { data = [], isLoading } = useGetMonthlyBudgets()
 
   return (
     <BudgetListContext
@@ -34,8 +30,6 @@ export function BudgetListProvider({
         setOpen,
         currentRow,
         setCurrentRow,
-        budgets: data,
-        isLoading,
       }}
     >
       {children}

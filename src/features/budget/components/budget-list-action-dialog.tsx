@@ -29,10 +29,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { useInitMonth } from '../api/budget-api'
+import { useGetMonthlyBudgets, useInitMonth } from '../api/budget-api'
 import { FRENCH_MONTHS } from '../data/data'
 import { getNextAvailableMonth } from '../data/monthly-budgets'
-import { useBudgetList } from './budget-list-provider'
 
 const formSchema = z.object({
   month: z.number().min(1).max(12),
@@ -53,9 +52,15 @@ export function BudgetListActionDialog({
   open,
   onOpenChange,
 }: BudgetListActionDialogProps) {
-  const { budgets } = useBudgetList()
   const navigate = useNavigate()
-  const defaults = getNextAvailableMonth(budgets)
+  // Only needs the single most recent budget, not the table's current
+  // page — independent of whatever pagination/sort the list is on.
+  const { data: latestPage } = useGetMonthlyBudgets({
+    pageSize: 1,
+    sortBy: 'month',
+    sortOrder: 'desc',
+  })
+  const defaults = getNextAvailableMonth(latestPage?.data ?? [])
   const { mutate: initMonth, isPending } = useInitMonth()
 
   const form = useForm<BudgetListActionDialogForm>({

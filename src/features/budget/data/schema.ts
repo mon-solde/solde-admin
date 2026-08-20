@@ -34,3 +34,11 @@ export const monthlyBudgetSchema = z.object({
   savingsWithdrawals: z.array(budgetSavingsWithdrawalSchema).default([]),
 })
 export type MonthlyBudget = z.infer<typeof monthlyBudgetSchema>
+
+export const monthlyBudgetsPageSchema = z.object({
+  data: z.array(monthlyBudgetSchema),
+  count: z.number(),
+  limit: z.number(),
+  page: z.number(),
+})
+export type MonthlyBudgetsPage = z.infer<typeof monthlyBudgetsPageSchema>
