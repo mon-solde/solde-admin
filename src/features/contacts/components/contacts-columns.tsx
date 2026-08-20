@@ -36,14 +36,16 @@ export const contactsColumns: ColumnDef<Contact>[] = [
   },
   {
     id: 'fullName',
+    // TanStack only considers a column sortable (getCanSort()) when it has
+    // an accessor — even under manualSorting, where the backend does the
+    // actual comparison and this value is never read for that purpose.
+    accessorFn: (row) => `${row.firstName} ${row.lastName ?? ''}`.trim(),
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Nom' />
     ),
-    cell: ({ row }) => {
-      const { firstName, lastName } = row.original
-      const fullName = `${firstName} ${lastName ?? ''}`.trim()
-      return <LongText className='max-w-36 ps-3'>{fullName}</LongText>
-    },
+    cell: ({ getValue }) => (
+      <LongText className='max-w-36 ps-3'>{getValue<string>()}</LongText>
+    ),
     meta: {
       className: cn(
         'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',

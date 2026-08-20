@@ -10,3 +10,11 @@ export const contactSchema = z.object({
 })
 
 export type Contact = z.infer<typeof contactSchema>
+
+export const contactsPageSchema = z.object({
+  data: z.array(contactSchema),
+  count: z.number(),
+  limit: z.number(),
+  page: z.number(),
+})
+export type ContactsPage = z.infer<typeof contactsPageSchema>

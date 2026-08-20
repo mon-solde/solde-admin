@@ -26,7 +26,11 @@ type ContactComboboxProps = {
 export function ContactCombobox({ value, onChange }: ContactComboboxProps) {
   const [open, setOpen] = useState(false)
   const [inputValue, setInputValue] = useState('')
-  const { data: contacts = [], isFetching } = useGetContacts()
+  // Not a table — this is a search-as-you-type dropdown that needs every
+  // contact available client-side, so it asks for a generous page size
+  // rather than the table's default.
+  const { data: page, isFetching } = useGetContacts({ pageSize: 1000 })
+  const contacts = useMemo(() => page?.data ?? [], [page])
 
   const selectedContact = contacts.find((c) => c.id === value) ?? null
 

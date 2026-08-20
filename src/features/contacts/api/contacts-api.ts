@@ -1,13 +1,36 @@
-import { z } from 'zod'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
-import { contactSchema, type Contact } from '../data/schema'
+import { contactsPageSchema, type ContactsPage } from '../data/schema'
 
 const CONTACTS_KEY = ['contacts'] as const
 
-async function fetchContacts(): Promise<Contact[]> {
-  const data = await apiClient.get('/v1/contacts')
-  return z.array(contactSchema).parse(data)
+// Single source of truth for "how many rows per page by default" — reused
+// by useTableUrlState (features/contacts/index.tsx) so the table's
+// resolved page size and the value actually sent to the backend can never
+// disagree.
+export const DEFAULT_PAGE_SIZE = 10
+
+export type ContactsFilters = {
+  search?: string
+  pageIndex?: number
+  pageSize?: number
+  sortBy?: 'fullName' | 'createdAt'
+  sortOrder?: 'asc' | 'desc'
+}
+
+async function fetchContacts(
+  filters: ContactsFilters = {}
+): Promise<ContactsPage> {
+  const { search, pageIndex, pageSize, sortBy, sortOrder } = filters
+  const params: Record<string, string | number> = {}
+  if (search) params.search = search
+  params.page = pageIndex ?? 0
+  params.limit = pageSize ?? DEFAULT_PAGE_SIZE
+  if (sortBy) params.sortBy = sortBy
+  if (sortOrder) params.sortOrder = sortOrder
+
+  const data = await apiClient.get('/v1/contacts', { params })
+  return contactsPageSchema.parse(data)
 }
 
 export type CreateContactPayload = {
@@ -45,10 +68,19 @@ async function reactivateContact(id: string): Promise<void> {
   return apiClient.patch(`/v1/contacts/${id}/reactivate`)
 }
 
-export function useGetContacts() {
+export function useGetContacts(filters: ContactsFilters = {}) {
+  const { search, pageIndex, pageSize, sortBy, sortOrder } = filters
   return useQuery({
-    queryKey: CONTACTS_KEY,
-    queryFn: fetchContacts,
+    queryKey: [
+      ...CONTACTS_KEY,
+      search ?? '',
+      pageIndex ?? 0,
+      pageSize ?? DEFAULT_PAGE_SIZE,
+      sortBy ?? '',
+      sortOrder ?? '',
+    ],
+    queryFn: () =>
+      fetchContacts({ search, pageIndex, pageSize, sortBy, sortOrder }),
   })
 }
 
