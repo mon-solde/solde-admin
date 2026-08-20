@@ -156,11 +156,16 @@ function VehicleDetailContent() {
   const filteredExpenses = vehicle.expenses.filter((e) => {
     const matchesSearch =
       !normalizedSearch || e.label.toLowerCase().includes(normalizedSearch)
-    // A multi-payer expense matches as soon as the searched participant is
-    // one of its payers, regardless of the others.
+    // Match on the responsible party (imputedToId ?? payerId), not the raw
+    // payer — money someone fronts but delegates isn't really their own
+    // payment, it's the delegate's (who already owes it back via a
+    // separate debt; see profit-sharing.ts's computeInvestedByResponsibleParty
+    // for the same rule on the backend). A multi-payer expense matches as
+    // soon as the searched participant is responsible for one of the
+    // payments, regardless of the others.
     const matchesPayer =
       payerFilter === 'all' ||
-      e.payers.some((p) => p.payerId === payerFilter)
+      e.payers.some((p) => (p.imputedToId ?? p.payerId) === payerFilter)
     return matchesSearch && matchesPayer
   })
   const hasActiveFilter = Boolean(normalizedSearch) || payerFilter !== 'all'
