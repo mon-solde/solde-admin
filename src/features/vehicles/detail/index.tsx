@@ -15,6 +15,7 @@ import { ConfirmDialog } from '@/components/confirm-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
 import {
   Popover,
   PopoverContent,
@@ -65,6 +66,7 @@ function VehicleDetailContent() {
     useState<Expense | null>(null)
   const [pendingDeleteEvent, setPendingDeleteEvent] =
     useState<VehicleEvent | null>(null)
+  const [expenseSearch, setExpenseSearch] = useState('')
 
   if (isLoading) {
     return (
@@ -134,11 +136,22 @@ function VehicleDetailContent() {
     })
   }
 
+  // Filtered client-side, not through the backend like the vehicles/dettes
+  // tables: `vehicle.expenses` is already fetched in full here (no
+  // pagination on this list — a single vehicle realistically accumulates
+  // a few dozen expenses over its lifetime, never enough to need it), so
+  // there's no request to debounce or extra round-trip to save.
+  const filteredExpenses = expenseSearch.trim()
+    ? vehicle.expenses.filter((e) =>
+        e.label.toLowerCase().includes(expenseSearch.trim().toLowerCase())
+      )
+    : vehicle.expenses
+
   // `vehicle.expenses` is already sorted by the backend (date desc, then
   // createdAt desc as a same-day tie-break), so consecutive same-day
   // expenses always land in the same group here.
   const expenseGroups: ExpenseGroup[] = []
-  for (const expense of vehicle.expenses) {
+  for (const expense of filteredExpenses) {
     const dateKey = expense.date.toDateString()
     const lastGroup = expenseGroups[expenseGroups.length - 1]
     if (lastGroup?.dateKey === dateKey) {
@@ -402,6 +415,13 @@ function VehicleDetailContent() {
               </div>
             </div>
 
+            <Input
+              placeholder='Filtrer par nom...'
+              value={expenseSearch}
+              onChange={(event) => setExpenseSearch(event.target.value)}
+              className='h-8 w-full sm:w-[250px]'
+            />
+
             {expenseGroups.length > 0 ? (
               <div className='space-y-4'>
                 {expenseGroups.map((group) => (
@@ -470,7 +490,9 @@ function VehicleDetailContent() {
               </div>
             ) : (
               <div className='rounded-md border py-12 text-center text-sm text-muted-foreground'>
-                Aucune dépense enregistrée.
+                {expenseSearch.trim()
+                  ? 'Aucune dépense ne correspond à la recherche.'
+                  : 'Aucune dépense enregistrée.'}
               </div>
             )}
           </div>

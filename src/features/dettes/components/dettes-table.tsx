@@ -76,7 +76,13 @@ export function DettesTable({
   const isFiltered = Boolean(
     contactId || type || status !== 'en cours' || vehicleId
   )
-  const { data: vehicles = [] } = useGetVehicles()
+  // Not a table — this only needs every vehicle to populate the filter
+  // dropdown, so it asks for a generous page size rather than the default.
+  const { data: vehiclesPage } = useGetVehicles({
+    status: 'tous',
+    pageSize: 1000,
+  })
+  const vehicles = vehiclesPage?.data ?? []
 
   const onContactIdChange = (id: string) =>
     navigate({

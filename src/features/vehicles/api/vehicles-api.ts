@@ -1,21 +1,40 @@
-import { z } from 'zod'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
-import {
-  vehicleSchema,
-  vehicleDetailSchema,
-  type VehicleStatus,
-} from '../data/schema'
+import { vehiclesPageSchema, vehicleDetailSchema, type VehiclesPage } from '../data/schema'
 
 const VEHICLES_KEY = ['vehicles'] as const
 const vehicleDetailKey = (id: string) => ['vehicles', id] as const
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
 
-async function fetchVehicles(status?: VehicleStatus) {
-  const params = status ? { status } : undefined
+// Single source of truth for "how many rows per page by default" — reused
+// by useTableUrlState (features/vehicles/index.tsx) so the table's resolved
+// page size and the value actually sent to the backend can never disagree.
+export const DEFAULT_PAGE_SIZE = 10
+
+export type VehiclesFilters = {
+  status?: 'en cours' | 'vendu' | 'tous'
+  search?: string
+  pageIndex?: number
+  pageSize?: number
+  sortBy?: 'name' | 'purchaseDate'
+  sortOrder?: 'asc' | 'desc'
+}
+
+async function fetchVehicles(filters: VehiclesFilters = {}): Promise<VehiclesPage> {
+  const { status, search, pageIndex, pageSize, sortBy, sortOrder } = filters
+  const params: Record<string, string | number> = {}
+  // Absent status means "not specified yet", which defaults to 'en cours' —
+  // only an explicit 'tous' should skip the status filter entirely.
+  if (status !== 'tous') params.status = status === 'vendu' ? 'SOLD' : 'ACTIVE'
+  if (search) params.search = search
+  params.page = pageIndex ?? 0
+  params.limit = pageSize ?? DEFAULT_PAGE_SIZE
+  if (sortBy) params.sortBy = sortBy
+  if (sortOrder) params.sortOrder = sortOrder
+
   const data = await apiClient.get('/v1/vehicles', { params })
-  return z.array(vehicleSchema).parse(data)
+  return vehiclesPageSchema.parse(data)
 }
 
 async function fetchVehicleDetail(vehicleId: string) {
@@ -23,10 +42,20 @@ async function fetchVehicleDetail(vehicleId: string) {
   return vehicleDetailSchema.parse(data)
 }
 
-export function useGetVehicles(status?: VehicleStatus) {
+export function useGetVehicles(filters: VehiclesFilters = {}) {
+  const { status, search, pageIndex, pageSize, sortBy, sortOrder } = filters
   return useQuery({
-    queryKey: status ? [...VEHICLES_KEY, status] : VEHICLES_KEY,
-    queryFn: () => fetchVehicles(status),
+    queryKey: [
+      ...VEHICLES_KEY,
+      status ?? '',
+      search ?? '',
+      pageIndex ?? 0,
+      pageSize ?? DEFAULT_PAGE_SIZE,
+      sortBy ?? '',
+      sortOrder ?? '',
+    ],
+    queryFn: () =>
+      fetchVehicles({ status, search, pageIndex, pageSize, sortBy, sortOrder }),
   })
 }
 

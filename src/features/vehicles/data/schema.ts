@@ -28,6 +28,14 @@ export const vehicleSchema = z.object({
 })
 export type Vehicle = z.infer<typeof vehicleSchema>
 
+export const vehiclesPageSchema = z.object({
+  data: z.array(vehicleSchema),
+  count: z.number(),
+  limit: z.number(),
+  page: z.number(),
+})
+export type VehiclesPage = z.infer<typeof vehiclesPageSchema>
+
 export const expensePayerSchema = z.object({
   payerId: z.string(),
   firstName: z.string(),

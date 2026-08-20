@@ -68,9 +68,21 @@ export const vehiclesColumns: ColumnDef<Vehicle>[] = [
         </Badge>
       )
     },
-    filterFn: (row, id, value) => value.includes(row.getValue(id)),
     enableSorting: false,
     enableHiding: false,
+  },
+  {
+    accessorKey: 'purchaseDate',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Date d'achat" />
+    ),
+    cell: ({ row }) => (
+      <span className='text-muted-foreground tabular-nums'>
+        {new Intl.DateTimeFormat('fr-FR').format(
+          row.getValue<Date>('purchaseDate')
+        )}
+      </span>
+    ),
   },
   {
     id: 'participants',
@@ -103,6 +115,9 @@ export const vehiclesColumns: ColumnDef<Vehicle>[] = [
         {row.original.totalExpenses.toLocaleString('fr-FR')} €
       </span>
     ),
+    // Computed by summing every expense payer's amount for the vehicle —
+    // not a Prisma column, so the backend can't sort on it.
+    enableSorting: false,
   },
   {
     id: 'actions',
