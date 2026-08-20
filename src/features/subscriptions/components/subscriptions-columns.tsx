@@ -93,8 +93,6 @@ export const subscriptionsColumns: ColumnDef<Subscription>[] = [
         </Badge>
       )
     },
-    filterFn: (row, id, value) => value.includes(row.getValue(id)),
-    enableSorting: false,
   },
   {
     id: 'status',
@@ -111,7 +109,6 @@ export const subscriptionsColumns: ColumnDef<Subscription>[] = [
         </Badge>
       )
     },
-    filterFn: (row, id, value) => value.includes(row.getValue(id)),
     enableSorting: false,
   },
   {

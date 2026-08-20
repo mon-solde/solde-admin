@@ -1,5 +1,6 @@
 import { CheckCircle2, XCircle, Zap, Hand } from 'lucide-react'
 
+// Keyed by the real API values — used for the type/status badge cells.
 export const subscriptionTypes = [
   { label: 'Automatique', value: 'AUTOMATIC' as const, icon: Zap },
   { label: 'Manuel', value: 'MANUAL' as const, icon: Hand },
@@ -8,6 +9,19 @@ export const subscriptionTypes = [
 export const subscriptionStatuses = [
   { label: 'Actif', value: 'active' as const, icon: CheckCircle2 },
   { label: 'Inactif', value: 'inactive' as const, icon: XCircle },
+]
+
+// Keyed by the French URL filter values (see vehicles' equivalent split) —
+// used for the Type/Statut Selects in the table toolbar, distinct from the
+// badge-display arrays above.
+export const subscriptionTypeFilterOptions = [
+  { label: 'Automatique', value: 'AUTOMATIC' as const },
+  { label: 'Manuel', value: 'MANUAL' as const },
+]
+
+export const subscriptionStatusFilterOptions = [
+  { label: 'En cours', value: 'en cours' as const },
+  { label: 'Inactif', value: 'inactif' as const },
 ]
 
 export const typeColorMap: Record<string, string> = {
