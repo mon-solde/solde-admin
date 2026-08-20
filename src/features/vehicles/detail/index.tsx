@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn, formatPersonName } from '@/lib/utils'
+import { useAuthStore } from '@/stores/auth-store'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -21,6 +22,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import {
   Table,
@@ -67,6 +75,9 @@ function VehicleDetailContent() {
   const [pendingDeleteEvent, setPendingDeleteEvent] =
     useState<VehicleEvent | null>(null)
   const [expenseSearch, setExpenseSearch] = useState('')
+  const [payerFilter, setPayerFilter] = useState('all')
+  const { auth } = useAuthStore()
+  const ownerId = auth.user?.accountNo ?? ''
 
   if (isLoading) {
     return (
@@ -141,11 +152,18 @@ function VehicleDetailContent() {
   // pagination on this list — a single vehicle realistically accumulates
   // a few dozen expenses over its lifetime, never enough to need it), so
   // there's no request to debounce or extra round-trip to save.
-  const filteredExpenses = expenseSearch.trim()
-    ? vehicle.expenses.filter((e) =>
-        e.label.toLowerCase().includes(expenseSearch.trim().toLowerCase())
-      )
-    : vehicle.expenses
+  const normalizedSearch = expenseSearch.trim().toLowerCase()
+  const filteredExpenses = vehicle.expenses.filter((e) => {
+    const matchesSearch =
+      !normalizedSearch || e.label.toLowerCase().includes(normalizedSearch)
+    // A multi-payer expense matches as soon as the searched participant is
+    // one of its payers, regardless of the others.
+    const matchesPayer =
+      payerFilter === 'all' ||
+      e.payers.some((p) => p.payerId === payerFilter)
+    return matchesSearch && matchesPayer
+  })
+  const hasActiveFilter = Boolean(normalizedSearch) || payerFilter !== 'all'
 
   // `vehicle.expenses` is already sorted by the backend (date desc, then
   // createdAt desc as a same-day tie-break), so consecutive same-day
@@ -415,12 +433,28 @@ function VehicleDetailContent() {
               </div>
             </div>
 
-            <Input
-              placeholder='Filtrer par nom...'
-              value={expenseSearch}
-              onChange={(event) => setExpenseSearch(event.target.value)}
-              className='h-8 w-full sm:w-[250px]'
-            />
+            <div className='flex flex-wrap gap-2'>
+              <Input
+                placeholder='Filtrer par nom...'
+                value={expenseSearch}
+                onChange={(event) => setExpenseSearch(event.target.value)}
+                className='h-8 w-full sm:w-[250px]'
+              />
+              <Select value={payerFilter} onValueChange={setPayerFilter}>
+                <SelectTrigger className='h-8 w-full sm:w-[180px]'>
+                  <SelectValue placeholder='Participant' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='all'>Tous les participants</SelectItem>
+                  <SelectItem value={ownerId}>Vous</SelectItem>
+                  {vehicle.participants.map((p) => (
+                    <SelectItem key={p.contactId} value={p.contactId}>
+                      {formatPersonName(p.firstName, p.lastName)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
             {expenseGroups.length > 0 ? (
               <div className='space-y-4'>
@@ -490,8 +524,8 @@ function VehicleDetailContent() {
               </div>
             ) : (
               <div className='rounded-md border py-12 text-center text-sm text-muted-foreground'>
-                {expenseSearch.trim()
-                  ? 'Aucune dépense ne correspond à la recherche.'
+                {hasActiveFilter
+                  ? 'Aucune dépense ne correspond aux filtres.'
                   : 'Aucune dépense enregistrée.'}
               </div>
             )}
