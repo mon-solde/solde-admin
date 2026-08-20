@@ -1,19 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Cross2Icon } from '@radix-ui/react-icons'
 import {
-  type SortingState,
   type VisibilityState,
   flexRender,
   getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
-import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
+import {
+  type NavigateFn,
+  type UseTableUrlStateReturn,
+} from '@/hooks/use-table-url-state'
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -42,8 +39,12 @@ import { dettesColumns as columns } from './dettes-columns'
 
 const FILTER_ALL = 'all'
 
-type DataTableProps = {
+type DataTableProps = Pick<
+  UseTableUrlStateReturn,
+  'pagination' | 'onPaginationChange' | 'sorting' | 'onSortingChange' | 'ensurePageInRange'
+> & {
   data: Dette[]
+  rowCount: number
   isLoading?: boolean
   search: Record<string, unknown>
   navigate: NavigateFn
@@ -51,27 +52,18 @@ type DataTableProps = {
 
 export function DettesTable({
   data,
+  rowCount,
   isLoading,
   search,
   navigate,
+  pagination,
+  onPaginationChange,
+  sorting,
+  onSortingChange,
+  ensurePageInRange,
 }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({})
-  const [sorting, setSorting] = useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-
-  const {
-    columnFilters,
-    onColumnFiltersChange,
-    pagination,
-    onPaginationChange,
-    ensurePageInRange,
-  } = useTableUrlState({
-    search,
-    navigate,
-    pagination: { defaultPage: 1, defaultPageSize: 10 },
-    globalFilter: { enabled: false },
-    columnFilters: [],
-  })
 
   // What the debt list is filtered by — the backend does the actual
   // filtering (see useGetDettes), this just reflects/updates the URL.
@@ -134,25 +126,21 @@ export function DettesTable({
   const table = useReactTable({
     data,
     columns,
+    rowCount,
+    manualPagination: true,
+    manualSorting: true,
     state: {
       sorting,
       columnVisibility,
       rowSelection,
-      columnFilters,
       pagination,
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
-    onSortingChange: setSorting,
+    onSortingChange,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
     onPaginationChange,
-    onColumnFiltersChange,
   })
 
   useEffect(() => {

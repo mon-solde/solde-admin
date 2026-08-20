@@ -21,10 +21,14 @@ export function DettesRemboursementsDrawer({
 }: DettesRemboursementsDrawerProps) {
   const addRepayment = useAddRepayment()
   const deleteRepayment = useDeleteRepayment()
-  const { data: dettes = [] } = useGetDettes()
+  // Not a table — this only needs to look up one debt by id after a
+  // mutation, so it asks for every debt (no status filter, a generous page
+  // size) rather than relying on whatever page/filters the table happens
+  // to be on, which could easily not contain this debt.
+  const { data: page } = useGetDettes({ status: 'tous', pageSize: 1000 })
   const { auth } = useAuthStore()
   const accountNo = auth.user?.accountNo ?? ''
-  const dette = dettes.find((d) => d.id === currentRow.id) ?? currentRow
+  const dette = page?.data.find((d) => d.id === currentRow.id) ?? currentRow
   const isLender = dette.role === 'lent'
   const lenderLabel = dette.lenderId === accountNo ? 'Vous' : dette.lenderName
   const borrowerLabel =

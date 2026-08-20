@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { getRouteApi } from '@tanstack/react-router'
+import { useTableUrlState } from '@/hooks/use-table-url-state'
 import { useAuthStore } from '@/stores/auth-store'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
@@ -9,7 +10,7 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { useGetDettes } from './api/dettes-api'
+import { DEFAULT_PAGE_SIZE, useGetDettes } from './api/dettes-api'
 import { DettesDialogs } from './components/dettes-dialogs'
 import { DettesPrimaryButtons } from './components/dettes-primary-buttons'
 import { DettesProvider } from './components/dettes-provider'
@@ -21,41 +22,82 @@ const fmt = new Intl.NumberFormat('fr-FR', {
   currency: 'EUR',
 })
 
+// TanStack column id -> backend sort key, and back — the single place this
+// mapping is defined, shared by useTableUrlState (URL <-> sorting state)
+// and the API call below (sorting state -> request params).
+const SORT_COLUMN_TO_API = {
+  personne: 'contactName',
+  amount: 'amount',
+  date: 'date',
+} as const
+
+const emptyTotals = {
+  lentRemaining: 0,
+  borrowedRemaining: 0,
+  net: 0,
+  lentCount: 0,
+  borrowedCount: 0,
+}
+
 export function Dettes() {
   const search = route.useSearch()
   const navigate = route.useNavigate()
-  const { data: rawDettes = [], isLoading } = useGetDettes({
+
+  // Single call, single source of truth: the resolved pageIndex/pageSize/
+  // sorting below is what both the API request AND the table itself use —
+  // no second place where "no value in the URL" could resolve to a
+  // different default than what's actually sent to the backend.
+  const {
+    pagination,
+    onPaginationChange,
+    sorting,
+    onSortingChange,
+    ensurePageInRange,
+  } = useTableUrlState({
+    search,
+    navigate,
+    pagination: { defaultPage: 1, defaultPageSize: DEFAULT_PAGE_SIZE },
+    globalFilter: { enabled: false },
+    sorting: {
+      columnIdToSortBy: SORT_COLUMN_TO_API,
+      defaultSortBy: 'date',
+      defaultSortOrder: 'desc',
+    },
+  })
+  const activeSort = sorting[0]
+
+  const { data: page, isLoading } = useGetDettes({
     contactId: search.contactId,
     type: search.type,
     status: search.status,
     vehicleId: search.vehicleId,
+    pageIndex: pagination.pageIndex,
+    pageSize: pagination.pageSize,
+    sortBy: activeSort
+      ? SORT_COLUMN_TO_API[activeSort.id as keyof typeof SORT_COLUMN_TO_API]
+      : undefined,
+    sortOrder: activeSort ? (activeSort.desc ? 'desc' : 'asc') : undefined,
   })
   const { auth } = useAuthStore()
   const accountNo = auth.user?.accountNo ?? ''
 
   const dettes = useMemo(
     () =>
-      rawDettes.map((d) => ({
+      (page?.data ?? []).map((d) => ({
         ...d,
         role:
           d.lenderId === accountNo ? ('lent' as const) : ('borrowed' as const),
       })),
-    [rawDettes, accountNo]
+    [page, accountNo]
   )
 
-  const { onMeDoit, nbPrets, jeDois, nbEmprunts, net } = useMemo(() => {
-    const prets = dettes.filter((d) => d.role === 'lent')
-    const emprunts = dettes.filter((d) => d.role === 'borrowed')
-    const onMeDoit = prets.reduce((sum, d) => sum + d.remaining, 0)
-    const jeDois = emprunts.reduce((sum, d) => sum + d.remaining, 0)
-    return {
-      onMeDoit,
-      nbPrets: prets.length,
-      jeDois,
-      nbEmprunts: emprunts.length,
-      net: onMeDoit - jeDois,
-    }
-  }, [dettes])
+  const {
+    lentRemaining: onMeDoit,
+    borrowedRemaining: jeDois,
+    net,
+    lentCount: nbPrets,
+    borrowedCount: nbEmprunts,
+  } = page?.totals ?? emptyTotals
 
   return (
     <DettesProvider>
@@ -128,9 +170,15 @@ export function Dettes() {
 
         <DettesTable
           data={dettes}
+          rowCount={page?.count ?? 0}
           isLoading={isLoading}
           search={search}
           navigate={navigate}
+          pagination={pagination}
+          onPaginationChange={onPaginationChange}
+          sorting={sorting}
+          onSortingChange={onSortingChange}
+          ensurePageInRange={ensurePageInRange}
         />
       </Main>
 

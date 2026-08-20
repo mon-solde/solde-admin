@@ -13,6 +13,8 @@ const dettesSearchSchema = z.object({
   status: z.enum(['en cours', 'remboursé', 'tous']).optional().catch(undefined),
   contactId: z.string().optional().catch(''),
   vehicleId: z.string().optional().catch(''),
+  sortBy: z.enum(['date', 'amount', 'contactName']).optional().catch(undefined),
+  sortOrder: z.enum(['asc', 'desc']).optional().catch(undefined),
 })
 
 export const Route = createFileRoute('/_authenticated/dettes/')({

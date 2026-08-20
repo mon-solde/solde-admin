@@ -117,6 +117,9 @@ export const dettesColumns: ColumnDef<Dette>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Restant dû' />
     ),
+    // Computed in memory from repayments, not a DB column — the backend
+    // can't sort on it (see find-debts.query-handler.ts).
+    enableSorting: false,
     cell: ({ row }) => {
       const remaining = row.getValue<number>('remaining')
       if (remaining === 0)

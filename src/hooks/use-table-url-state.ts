@@ -3,6 +3,7 @@ import type {
   ColumnFiltersState,
   OnChangeFn,
   PaginationState,
+  SortingState,
 } from '@tanstack/react-table'
 
 type SearchRecord = Record<string, unknown>
@@ -46,9 +47,20 @@ type UseTableUrlStateParams = {
         deserialize?: (value: unknown) => unknown
       }
   >
+  // Opt-in: URL-synced single-column sorting, for tables whose sort is
+  // resolved server-side. Absent for every table that still sorts
+  // client-side, so their behavior is unchanged.
+  sorting?: {
+    sortByKey?: string
+    sortOrderKey?: string
+    // Maps a TanStack column id to the backend's sort key, and back.
+    columnIdToSortBy: Record<string, string>
+    defaultSortBy: string
+    defaultSortOrder?: 'asc' | 'desc'
+  }
 }
 
-type UseTableUrlStateReturn = {
+export type UseTableUrlStateReturn = {
   // Global filter
   globalFilter?: string
   onGlobalFilterChange?: OnChangeFn<string>
@@ -58,6 +70,9 @@ type UseTableUrlStateReturn = {
   // Pagination
   pagination: PaginationState
   onPaginationChange: OnChangeFn<PaginationState>
+  // Sorting (no-op when the `sorting` config isn't passed)
+  sorting: SortingState
+  onSortingChange: OnChangeFn<SortingState>
   // Helpers
   ensurePageInRange: (
     pageCount: number,
@@ -74,6 +89,7 @@ export function useTableUrlState(
     pagination: paginationCfg,
     globalFilter: globalFilterCfg,
     columnFilters: columnFiltersCfg = [],
+    sorting: sortingCfg,
   } = params
 
   const pageKey = paginationCfg?.pageKey ?? ('page' as string)
@@ -190,6 +206,46 @@ export function useTableUrlState(
     })
   }
 
+  const sortByKey = sortingCfg?.sortByKey ?? ('sortBy' as string)
+  const sortOrderKey = sortingCfg?.sortOrderKey ?? ('sortOrder' as string)
+
+  const sortByToColumnId: Record<string, string> = useMemo(() => {
+    if (!sortingCfg) return {}
+    return Object.fromEntries(
+      Object.entries(sortingCfg.columnIdToSortBy).map(([columnId, sortBy]) => [
+        sortBy,
+        columnId,
+      ])
+    )
+  }, [sortingCfg])
+
+  const sorting: SortingState = useMemo(() => {
+    if (!sortingCfg) return []
+    const rawSortBy = (search as SearchRecord)[sortByKey]
+    const sortBy = typeof rawSortBy === 'string' ? rawSortBy : sortingCfg.defaultSortBy
+    const rawSortOrder = (search as SearchRecord)[sortOrderKey]
+    const sortOrder =
+      rawSortOrder === 'asc' || rawSortOrder === 'desc'
+        ? rawSortOrder
+        : (sortingCfg.defaultSortOrder ?? 'desc')
+    const columnId = sortByToColumnId[sortBy]
+    return columnId ? [{ id: columnId, desc: sortOrder === 'desc' }] : []
+  }, [search, sortByKey, sortOrderKey, sortingCfg, sortByToColumnId])
+
+  const onSortingChange: OnChangeFn<SortingState> = (updater) => {
+    if (!sortingCfg) return
+    const next = typeof updater === 'function' ? updater(sorting) : updater
+    const first = next[0]
+    navigate({
+      search: (prev) => ({
+        ...(prev as SearchRecord),
+        [pageKey]: undefined,
+        [sortByKey]: first ? sortingCfg.columnIdToSortBy[first.id] : undefined,
+        [sortOrderKey]: first ? (first.desc ? 'desc' : 'asc') : undefined,
+      }),
+    })
+  }
+
   const ensurePageInRange = (
     pageCount: number,
     opts: { resetTo?: 'first' | 'last' } = { resetTo: 'first' }
@@ -214,6 +270,8 @@ export function useTableUrlState(
     onColumnFiltersChange,
     pagination,
     onPaginationChange,
+    sorting,
+    onSortingChange,
     ensurePageInRange,
   }
 }
