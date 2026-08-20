@@ -1,7 +1,13 @@
+import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import {
+  useAddRecurringChargeToBudget,
+  useGetMonthlyBudget,
+} from '@/features/budget/api/budget-api'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import { DecimalInput } from '@/components/ui/decimal-input'
 import {
   Dialog,
@@ -20,6 +26,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { SelectDropdown } from '@/components/select-dropdown'
 import {
   useCreateRecurringCharge,
@@ -57,7 +64,22 @@ export function SubscriptionsActionDialog({
   const isEdit = !!currentRow
   const createCharge = useCreateRecurringCharge()
   const updateCharge = useUpdateRecurringCharge()
+  const addToBudget = useAddRecurringChargeToBudget()
   const isPending = createCharge.isPending || updateCharge.isPending
+
+  // A charge created after the current month's budget was already
+  // generated doesn't retroactively appear in it (see MonthlyRecurringCharge
+  // — frozen at generation time) — offering to attach it immediately closes
+  // that gap for the common case, without touching any past month.
+  const now = new Date()
+  const currentYear = now.getFullYear()
+  const currentMonth = now.getMonth() + 1
+  const { data: currentBudget } = useGetMonthlyBudget(
+    currentYear,
+    currentMonth
+  )
+  const [applyToCurrentMonth, setApplyToCurrentMonth] = useState(true)
+  const showApplyToCurrentMonth = !isEdit && !!currentBudget
 
   const form = useForm<SubscriptionFormValues>({
     resolver: zodResolver(subscriptionFormSchema),
@@ -86,17 +108,31 @@ export function SubscriptionsActionDialog({
       type: values.type,
       dueDay: isManual ? undefined : values.dueDay,
     }
-    const onSuccess = () => {
+    const close = () => {
       form.reset()
       onOpenChange(false)
     }
 
     if (currentRow) {
-      updateCharge.mutate({ id: currentRow.id, ...payload }, { onSuccess })
+      updateCharge.mutate(
+        { id: currentRow.id, ...payload },
+        { onSuccess: close }
+      )
       return
     }
 
-    createCharge.mutate(payload, { onSuccess })
+    createCharge.mutate(payload, {
+      onSuccess: ({ id }) => {
+        if (showApplyToCurrentMonth && applyToCurrentMonth && currentBudget) {
+          addToBudget.mutate(
+            { budgetId: currentBudget.id, recurringChargeId: id },
+            { onSuccess: close, onError: close }
+          )
+          return
+        }
+        close()
+      },
+    })
   }
 
   return (
@@ -216,6 +252,26 @@ export function SubscriptionsActionDialog({
                   </FormItem>
                 )}
               />
+            )}
+
+            {showApplyToCurrentMonth && (
+              <div className='grid grid-cols-6 items-center gap-x-4 gap-y-1'>
+                <div className='col-span-4 col-start-3 flex items-center gap-2'>
+                  <Checkbox
+                    id='apply-to-current-month'
+                    checked={applyToCurrentMonth}
+                    onCheckedChange={(value) =>
+                      setApplyToCurrentMonth(value === true)
+                    }
+                  />
+                  <Label
+                    htmlFor='apply-to-current-month'
+                    className='font-normal'
+                  >
+                    Appliquer aussi au mois en cours
+                  </Label>
+                </div>
+              </div>
             )}
           </form>
         </Form>

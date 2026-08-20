@@ -75,6 +75,20 @@ async function addSavingsWithdrawal({
   )
 }
 
+export type AddRecurringChargeToBudgetPayload = {
+  budgetId: string
+  recurringChargeId: string
+}
+
+async function addRecurringChargeToBudget({
+  budgetId,
+  recurringChargeId,
+}: AddRecurringChargeToBudgetPayload): Promise<{ id: string }> {
+  return apiClient.post(`/v1/monthly-budgets/${budgetId}/recurring-charges`, {
+    recurringChargeId,
+  })
+}
+
 export function useGetMonthlyBudgets() {
   return useQuery({
     queryKey: MONTHLY_BUDGETS_KEY,
@@ -124,5 +138,14 @@ export function useAddSavingsWithdrawal() {
       queryClient.invalidateQueries({ queryKey: MONTHLY_BUDGETS_KEY })
       queryClient.invalidateQueries({ queryKey: ['savings'] })
     },
+  })
+}
+
+export function useAddRecurringChargeToBudget() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: addRecurringChargeToBudget,
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: MONTHLY_BUDGETS_KEY }),
   })
 }
