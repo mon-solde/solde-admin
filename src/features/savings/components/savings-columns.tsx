@@ -46,7 +46,6 @@ export const savingsColumns: ColumnDef<SavingsHistoryEntry>[] = [
         {row.original.source === 'bank' ? 'Banque' : 'Espèces'}
       </Badge>
     ),
-    filterFn: (row, id, value) => value.includes(row.getValue(id)),
     enableSorting: false,
   },
   {
@@ -59,7 +58,6 @@ export const savingsColumns: ColumnDef<SavingsHistoryEntry>[] = [
         {row.original.kind === 'addition' ? 'Ajout' : 'Retrait'}
       </Badge>
     ),
-    filterFn: (row, id, value) => value.includes(row.getValue(id)),
     enableSorting: false,
   },
   {

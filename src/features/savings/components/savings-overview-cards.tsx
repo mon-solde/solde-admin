@@ -1,11 +1,13 @@
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatEuros } from '../data/data'
-import { useSavings } from './savings-provider'
 
-export function SavingsOverviewCards() {
-  const { totals } = useSavings()
-  const { bank, cash, total } = totals
+type SavingsOverviewCardsProps = {
+  balances: { bank: number; cash: number; total: number }
+}
+
+export function SavingsOverviewCards({ balances }: SavingsOverviewCardsProps) {
+  const { bank, cash, total } = balances
 
   return (
     <div className='grid gap-4 sm:grid-cols-3'>

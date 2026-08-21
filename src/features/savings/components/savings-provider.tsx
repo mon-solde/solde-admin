@@ -1,11 +1,7 @@
 import React, { useState } from 'react'
 import { toast } from 'sonner'
 import useDialogState from '@/hooks/use-dialog-state'
-import {
-  useGetSavings,
-  useCreateSavingsEvent,
-  useDeleteSavingsEvent,
-} from '../api/savings-api'
+import { useCreateSavingsEvent, useDeleteSavingsEvent } from '../api/savings-api'
 import { type SavingsHistoryEntry } from '../data/data'
 
 type SavingsDialogType = 'add' | 'delete'
@@ -25,9 +21,6 @@ type SavingsContextType = {
   setCurrentRow: React.Dispatch<
     React.SetStateAction<SavingsHistoryEntry | null>
   >
-  history: SavingsHistoryEntry[]
-  totals: { bank: number; cash: number; total: number }
-  isLoading: boolean
   addMovement: (
     movement: CreateManualMovementInput,
     callbacks?: { onSuccess?: () => void }
@@ -41,22 +34,8 @@ export function SavingsProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useDialogState<SavingsDialogType>(null)
   const [currentRow, setCurrentRow] = useState<SavingsHistoryEntry | null>(null)
 
-  const { data, isLoading } = useGetSavings()
   const { mutate: createEvent } = useCreateSavingsEvent()
   const { mutate: deleteEvent } = useDeleteSavingsEvent()
-
-  const history: SavingsHistoryEntry[] = (data?.history ?? []).map((e) => ({
-    id: e.id,
-    sourceType: e.sourceType,
-    date: e.date,
-    label: e.label,
-    note: e.note,
-    amount: e.amount,
-    kind: e.kind,
-    source: e.source,
-  }))
-
-  const totals = data?.balances ?? { bank: 0, cash: 0, total: 0 }
 
   function addMovement(
     movement: CreateManualMovementInput,
@@ -103,9 +82,6 @@ export function SavingsProvider({ children }: { children: React.ReactNode }) {
         setOpen,
         currentRow,
         setCurrentRow,
-        history,
-        totals,
-        isLoading,
         addMovement,
         deleteMovement,
       }}
