@@ -85,28 +85,6 @@ export const ownerSummarySchema = z.object({
 })
 export type OwnerSummary = z.infer<typeof ownerSummarySchema>
 
-export const reversementRepaymentSchema = z.object({
-  id: z.string(),
-  amount: z.coerce.number(),
-  date: z.coerce.date(),
-  note: z.string().nullable().optional(),
-})
-
-export const reversementSchema = z.object({
-  debtId: z.string(),
-  contactId: z.string(),
-  contactFirstName: z.string(),
-  contactLastName: z.string().nullable(),
-  direction: z.enum(['LENDER', 'BORROWER']),
-  origin: z.string(),
-  amountDue: z.coerce.number(),
-  amountPaid: z.coerce.number(),
-  remaining: z.coerce.number(),
-  isSettled: z.boolean(),
-  repayments: z.array(reversementRepaymentSchema).default([]),
-})
-export type Reversement = z.infer<typeof reversementSchema>
-
 export const vehicleDetailSchema = vehicleSchema.extend({
   totalExpenses: z.coerce.number().optional().default(0),
   expenses: z.array(expenseSchema),
@@ -125,6 +103,5 @@ export const vehicleDetailSchema = vehicleSchema.extend({
     owner: ownerSummarySchema,
     participants: z.array(participantSummarySchema),
   }),
-  reversements: z.array(reversementSchema).default([]),
 })
 export type VehicleDetail = z.infer<typeof vehicleDetailSchema>

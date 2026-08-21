@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { getRouteApi, Link } from '@tanstack/react-router'
 import { Cross2Icon } from '@radix-ui/react-icons'
 import {
@@ -11,6 +11,7 @@ import {
   TrendingUp,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useTableUrlState } from '@/hooks/use-table-url-state'
 import { centsToEuros } from '@/lib/money'
 import { cn, formatPersonName } from '@/lib/utils'
 import { useAuthStore } from '@/stores/auth-store'
@@ -44,6 +45,10 @@ import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { useGetDettes } from '@/features/dettes/api/dettes-api'
+import { DettesDialogs } from '@/features/dettes/components/dettes-dialogs'
+import { DettesProvider } from '@/features/dettes/components/dettes-provider'
+import { DettesTable } from '@/features/dettes/components/dettes-table'
 import {
   useGetVehicleDetail,
   useDeleteExpense,
@@ -52,7 +57,6 @@ import {
 import { statusColorMap } from '../data/data'
 import { type Expense, type VehicleEvent } from '../data/schema'
 import { PayersCell } from './components/payers-cell'
-import { ReversementsSection } from './components/reversements-section'
 import { VehicleDetailDialogs } from './components/vehicle-detail-dialogs'
 import {
   VehicleDetailProvider,
@@ -63,11 +67,58 @@ type ExpenseGroup = { dateKey: string; date: Date; expenses: Expense[] }
 
 const route = getRouteApi('/_authenticated/vehicles/$vehicleId')
 
+// Same mapping as features/dettes/index.tsx — the debts table embedded on
+// this page is the exact same component, just pre-filtered to this vehicle.
+const SORT_COLUMN_TO_API = {
+  personne: 'contactName',
+  amount: 'amount',
+  date: 'date',
+} as const
+
 function VehicleDetailContent() {
   const { vehicleId } = route.useParams()
+  const search = route.useSearch()
+  const navigate = route.useNavigate()
   const { setOpen, setCurrentExpense, setCurrentVehicleEvent } =
     useVehicleDetail()
   const { data: vehicle, isLoading } = useGetVehicleDetail(vehicleId)
+  const {
+    pagination: dettesPagination,
+    onPaginationChange: onDettesPaginationChange,
+    sorting: dettesSorting,
+    onSortingChange: onDettesSortingChange,
+    ensurePageInRange: ensureDettesPageInRange,
+  } = useTableUrlState({
+    search,
+    navigate,
+    pagination: { defaultPage: 1, defaultPageSize: 10 },
+    globalFilter: { enabled: false },
+    sorting: {
+      columnIdToSortBy: SORT_COLUMN_TO_API,
+      defaultSortBy: 'date',
+      defaultSortOrder: 'desc',
+    },
+  })
+  const dettesActiveSort = dettesSorting[0]
+  // Every debt tied to this vehicle, settled or not — there's no status
+  // filter exposed here, so it defaults to 'en cours' otherwise.
+  const { data: vehicleDettesPage, isLoading: isVehicleDettesLoading } =
+    useGetDettes({
+      vehicleId,
+      status: 'tous',
+      pageIndex: dettesPagination.pageIndex,
+      pageSize: dettesPagination.pageSize,
+      sortBy: dettesActiveSort
+        ? SORT_COLUMN_TO_API[
+            dettesActiveSort.id as keyof typeof SORT_COLUMN_TO_API
+          ]
+        : undefined,
+      sortOrder: dettesActiveSort
+        ? dettesActiveSort.desc
+          ? 'desc'
+          : 'asc'
+        : undefined,
+    })
   const { mutate: deleteExpense, isPending: isDeletingExpense } =
     useDeleteExpense(vehicleId)
   const { mutate: deleteVehicleEvent, isPending: isDeletingEvent } =
@@ -80,6 +131,17 @@ function VehicleDetailContent() {
   const [payerFilter, setPayerFilter] = useState('all')
   const { auth } = useAuthStore()
   const ownerId = auth.user?.accountNo ?? ''
+  // role isn't returned by the API — resolved client-side against the
+  // current account, same as features/dettes/index.tsx.
+  const vehicleDettes = useMemo(
+    () =>
+      (vehicleDettesPage?.data ?? []).map((d) => ({
+        ...d,
+        role:
+          d.lenderId === ownerId ? ('lent' as const) : ('borrowed' as const),
+      })),
+    [vehicleDettesPage, ownerId]
+  )
 
   if (isLoading) {
     return (
@@ -619,12 +681,26 @@ function VehicleDetailContent() {
           )}
         </div>
 
-        {vehicle.reversements.length > 0 && (
-          <ReversementsSection
-            reversements={vehicle.reversements}
-            vehicleId={vehicle.id}
-            vehicleName={vehicle.name}
-          />
+        {(vehicleDettesPage?.count ?? 0) > 0 && (
+          <DettesProvider>
+            <div className='space-y-3'>
+              <h3 className='font-semibold'>Dettes liées à ce véhicule</h3>
+              <DettesTable
+                data={vehicleDettes}
+                rowCount={vehicleDettesPage?.count ?? 0}
+                isLoading={isVehicleDettesLoading}
+                search={search}
+                navigate={navigate}
+                pagination={dettesPagination}
+                onPaginationChange={onDettesPaginationChange}
+                sorting={dettesSorting}
+                onSortingChange={onDettesSortingChange}
+                ensurePageInRange={ensureDettesPageInRange}
+                showFilters={false}
+              />
+            </div>
+            <DettesDialogs />
+          </DettesProvider>
         )}
       </Main>
 

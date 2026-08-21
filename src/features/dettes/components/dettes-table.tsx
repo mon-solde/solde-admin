@@ -48,6 +48,10 @@ type DataTableProps = Pick<
   isLoading?: boolean
   search: Record<string, unknown>
   navigate: NavigateFn
+  // Off when this table is embedded somewhere the filters don't make sense
+  // (e.g. a single vehicle's page, where "Véhicule" would be redundant) —
+  // on by default so the main Dettes page is unaffected.
+  showFilters?: boolean
 }
 
 export function DettesTable({
@@ -61,6 +65,7 @@ export function DettesTable({
   sorting,
   onSortingChange,
   ensurePageInRange,
+  showFilters = true,
 }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -160,66 +165,68 @@ export function DettesTable({
         'flex flex-1 flex-col gap-4'
       )}
     >
-      <div className='flex items-center justify-between'>
-        <div className='flex flex-1 flex-wrap items-center gap-2'>
-          <div className='w-[220px]'>
-            <ContactCombobox value={contactId} onChange={onContactIdChange} />
-          </div>
-          <Select value={type || FILTER_ALL} onValueChange={onTypeChange}>
-            <SelectTrigger className='h-8 w-[150px]'>
-              <SelectValue placeholder='Direction' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={FILTER_ALL}>Toutes les directions</SelectItem>
-              {detteTypes.map((t) => (
-                <SelectItem key={t.value} value={t.value}>
-                  {t.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={status} onValueChange={onStatusChange}>
-            <SelectTrigger className='h-8 w-[150px]'>
-              <SelectValue placeholder='Statut' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value='tous'>Tous les statuts</SelectItem>
-              {detteStatuses.map((s) => (
-                <SelectItem key={s.value} value={s.value}>
-                  {s.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select
-            value={vehicleId || FILTER_ALL}
-            onValueChange={onVehicleIdChange}
-          >
-            <SelectTrigger className='h-8 w-[180px]'>
-              <SelectValue placeholder='Véhicule' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={FILTER_ALL}>Tous les véhicules</SelectItem>
-              {vehicles.map((v) => (
-                <SelectItem key={v.id} value={v.id}>
-                  {v.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {isFiltered && (
-            <Button
-              variant='ghost'
-              onClick={resetFilters}
-              className='h-8 px-2 lg:px-3'
+      {showFilters && (
+        <div className='flex items-center justify-between'>
+          <div className='flex flex-1 flex-wrap items-center gap-2'>
+            <div className='w-[220px]'>
+              <ContactCombobox value={contactId} onChange={onContactIdChange} />
+            </div>
+            <Select value={type || FILTER_ALL} onValueChange={onTypeChange}>
+              <SelectTrigger className='h-8 w-[150px]'>
+                <SelectValue placeholder='Direction' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={FILTER_ALL}>Toutes les directions</SelectItem>
+                {detteTypes.map((t) => (
+                  <SelectItem key={t.value} value={t.value}>
+                    {t.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={status} onValueChange={onStatusChange}>
+              <SelectTrigger className='h-8 w-[150px]'>
+                <SelectValue placeholder='Statut' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='tous'>Tous les statuts</SelectItem>
+                {detteStatuses.map((s) => (
+                  <SelectItem key={s.value} value={s.value}>
+                    {s.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
+              value={vehicleId || FILTER_ALL}
+              onValueChange={onVehicleIdChange}
             >
-              Réinitialiser
-              <Cross2Icon className='ms-2 h-4 w-4' />
-            </Button>
-          )}
+              <SelectTrigger className='h-8 w-[180px]'>
+                <SelectValue placeholder='Véhicule' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={FILTER_ALL}>Tous les véhicules</SelectItem>
+                {vehicles.map((v) => (
+                  <SelectItem key={v.id} value={v.id}>
+                    {v.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {isFiltered && (
+              <Button
+                variant='ghost'
+                onClick={resetFilters}
+                className='h-8 px-2 lg:px-3'
+              >
+                Réinitialiser
+                <Cross2Icon className='ms-2 h-4 w-4' />
+              </Button>
+            )}
+          </div>
+          <DataTableViewOptions table={table} />
         </div>
-        <DataTableViewOptions table={table} />
-      </div>
+      )}
       <div className='overflow-hidden rounded-md border'>
         <Table>
           <TableHeader>

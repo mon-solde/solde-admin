@@ -186,29 +186,6 @@ export function useUpdateVehicleParticipants(vehicleId: string) {
   })
 }
 
-export function useAddReversement(vehicleId: string) {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: (data: {
-      debtId: string
-      amount: number
-      date: string
-      note?: string
-      source: 'BANK' | 'CASH' | 'BOTH'
-      bankSplitAmount?: number
-    }) =>
-      apiClient.post(`/v1/debts/${data.debtId}/repayments`, {
-        amount: data.amount,
-        date: data.date,
-        note: data.note,
-        source: data.source,
-        bankSplitAmount: data.bankSplitAmount,
-      }),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: vehicleDetailKey(vehicleId) }),
-  })
-}
-
 export function useDeclareSale(vehicleId: string) {
   const queryClient = useQueryClient()
   return useMutation({
