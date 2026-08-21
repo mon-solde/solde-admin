@@ -100,12 +100,15 @@ function VehicleDetailContent() {
     },
   })
   const dettesActiveSort = dettesSorting[0]
-  // Every debt tied to this vehicle, settled or not — there's no status
-  // filter exposed here, so it defaults to 'en cours' otherwise.
+  // Same filters as the Dettes page (contactId/type/status), minus
+  // vehicleId which stays fixed to this vehicle — same 'en cours' default
+  // too, since status is left undefined until the user picks something.
   const { data: vehicleDettesPage, isLoading: isVehicleDettesLoading } =
     useGetDettes({
       vehicleId,
-      status: 'tous',
+      contactId: search.contactId,
+      type: search.type,
+      status: search.status,
       pageIndex: dettesPagination.pageIndex,
       pageSize: dettesPagination.pageSize,
       sortBy: dettesActiveSort
@@ -681,27 +684,25 @@ function VehicleDetailContent() {
           )}
         </div>
 
-        {(vehicleDettesPage?.count ?? 0) > 0 && (
-          <DettesProvider>
-            <div className='space-y-3'>
-              <h3 className='font-semibold'>Dettes liées à ce véhicule</h3>
-              <DettesTable
-                data={vehicleDettes}
-                rowCount={vehicleDettesPage?.count ?? 0}
-                isLoading={isVehicleDettesLoading}
-                search={search}
-                navigate={navigate}
-                pagination={dettesPagination}
-                onPaginationChange={onDettesPaginationChange}
-                sorting={dettesSorting}
-                onSortingChange={onDettesSortingChange}
-                ensurePageInRange={ensureDettesPageInRange}
-                showFilters={false}
-              />
-            </div>
-            <DettesDialogs />
-          </DettesProvider>
-        )}
+        <DettesProvider>
+          <div className='space-y-3'>
+            <h3 className='font-semibold'>Dettes liées à ce véhicule</h3>
+            <DettesTable
+              data={vehicleDettes}
+              rowCount={vehicleDettesPage?.count ?? 0}
+              isLoading={isVehicleDettesLoading}
+              search={search}
+              navigate={navigate}
+              pagination={dettesPagination}
+              onPaginationChange={onDettesPaginationChange}
+              sorting={dettesSorting}
+              onSortingChange={onDettesSortingChange}
+              ensurePageInRange={ensureDettesPageInRange}
+              hideVehicleFilter
+            />
+          </div>
+          <DettesDialogs />
+        </DettesProvider>
       </Main>
 
       <VehicleDetailDialogs vehicle={vehicle} />
