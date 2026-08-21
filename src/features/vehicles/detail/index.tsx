@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { getRouteApi, Link } from '@tanstack/react-router'
+import { Cross2Icon } from '@radix-ui/react-icons'
 import {
   ArrowLeft,
   CheckCircle2,
@@ -169,6 +170,10 @@ function VehicleDetailContent() {
     return matchesSearch && matchesPayer
   })
   const hasActiveFilter = Boolean(normalizedSearch) || payerFilter !== 'all'
+  const resetExpenseFilters = () => {
+    setExpenseSearch('')
+    setPayerFilter('all')
+  }
 
   // `vehicle.expenses` is already sorted by the backend (date desc, then
   // createdAt desc as a same-day tie-break), so consecutive same-day
@@ -459,6 +464,17 @@ function VehicleDetailContent() {
                   ))}
                 </SelectContent>
               </Select>
+              {hasActiveFilter && (
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  onClick={resetExpenseFilters}
+                  className='h-8 px-2 lg:px-3'
+                >
+                  Réinitialiser
+                  <Cross2Icon className='ms-2 h-4 w-4' />
+                </Button>
+              )}
             </div>
 
             {expenseGroups.length > 0 ? (
