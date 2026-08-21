@@ -94,9 +94,11 @@ export const reversementRepaymentSchema = z.object({
 
 export const reversementSchema = z.object({
   debtId: z.string(),
-  recipientId: z.string(),
-  recipientFirstName: z.string(),
-  recipientLastName: z.string().nullable(),
+  contactId: z.string(),
+  contactFirstName: z.string(),
+  contactLastName: z.string().nullable(),
+  direction: z.enum(['LENDER', 'BORROWER']),
+  origin: z.string(),
   amountDue: z.coerce.number(),
   amountPaid: z.coerce.number(),
   remaining: z.coerce.number(),

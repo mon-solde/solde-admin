@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { CheckCircle2, Clock } from 'lucide-react'
+import { ArrowDownLeft, ArrowUpRight, CheckCircle2, Clock } from 'lucide-react'
 import { centsToEuros } from '@/lib/money'
-import { cn } from '@/lib/utils'
+import { cn, formatPersonName } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -33,12 +33,14 @@ export function ReversementsSection({
   return (
     <>
       <div className='space-y-3'>
-        <h3 className='font-semibold'>Reversements</h3>
+        <h3 className='font-semibold'>Dettes liées à ce véhicule</h3>
         <div className='overflow-hidden rounded-md border'>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Bénéficiaire</TableHead>
+                <TableHead>Direction</TableHead>
+                <TableHead>Personne</TableHead>
+                <TableHead>Origine</TableHead>
                 <TableHead className='text-end'>Dû</TableHead>
                 <TableHead className='text-end'>Versé</TableHead>
                 <TableHead className='text-end'>Reste</TableHead>
@@ -49,8 +51,24 @@ export function ReversementsSection({
             <TableBody>
               {reversements.map((r) => (
                 <TableRow key={r.debtId}>
+                  <TableCell>
+                    {r.direction === 'LENDER' ? (
+                      <Badge className='gap-1 border border-emerald-200 bg-emerald-100 text-emerald-700 shadow-none hover:bg-emerald-100'>
+                        <ArrowUpRight size={11} strokeWidth={2.5} />
+                        On me doit
+                      </Badge>
+                    ) : (
+                      <Badge className='gap-1 border border-rose-200 bg-rose-100 text-rose-600 shadow-none hover:bg-rose-100'>
+                        <ArrowDownLeft size={11} strokeWidth={2.5} />
+                        Je dois
+                      </Badge>
+                    )}
+                  </TableCell>
                   <TableCell className='font-medium'>
-                    {r.recipientFirstName} {r.recipientLastName}
+                    {formatPersonName(r.contactFirstName, r.contactLastName)}
+                  </TableCell>
+                  <TableCell className='text-muted-foreground'>
+                    {r.origin}
                   </TableCell>
                   <TableCell className='text-end'>
                     {centsToEuros(r.amountDue).toLocaleString('fr-FR', {

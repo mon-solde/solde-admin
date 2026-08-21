@@ -618,15 +618,15 @@ function VehicleDetailContent() {
             </div>
           )}
         </div>
-      </Main>
 
-      {isSold && vehicle.reversements.length > 0 && (
-        <ReversementsSection
-          reversements={vehicle.reversements}
-          vehicleId={vehicle.id}
-          vehicleName={vehicle.name}
-        />
-      )}
+        {vehicle.reversements.length > 0 && (
+          <ReversementsSection
+            reversements={vehicle.reversements}
+            vehicleId={vehicle.id}
+            vehicleName={vehicle.name}
+          />
+        )}
+      </Main>
 
       <VehicleDetailDialogs vehicle={vehicle} />
 
