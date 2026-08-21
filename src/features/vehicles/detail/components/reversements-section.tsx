@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { CheckCircle2, Clock } from 'lucide-react'
+import { centsToEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -52,13 +53,13 @@ export function ReversementsSection({
                     {r.recipientFirstName} {r.recipientLastName}
                   </TableCell>
                   <TableCell className='text-end'>
-                    {r.amountDue.toLocaleString('fr-FR', {
+                    {centsToEuros(r.amountDue).toLocaleString('fr-FR', {
                       maximumFractionDigits: 2,
                     })}{' '}
                     €
                   </TableCell>
                   <TableCell className='text-end text-muted-foreground'>
-                    {r.amountPaid.toLocaleString('fr-FR', {
+                    {centsToEuros(r.amountPaid).toLocaleString('fr-FR', {
                       maximumFractionDigits: 2,
                     })}{' '}
                     €
@@ -71,7 +72,7 @@ export function ReversementsSection({
                   >
                     {r.isSettled
                       ? '—'
-                      : `${r.remaining.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} €`}
+                      : `${centsToEuros(r.remaining).toLocaleString('fr-FR', { maximumFractionDigits: 2 })} €`}
                   </TableCell>
                   <TableCell>
                     {r.isSettled ? (

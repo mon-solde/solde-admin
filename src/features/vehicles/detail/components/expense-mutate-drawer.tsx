@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusIcon, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
+import { centsToEuros, eurosToCents } from '@/lib/money'
 import { formatPersonName } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { DecimalInput } from '@/components/ui/decimal-input'
@@ -86,7 +87,7 @@ export function ExpenseMutateDrawer({
           date: currentExpense.date.toISOString().split('T')[0],
           payers: currentExpense.payers.map((p) => ({
             payerId: p.payerId,
-            amount: p.amount,
+            amount: centsToEuros(p.amount),
             source: p.source ?? ('BANK' as const),
             imputedToId: p.imputedToId ?? undefined,
           })),
@@ -124,6 +125,7 @@ export function ExpenseMutateDrawer({
       // contact's money never touches your tracked balances.
       payers: data.payers.map((p) => ({
         ...p,
+        amount: eurosToCents(p.amount),
         source: p.payerId === ownerId ? p.source : undefined,
       })),
     }

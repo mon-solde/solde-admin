@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { centsToEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
@@ -53,7 +54,7 @@ export function BudgetSavingsCard({
                 availableForSavings >= 0 ? 'text-green-600' : 'text-red-600'
               )}
             >
-              {formatEuros(availableForSavings)}
+              {formatEuros(centsToEuros(availableForSavings))}
             </span>
           </div>
 
@@ -68,7 +69,7 @@ export function BudgetSavingsCard({
               Mis de côté ce mois
             </span>
             <span className='font-semibold text-green-600'>
-              {formatEuros(totalSaved)}
+              {formatEuros(centsToEuros(totalSaved))}
             </span>
           </button>
 
@@ -82,7 +83,7 @@ export function BudgetSavingsCard({
                 remainingToSave <= 0 ? 'text-green-600' : 'text-amber-600'
               )}
             >
-              {formatEuros(remainingToSave)}
+              {formatEuros(centsToEuros(remainingToSave))}
             </span>
           </div>
         </CardContent>

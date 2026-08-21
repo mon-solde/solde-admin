@@ -1,3 +1,4 @@
+import { eurosToCents } from '@/lib/money'
 import { useAddSavingsWithdrawal } from '../api/budget-api'
 import { type MonthlyBudget, type SavingsDestination } from '../data/schema'
 
@@ -24,7 +25,7 @@ export function useBudgetState(budget: MonthlyBudget) {
   }) {
     mutateAddWithdrawal({
       budgetId: budget.id,
-      amount: withdrawal.amount,
+      amount: eurosToCents(withdrawal.amount),
       destination: withdrawal.destination,
       withdrawalDate: withdrawal.withdrawalDate.toISOString().split('T')[0],
     })

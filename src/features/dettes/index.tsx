@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { getRouteApi } from '@tanstack/react-router'
+import { centsToEuros } from '@/lib/money'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
 import { useAuthStore } from '@/stores/auth-store'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
@@ -128,7 +129,7 @@ export function Dettes() {
                 On me doit
               </Label>
               <CardTitle className='text-2xl font-bold text-emerald-600 tabular-nums'>
-                +{fmt.format(onMeDoit)}
+                +{fmt.format(centsToEuros(onMeDoit))}
               </CardTitle>
               <Label className='text-xs text-muted-foreground'>
                 {nbPrets} prêt{nbPrets !== 1 ? 's' : ''}
@@ -142,7 +143,7 @@ export function Dettes() {
                 Je dois
               </Label>
               <CardTitle className='text-2xl font-bold text-rose-500 tabular-nums'>
-                -{fmt.format(jeDois)}
+                -{fmt.format(centsToEuros(jeDois))}
               </CardTitle>
               <Label className='text-xs text-muted-foreground'>
                 {nbEmprunts} emprunt{nbEmprunts !== 1 ? 's' : ''}
@@ -159,7 +160,7 @@ export function Dettes() {
                 className={`text-2xl font-bold tabular-nums ${net >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}
               >
                 {net >= 0 ? '+' : ''}
-                {fmt.format(net)}
+                {fmt.format(centsToEuros(net))}
               </CardTitle>
               <Label className='text-xs text-muted-foreground'>
                 {net >= 0 ? 'En votre faveur' : 'En votre défaveur'}

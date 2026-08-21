@@ -12,6 +12,7 @@ import {
   SplitSquareHorizontal,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { eurosToCents } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -152,11 +153,11 @@ export function DettesMutateDrawer({
       {
         role,
         personId: data.personId,
-        amount: data.amount,
+        amount: eurosToCents(data.amount),
         date: data.date,
         description: data.description || undefined,
-        bankAmount,
-        cashAmount,
+        bankAmount: eurosToCents(bankAmount),
+        cashAmount: eurosToCents(cashAmount),
       },
       {
         onSuccess: () => {

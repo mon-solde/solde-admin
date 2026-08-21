@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
+import { eurosToCents } from '@/lib/money'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -56,7 +57,7 @@ export function BudgetInitMonthDialog({
 
   function handleSubmit(values: FormValues) {
     initMonth(
-      { year, month, receivedSalary: values.receivedSalary },
+      { year, month, receivedSalary: eurosToCents(values.receivedSalary) },
       {
         onSuccess: () => {
           form.reset()

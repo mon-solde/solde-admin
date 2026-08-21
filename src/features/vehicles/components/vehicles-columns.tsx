@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { type ColumnDef } from '@tanstack/react-table'
+import { centsToEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -112,7 +113,7 @@ export const vehiclesColumns: ColumnDef<Vehicle>[] = [
     accessorKey: 'totalExpenses',
     cell: ({ row }) => (
       <span className='font-medium'>
-        {row.original.totalExpenses.toLocaleString('fr-FR')} €
+        {centsToEuros(row.original.totalExpenses).toLocaleString('fr-FR')} €
       </span>
     ),
     // Computed by summing every expense payer's amount for the vehicle —

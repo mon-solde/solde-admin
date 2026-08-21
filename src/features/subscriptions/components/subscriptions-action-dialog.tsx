@@ -6,6 +6,7 @@ import {
   useAddRecurringChargeToBudget,
   useGetMonthlyBudget,
 } from '@/features/budget/api/budget-api'
+import { centsToEuros, eurosToCents } from '@/lib/money'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DecimalInput } from '@/components/ui/decimal-input'
@@ -86,7 +87,7 @@ export function SubscriptionsActionDialog({
     defaultValues: currentRow
       ? {
           name: currentRow.name,
-          amount: currentRow.amount,
+          amount: centsToEuros(currentRow.amount),
           type: currentRow.type,
           dueDay: currentRow.dueDay ?? 1,
         }
@@ -104,7 +105,7 @@ export function SubscriptionsActionDialog({
   function handleSubmit(values: SubscriptionFormValues) {
     const payload = {
       name: values.name,
-      amount: values.amount,
+      amount: eurosToCents(values.amount),
       type: values.type,
       dueDay: isManual ? undefined : values.dueDay,
     }

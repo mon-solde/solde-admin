@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { toast } from 'sonner'
+import { eurosToCents } from '@/lib/money'
 import useDialogState from '@/hooks/use-dialog-state'
 import { useCreateSavingsEvent, useDeleteSavingsEvent } from '../api/savings-api'
 import { type SavingsHistoryEntry } from '../data/data'
@@ -45,7 +46,7 @@ export function SavingsProvider({ children }: { children: React.ReactNode }) {
       {
         kind: movement.kind.toUpperCase() as 'ADDITION' | 'WITHDRAWAL',
         source: movement.source.toUpperCase() as 'BANK' | 'CASH',
-        amount: movement.amount,
+        amount: eurosToCents(movement.amount),
         label: movement.label,
         date: movement.date.toISOString().split('T')[0],
       },

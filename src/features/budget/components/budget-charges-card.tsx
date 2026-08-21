@@ -1,3 +1,4 @@
+import { centsToEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -41,7 +42,7 @@ export function BudgetChargesCard({ entries }: BudgetChargesCardProps) {
             </div>
             <div className='flex items-center gap-3'>
               <span className='text-sm font-medium'>
-                {formatEuros(entry.amount)}
+                {formatEuros(centsToEuros(entry.amount))}
               </span>
               <Badge
                 variant='outline'

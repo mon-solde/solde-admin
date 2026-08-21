@@ -1,4 +1,5 @@
 import { toast } from 'sonner'
+import { centsToEuros, eurosToCents } from '@/lib/money'
 import { PaymentDrawer } from '@/components/payment-drawer'
 import { useAddReversement } from '../../api/vehicles-api'
 import { type Reversement } from '../../data/schema'
@@ -34,17 +35,28 @@ export function ReversementDrawer({
           — <strong>{vehicleName}</strong>
         </>
       }
-      amountDue={reversement.amountDue}
-      amountPaid={reversement.amountPaid}
-      remaining={reversement.remaining}
-      repayments={reversement.repayments}
+      amountDue={centsToEuros(reversement.amountDue)}
+      amountPaid={centsToEuros(reversement.amountPaid)}
+      remaining={centsToEuros(reversement.remaining)}
+      repayments={reversement.repayments.map((r) => ({
+        ...r,
+        amount: centsToEuros(r.amount),
+      }))}
       isPending={isPending}
       sourceSelectorLabel="D'où vient cet argent ?"
       paidLabel='Versé'
       remainingLabel='Reste à verser'
       onSubmit={(data) =>
         addReversement(
-          { debtId: reversement.debtId, ...data },
+          {
+            debtId: reversement.debtId,
+            ...data,
+            amount: eurosToCents(data.amount),
+            bankSplitAmount:
+              data.bankSplitAmount !== undefined
+                ? eurosToCents(data.bankSplitAmount)
+                : undefined,
+          },
           {
             onSuccess: () => toast.success('Versement enregistré.'),
             onError: (error: any) =>

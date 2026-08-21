@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from '@tanstack/react-router'
 import { Loader2 } from 'lucide-react'
+import { eurosToCents } from '@/lib/money'
 import { Button } from '@/components/ui/button'
 import { DecimalInput } from '@/components/ui/decimal-input'
 import {
@@ -80,7 +81,7 @@ export function BudgetListActionDialog({
       {
         year: values.year,
         month: values.month,
-        receivedSalary: values.receivedSalary,
+        receivedSalary: eurosToCents(values.receivedSalary),
       },
       {
         onSuccess: () => {

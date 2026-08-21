@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { centsToEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { DecimalInput } from '@/components/ui/decimal-input'
@@ -106,14 +107,14 @@ export function BudgetSavingsSheet({
           <SheetTitle>Épargne mise de côté</SheetTitle>
           <SheetDescription>
             {FRENCH_MONTHS[month - 1]} {year} · Disponible :{' '}
-            {formatEuros(availableForSavings)}
+            {formatEuros(centsToEuros(availableForSavings))}
           </SheetDescription>
         </SheetHeader>
 
         <div className='space-y-2 pb-4'>
           <div className='flex items-center justify-between text-sm'>
             <span className='text-muted-foreground'>
-              {formatEuros(totalSaved)} retirés
+              {formatEuros(centsToEuros(totalSaved))} retirés
             </span>
             <span
               className={cn(
@@ -158,7 +159,7 @@ export function BudgetSavingsSheet({
                     </p>
                   </div>
                   <span className='font-semibold text-green-600'>
-                    {formatEuros(w.amount)}
+                    {formatEuros(centsToEuros(w.amount))}
                   </span>
                 </div>
               ))}

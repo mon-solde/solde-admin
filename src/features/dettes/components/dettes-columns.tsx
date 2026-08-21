@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { type ColumnDef } from '@tanstack/react-table'
 import { ArrowUpRight, ArrowDownLeft, Car } from 'lucide-react'
+import { centsToEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -108,7 +109,7 @@ export const dettesColumns: ColumnDef<Dette>[] = [
     ),
     cell: ({ row }) => (
       <Label className='cursor-default font-normal tabular-nums'>
-        {fmt.format(row.getValue<number>('amount'))}
+        {fmt.format(centsToEuros(row.getValue<number>('amount')))}
       </Label>
     ),
   },
@@ -130,7 +131,7 @@ export const dettesColumns: ColumnDef<Dette>[] = [
         )
       return (
         <Label className='cursor-default font-normal tabular-nums'>
-          {fmt.format(remaining)}
+          {fmt.format(centsToEuros(remaining))}
         </Label>
       )
     },

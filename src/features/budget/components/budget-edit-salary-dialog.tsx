@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
+import { centsToEuros, eurosToCents } from '@/lib/money'
 import { Button } from '@/components/ui/button'
 import { DecimalInput } from '@/components/ui/decimal-input'
 import {
@@ -46,13 +47,13 @@ export function BudgetEditSalaryDialog({
 
   const form = useForm<EditSalaryFormValues>({
     resolver: zodResolver(editSalaryFormSchema),
-    defaultValues: { receivedSalary: currentSalary },
+    defaultValues: { receivedSalary: centsToEuros(currentSalary) },
   })
 
   function handleSubmit(values: EditSalaryFormValues) {
     if (!budgetId) return
     updateSalary(
-      { id: budgetId, receivedSalary: values.receivedSalary },
+      { id: budgetId, receivedSalary: eurosToCents(values.receivedSalary) },
       {
         onSuccess: () => {
           form.reset()

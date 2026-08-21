@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Info, TrendingDown, TrendingUp } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
+import { centsToEuros, eurosToCents } from '@/lib/money'
 import { formatPersonName } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { DecimalInput } from '@/components/ui/decimal-input'
@@ -34,29 +35,31 @@ type ProfitShareBeneficiary = { contactId: string; profitShare: number }
 // more of the car someone owns, the more of the gain they get. A deficit is
 // split equally instead: an unexpected loss isn't scaled by ownership,
 // everyone bears the same amount regardless of profitShare or what they
-// personally invested.
+// personally invested. Either way, rounding each share to the nearest cent
+// independently can leave the shares a cent or two short of (or over) the
+// total — the last beneficiary absorbs that remainder so shares always sum
+// back to the exact amount (mirrors profit-sharing.ts on the backend, which
+// computes the real settlement this only previews).
 function computeProfitShares(
   profit: number,
   beneficiaries: ProfitShareBeneficiary[]
 ): Map<string, number> {
-  if (profit >= 0) {
-    return new Map(
-      beneficiaries.map((b) => [b.contactId, (profit * b.profitShare) / 100])
-    )
-  }
+  if (beneficiaries.length === 0) return new Map()
 
-  const deficit = -profit
-  const rawShare = deficit / beneficiaries.length
-  const roundedShare = Math.round(rawShare * 100) / 100
-  const roundingRemainder =
-    Math.round((deficit - roundedShare * beneficiaries.length) * 100) / 100
+  const amount = Math.abs(profit)
+  const sign = profit >= 0 ? 1 : -1
+  const rawShares =
+    profit >= 0
+      ? beneficiaries.map((b) => Math.round((amount * b.profitShare) / 100))
+      : beneficiaries.map(() => Math.round(amount / beneficiaries.length))
+  const remainder = amount - rawShares.reduce((sum, cents) => sum + cents, 0)
 
   return new Map(
     beneficiaries.map((b, index) => [
       b.contactId,
-      -(index === beneficiaries.length - 1
-        ? roundedShare + roundingRemainder
-        : roundedShare),
+      sign *
+        (rawShares[index] +
+          (index === beneficiaries.length - 1 ? remainder : 0)),
     ])
   )
 }
@@ -94,11 +97,16 @@ export function DeclareSoldDialog({
   const cashierIsOwner = cashierId === ownerId
 
   const { financialSummary } = vehicle
+  // financialSummary is in cents (from the API) — the user types euros, so
+  // every computation below (profit, shares, breakdowns) works in cents,
+  // only converted back to euros at display time.
   const salePriceNum = Number.isNaN(salePrice) ? 0 : salePrice
   const bankSplitNum = Number.isNaN(bankSplit) ? 0 : bankSplit
-  const cashComputed = Math.max(0, salePriceNum - bankSplitNum)
+  const salePriceCents = eurosToCents(salePriceNum)
+  const bankSplitCents = eurosToCents(bankSplitNum)
+  const cashComputedCents = Math.max(0, salePriceCents - bankSplitCents)
   const profit =
-    salePriceNum > 0 ? salePriceNum - financialSummary.totalExpenses : null
+    salePriceCents > 0 ? salePriceCents - financialSummary.totalExpenses : null
   const isDeficit = profit !== null && profit < 0
 
   const profitShareBeneficiaries: ProfitShareBeneficiary[] = [
@@ -120,6 +128,8 @@ export function DeclareSoldDialog({
       ? computeProfitShares(profit, profitShareBeneficiaries)
       : new Map<string, number>()
 
+  // invested/profitAmount/total are converted to euros here, once, since
+  // everything below this point is display-only.
   const breakdown = vehicle.participants.map((p) => {
     const invested =
       financialSummary.participants.find((s) => s.contactId === p.contactId)
@@ -127,17 +137,19 @@ export function DeclareSoldDialog({
     const profitAmount = profitShareById.get(p.contactId) ?? 0
     return {
       ...p,
-      invested,
-      profitAmount,
-      total: invested + profitAmount,
+      invested: centsToEuros(invested),
+      profitAmount: centsToEuros(profitAmount),
+      total: centsToEuros(invested + profitAmount),
     }
   })
 
   const ownerProfitAmount = profitShareById.get(ownerId) ?? 0
   const ownerBreakdown = {
-    invested: financialSummary.owner.totalInvested,
-    profitAmount: ownerProfitAmount,
-    total: financialSummary.owner.totalInvested + ownerProfitAmount,
+    invested: centsToEuros(financialSummary.owner.totalInvested),
+    profitAmount: centsToEuros(ownerProfitAmount),
+    total: centsToEuros(
+      financialSummary.owner.totalInvested + ownerProfitAmount
+    ),
   }
 
   const reset = () => {
@@ -156,7 +168,7 @@ export function DeclareSoldDialog({
 
     if (!cashierIsOwner) {
       declareSale(
-        { salePrice: salePriceNum, soldAt, cashierId },
+        { salePrice: salePriceCents, soldAt, cashierId },
         {
           onSuccess: () => {
             toast.success('Vente déclarée.')
@@ -189,19 +201,19 @@ export function DeclareSoldDialog({
 
     const bankAmount =
       sourceType === 'BANK'
-        ? salePriceNum
+        ? salePriceCents
         : sourceType === 'CASH'
           ? 0
-          : bankSplitNum
+          : bankSplitCents
     const cashAmount =
       sourceType === 'CASH'
-        ? salePriceNum
+        ? salePriceCents
         : sourceType === 'BANK'
           ? 0
-          : cashComputed
+          : cashComputedCents
 
     declareSale(
-      { salePrice: salePriceNum, soldAt, cashierId, bankAmount, cashAmount },
+      { salePrice: salePriceCents, soldAt, cashierId, bankAmount, cashAmount },
       {
         onSuccess: () => {
           toast.success('Vente déclarée.')
@@ -230,7 +242,7 @@ export function DeclareSoldDialog({
           <DialogDescription>
             {vehicle.name} — Total investi :{' '}
             <span className='font-medium text-foreground'>
-              {financialSummary.totalExpenses.toLocaleString('fr-FR')} €
+              {centsToEuros(financialSummary.totalExpenses).toLocaleString('fr-FR')} €
             </span>
           </DialogDescription>
         </DialogHeader>
@@ -320,7 +332,7 @@ export function DeclareSoldDialog({
                   <div className='flex items-center justify-between text-sm text-muted-foreground'>
                     <span>Espèces</span>
                     <span className='font-medium text-foreground'>
-                      {cashComputed.toLocaleString('fr-FR')} €
+                      {centsToEuros(cashComputedCents).toLocaleString('fr-FR')} €
                     </span>
                   </div>
                   {vehicle.participants.length > 0 && (
@@ -357,8 +369,8 @@ export function DeclareSoldDialog({
                   >
                     {profit !== null
                       ? isDeficit
-                        ? `${Math.abs(profit).toLocaleString('fr-FR')} €`
-                        : `+${profit.toLocaleString('fr-FR')} €`
+                        ? `${centsToEuros(Math.abs(profit)).toLocaleString('fr-FR')} €`
+                        : `+${centsToEuros(profit).toLocaleString('fr-FR')} €`
                       : '—'}
                   </span>
                 </span>

@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { type ColumnDef } from '@tanstack/react-table'
+import { centsToEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { DataTableColumnHeader } from '@/components/data-table'
 import {
@@ -33,7 +34,9 @@ export const budgetListColumns: ColumnDef<MonthlyBudget>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='Salaire reçu' />
     ),
-    cell: ({ row }) => <span>{formatEuros(row.original.receivedSalary)}</span>,
+    cell: ({ row }) => (
+      <span>{formatEuros(centsToEuros(row.original.receivedSalary))}</span>
+    ),
   },
   {
     id: 'disponible',
@@ -47,7 +50,7 @@ export const budgetListColumns: ColumnDef<MonthlyBudget>[] = [
         <span
           className={cn(available >= 0 ? 'text-green-600' : 'text-red-600')}
         >
-          {formatEuros(available)}
+          {formatEuros(centsToEuros(available))}
         </span>
       )
     },

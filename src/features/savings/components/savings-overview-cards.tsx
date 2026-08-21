@@ -1,3 +1,4 @@
+import { centsToEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { formatEuros } from '../data/data'
@@ -19,7 +20,7 @@ export function SavingsOverviewCards({ balances }: SavingsOverviewCardsProps) {
         </CardHeader>
         <CardContent>
           <p className={cn('text-2xl font-bold', bank < 0 && 'text-red-600')}>
-            {formatEuros(bank)}
+            {formatEuros(centsToEuros(bank))}
           </p>
         </CardContent>
       </Card>
@@ -32,7 +33,7 @@ export function SavingsOverviewCards({ balances }: SavingsOverviewCardsProps) {
         </CardHeader>
         <CardContent>
           <p className={cn('text-2xl font-bold', cash < 0 && 'text-red-600')}>
-            {formatEuros(cash)}
+            {formatEuros(centsToEuros(cash))}
           </p>
         </CardContent>
       </Card>
@@ -50,7 +51,7 @@ export function SavingsOverviewCards({ balances }: SavingsOverviewCardsProps) {
               total < 0 ? 'text-red-600' : 'text-green-600'
             )}
           >
-            {formatEuros(total)}
+            {formatEuros(centsToEuros(total))}
           </p>
         </CardContent>
       </Card>

@@ -1,4 +1,5 @@
 import { ArrowRight } from 'lucide-react'
+import { centsToEuros } from '@/lib/money'
 import { Button } from '@/components/ui/button'
 import {
   Popover,
@@ -15,7 +16,7 @@ export function PayersCell({ payers }: PayersCellProps) {
   const delegations = payers.filter((p) => p.imputedToId)
   const summary =
     payers.length === 1 && delegations.length === 0
-      ? `${payers[0].firstName} ${payers[0].amount.toLocaleString('fr-FR')} €`
+      ? `${payers[0].firstName} ${centsToEuros(payers[0].amount).toLocaleString('fr-FR')} €`
       : delegations.length > 0
         ? `${payers.length} payeur${payers.length > 1 ? 's' : ''} (${delegations.length} délégation${delegations.length > 1 ? 's' : ''})`
         : `${payers.length} payeurs`
@@ -41,7 +42,7 @@ export function PayersCell({ payers }: PayersCellProps) {
             <div key={i} className='flex items-center gap-3 text-sm'>
               <span className='w-20 font-medium'>{p.firstName}</span>
               <span className='w-20 text-end tabular-nums'>
-                {p.amount.toLocaleString('fr-FR')} €
+                {centsToEuros(p.amount).toLocaleString('fr-FR')} €
               </span>
               {p.imputedToId && (
                 <span className='flex items-center gap-1 text-muted-foreground'>

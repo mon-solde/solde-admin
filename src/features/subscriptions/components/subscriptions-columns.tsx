@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { centsToEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -54,7 +55,7 @@ export const subscriptionsColumns: ColumnDef<Subscription>[] = [
     ),
     cell: ({ row }) => (
       <span className='font-medium'>
-        {formatAmountInEuros(row.original.amount)}
+        {formatAmountInEuros(centsToEuros(row.original.amount))}
       </span>
     ),
   },

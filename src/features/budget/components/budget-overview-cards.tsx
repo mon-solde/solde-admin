@@ -1,4 +1,5 @@
 import { Pencil } from 'lucide-react'
+import { centsToEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -53,7 +54,9 @@ export function BudgetOverviewCards({
           </Button>
         </CardHeader>
         <CardContent>
-          <p className='text-2xl font-bold'>{formatEuros(receivedSalary)}</p>
+          <p className='text-2xl font-bold'>
+            {formatEuros(centsToEuros(receivedSalary))}
+          </p>
         </CardContent>
       </Card>
 
@@ -65,7 +68,7 @@ export function BudgetOverviewCards({
         </CardHeader>
         <CardContent>
           <p className='text-2xl font-bold text-red-600'>
-            − {formatEuros(totalCharges)}
+            − {formatEuros(centsToEuros(totalCharges))}
           </p>
           <p className='mt-1 text-xs text-muted-foreground'>
             {totalCount} charge{totalCount > 1 ? 's' : ''}
@@ -93,7 +96,7 @@ export function BudgetOverviewCards({
               availableAfterDeductions >= 0 ? 'text-green-600' : 'text-red-600'
             )}
           >
-            {formatEuros(availableAfterDeductions)}
+            {formatEuros(centsToEuros(availableAfterDeductions))}
           </p>
         </CardContent>
       </Card>

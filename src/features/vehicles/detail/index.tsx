@@ -11,6 +11,7 @@ import {
   TrendingUp,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { centsToEuros } from '@/lib/money'
 import { cn, formatPersonName } from '@/lib/utils'
 import { useAuthStore } from '@/stores/auth-store'
 import { ConfirmDialog } from '@/components/confirm-dialog'
@@ -231,7 +232,7 @@ function VehicleDetailContent() {
             </CardHeader>
             <CardContent>
               <p className='text-2xl font-bold'>
-                {financialSummary.totalExpenses.toLocaleString('fr-FR')} €
+                {centsToEuros(financialSummary.totalExpenses).toLocaleString('fr-FR')} €
               </p>
               <p className='text-xs text-muted-foreground'>
                 {vehicle.expenses.length} dépense
@@ -250,7 +251,7 @@ function VehicleDetailContent() {
               {vehicle.soldVehicle ? (
                 <>
                   <p className='text-2xl font-bold text-green-600'>
-                    {vehicle.soldVehicle.salePrice.toLocaleString('fr-FR')} €
+                    {centsToEuros(vehicle.soldVehicle.salePrice).toLocaleString('fr-FR')} €
                   </p>
                   <p className='text-xs text-muted-foreground'>
                     Vendu le{' '}
@@ -300,7 +301,7 @@ function VehicleDetailContent() {
                     )}
                   >
                     {financialSummary.profit >= 0 ? '+' : ''}
-                    {financialSummary.profit.toLocaleString('fr-FR')} €
+                    {centsToEuros(financialSummary.profit).toLocaleString('fr-FR')} €
                   </p>
                   <p className='text-xs text-muted-foreground'>
                     Après dépenses et prix d&apos;achat
@@ -376,15 +377,15 @@ function VehicleDetailContent() {
                       </Badge>
                     </TableCell>
                     <TableCell className='text-end'>
-                      {financialSummary.owner.totalInvested.toLocaleString(
-                        'fr-FR'
-                      )}{' '}
+                      {centsToEuros(
+                        financialSummary.owner.totalInvested
+                      ).toLocaleString('fr-FR')}{' '}
                       €
                     </TableCell>
                     {isSold && (
                       <TableCell className='text-end font-medium text-green-600'>
                         {financialSummary.owner.amountToReceive !== null
-                          ? `${financialSummary.owner.amountToReceive.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} €`
+                          ? `${centsToEuros(financialSummary.owner.amountToReceive).toLocaleString('fr-FR', { maximumFractionDigits: 2 })} €`
                           : '—'}
                       </TableCell>
                     )}
@@ -398,12 +399,12 @@ function VehicleDetailContent() {
                         <Badge variant='outline'>{p.profitShare}%</Badge>
                       </TableCell>
                       <TableCell className='text-end'>
-                        {p.totalInvested.toLocaleString('fr-FR')} €
+                        {centsToEuros(p.totalInvested).toLocaleString('fr-FR')} €
                       </TableCell>
                       {isSold && (
                         <TableCell className='text-end font-medium text-green-600'>
                           {p.amountToReceive !== null
-                            ? `${p.amountToReceive.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} €`
+                            ? `${centsToEuros(p.amountToReceive).toLocaleString('fr-FR', { maximumFractionDigits: 2 })} €`
                             : '—'}
                         </TableCell>
                       )}
@@ -512,7 +513,7 @@ function VehicleDetailContent() {
                           </div>
                           <div className='flex shrink-0 items-center gap-1'>
                             <span className='font-medium tabular-nums'>
-                              {expense.totalAmount.toLocaleString('fr-FR')} €
+                              {centsToEuros(expense.totalAmount).toLocaleString('fr-FR')} €
                             </span>
                             {!isSold && (
                               <>
@@ -643,7 +644,7 @@ function VehicleDetailContent() {
               Êtes-vous sûr de vouloir supprimer{' '}
               <span className='font-bold'>{pendingDeleteExpense.label}</span>{' '}
               (
-              {pendingDeleteExpense.totalAmount.toLocaleString('fr-FR')} €) ?
+              {centsToEuros(pendingDeleteExpense.totalAmount).toLocaleString('fr-FR')} €) ?
               Cette action est irréversible.
             </p>
           }

@@ -1,4 +1,5 @@
 import { toast } from 'sonner'
+import { centsToEuros, eurosToCents } from '@/lib/money'
 import { useAuthStore } from '@/stores/auth-store'
 import { PaymentDrawer } from '@/components/payment-drawer'
 import {
@@ -46,15 +47,18 @@ export function DettesRemboursementsDrawer({
             {new Intl.NumberFormat('fr-FR', {
               style: 'currency',
               currency: 'EUR',
-            }).format(dette.amount)}
+            }).format(centsToEuros(dette.amount))}
           </strong>{' '}
           à <strong>{borrowerLabel}</strong>
         </>
       }
-      amountDue={dette.amount}
-      amountPaid={dette.totalRepaid}
-      remaining={dette.remaining}
-      repayments={dette.repayments}
+      amountDue={centsToEuros(dette.amount)}
+      amountPaid={centsToEuros(dette.totalRepaid)}
+      remaining={centsToEuros(dette.remaining)}
+      repayments={dette.repayments.map((r) => ({
+        ...r,
+        amount: centsToEuros(r.amount),
+      }))}
       isPending={addRepayment.isPending}
       onDeleteRepayment={(repaymentId) =>
         deleteRepayment.mutate(
@@ -80,7 +84,15 @@ export function DettesRemboursementsDrawer({
       remainingLabel='Reste à régler'
       onSubmit={(data) =>
         addRepayment.mutate(
-          { debtId: dette.id, ...data },
+          {
+            debtId: dette.id,
+            ...data,
+            amount: eurosToCents(data.amount),
+            bankSplitAmount:
+              data.bankSplitAmount !== undefined
+                ? eurosToCents(data.bankSplitAmount)
+                : undefined,
+          },
           {
             onSuccess: () => toast.success('Versement enregistré.'),
             onError: (error: any) =>

@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { centsToEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -75,7 +76,7 @@ export const savingsColumns: ColumnDef<SavingsHistoryEntry>[] = [
           )}
         >
           {kind === 'addition' ? '+' : '-'}
-          {formatEuros(amount)}
+          {formatEuros(centsToEuros(amount))}
         </span>
       )
     },

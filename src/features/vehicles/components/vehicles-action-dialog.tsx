@@ -3,6 +3,7 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusIcon, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { eurosToCents } from '@/lib/money'
 import { Button } from '@/components/ui/button'
 import { DecimalInput } from '@/components/ui/decimal-input'
 import {
@@ -95,7 +96,7 @@ export function VehiclesActionDialog({
       {
         name: values.name,
         purchaseDate: values.purchaseDate,
-        purchasePrice: values.purchasePrice,
+        purchasePrice: eurosToCents(values.purchasePrice),
         participants: values.participants.map((p) => ({
           contactId: p.contactId,
           profitShare: p.profitShare,
