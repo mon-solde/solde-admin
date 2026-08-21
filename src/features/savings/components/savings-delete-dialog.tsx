@@ -22,7 +22,7 @@ export function SavingsDeleteDialog({
   open,
   onOpenChange,
 }: SavingsDeleteDialogProps) {
-  const { deleteMovement } = useSavings()
+  const { deleteMovement, isDeletingMovement } = useSavings()
 
   function handleDelete() {
     deleteMovement(currentRow.id, { onSuccess: () => onOpenChange(false) })
@@ -45,9 +45,10 @@ export function SavingsDeleteDialog({
           <AlertDialogCancel>Annuler</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
+            disabled={isDeletingMovement}
             className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
           >
-            Supprimer
+            {isDeletingMovement ? 'Suppression…' : 'Supprimer'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

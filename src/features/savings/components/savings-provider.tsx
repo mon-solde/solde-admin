@@ -26,7 +26,9 @@ type SavingsContextType = {
     movement: CreateManualMovementInput,
     callbacks?: { onSuccess?: () => void }
   ) => void
+  isAddingMovement: boolean
   deleteMovement: (id: string, callbacks?: { onSuccess?: () => void }) => void
+  isDeletingMovement: boolean
 }
 
 const SavingsContext = React.createContext<SavingsContextType | null>(null)
@@ -35,8 +37,10 @@ export function SavingsProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useDialogState<SavingsDialogType>(null)
   const [currentRow, setCurrentRow] = useState<SavingsHistoryEntry | null>(null)
 
-  const { mutate: createEvent } = useCreateSavingsEvent()
-  const { mutate: deleteEvent } = useDeleteSavingsEvent()
+  const { mutate: createEvent, isPending: isAddingMovement } =
+    useCreateSavingsEvent()
+  const { mutate: deleteEvent, isPending: isDeletingMovement } =
+    useDeleteSavingsEvent()
 
   function addMovement(
     movement: CreateManualMovementInput,
@@ -84,7 +88,9 @@ export function SavingsProvider({ children }: { children: React.ReactNode }) {
         currentRow,
         setCurrentRow,
         addMovement,
+        isAddingMovement,
         deleteMovement,
+        isDeletingMovement,
       }}
     >
       {children}

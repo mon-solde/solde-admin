@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { DecimalInput } from '@/components/ui/decimal-input'
 import {
@@ -49,7 +50,7 @@ export function SavingsActionDialog({
   open,
   onOpenChange,
 }: SavingsActionDialogProps) {
-  const { addMovement } = useSavings()
+  const { addMovement, isAddingMovement } = useSavings()
 
   const form = useForm<AddMovementValues>({
     resolver: zodResolver(addMovementSchema),
@@ -197,7 +198,14 @@ export function SavingsActionDialog({
           </form>
         </Form>
         <DialogFooter>
-          <Button type='submit' form='savings-add-form'>
+          <Button
+            type='submit'
+            form='savings-add-form'
+            disabled={isAddingMovement}
+          >
+            {isAddingMovement && (
+              <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+            )}
             Enregistrer
           </Button>
         </DialogFooter>
