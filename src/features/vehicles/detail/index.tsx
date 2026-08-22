@@ -5,6 +5,7 @@ import {
   ArrowLeft,
   CheckCircle2,
   CircleDashed,
+  FileSpreadsheet,
   Pencil,
   PlusIcon,
   Trash2,
@@ -57,6 +58,7 @@ import {
 import { statusColorMap } from '../data/data'
 import { type Expense, type VehicleEvent } from '../data/schema'
 import { PayersCell } from './components/payers-cell'
+import { exportVehicleInvestmentsToExcel } from './lib/export-investments'
 import { VehicleDetailDialogs } from './components/vehicle-detail-dialogs'
 import {
   VehicleDetailProvider,
@@ -485,6 +487,17 @@ function VehicleDetailContent() {
             <div className='flex items-center justify-between'>
               <h3 className='font-semibold'>Dépenses</h3>
               <div className='flex gap-2'>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  className='gap-1'
+                  onClick={() => {
+                    void exportVehicleInvestmentsToExcel(vehicle, ownerId)
+                  }}
+                >
+                  <FileSpreadsheet size={14} />
+                  Exporter Excel
+                </Button>
                 {!isSold && (
                   <Button
                     variant='outline'
