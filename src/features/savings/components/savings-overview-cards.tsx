@@ -1,6 +1,12 @@
+import { Info } from 'lucide-react'
 import { centsToEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { formatEuros } from '../data/data'
 
 type SavingsOverviewCardsProps = {
@@ -40,8 +46,18 @@ export function SavingsOverviewCards({ balances }: SavingsOverviewCardsProps) {
 
       <Card>
         <CardHeader className='pb-2'>
-          <CardTitle className='text-sm font-medium text-muted-foreground'>
+          <CardTitle className='flex items-center gap-1.5 text-sm font-medium text-muted-foreground'>
             Total Global
+            <Tooltip>
+              <TooltipTrigger>
+                <Info size={14} />
+              </TooltipTrigger>
+              <TooltipContent className='max-w-64 text-center'>
+                Calculé à partir de tous les mouvements d&apos;argent de
+                l&apos;application (prêts, remboursements, salaires, ventes de
+                véhicules…), pas seulement de vos ajustements manuels.
+              </TooltipContent>
+            </Tooltip>
           </CardTitle>
         </CardHeader>
         <CardContent>

@@ -85,7 +85,7 @@ export function Savings() {
           <div>
             <h2 className='text-2xl font-bold tracking-tight'>Épargne</h2>
             <p className='text-muted-foreground'>
-              Suivi de votre capital épargne.
+              Combien vous avez actuellement de côté et pouvez dépenser.
             </p>
           </div>
           <SavingsPrimaryButtons />
