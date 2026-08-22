@@ -90,13 +90,24 @@ function buildDetailTable(vehicle: VehicleDetail, ownerId: string): Table {
   )
   const rows: (string | number)[][] = []
   for (const expense of expensesByDateAsc) {
+    // A single expense can have several payer rows resolving to the same
+    // responsible party (e.g. they paid part of it directly and someone
+    // else fronted the rest for them) — grouped into one line per party so
+    // the same expense doesn't appear to have been paid twice.
+    const amountByResponsibleId = new Map<string, number>()
     for (const payer of expense.payers) {
       const responsibleId = payer.imputedToId ?? payer.payerId
+      amountByResponsibleId.set(
+        responsibleId,
+        (amountByResponsibleId.get(responsibleId) ?? 0) + payer.amount
+      )
+    }
+    for (const [responsibleId, amount] of amountByResponsibleId) {
       rows.push([
         expense.date.toLocaleDateString('fr-FR'),
         expense.label,
         resolvePersonName(responsibleId, ownerId, vehicle),
-        centsToEuros(payer.amount),
+        centsToEuros(amount),
       ])
     }
   }
