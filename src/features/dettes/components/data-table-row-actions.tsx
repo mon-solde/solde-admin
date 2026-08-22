@@ -1,6 +1,6 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { type Row } from '@tanstack/react-table'
-import { Trash2, Banknote } from 'lucide-react'
+import { Trash2, Banknote, CheckCircle2, Undo2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -56,6 +56,33 @@ export function DataTableRowActions<TData>({
             <Banknote size={16} />
           </DropdownMenuShortcut>
         </DropdownMenuItem>
+        {dette.isManuallySettled ? (
+          <DropdownMenuItem
+            onClick={() => {
+              setCurrentRow(dette)
+              setOpen('unsettle')
+            }}
+          >
+            Annuler le règlement manuel
+            <DropdownMenuShortcut>
+              <Undo2 size={16} />
+            </DropdownMenuShortcut>
+          </DropdownMenuItem>
+        ) : (
+          !dette.isRepaid && (
+            <DropdownMenuItem
+              onClick={() => {
+                setCurrentRow(dette)
+                setOpen('settle')
+              }}
+            >
+              Marquer comme réglée
+              <DropdownMenuShortcut>
+                <CheckCircle2 size={16} />
+              </DropdownMenuShortcut>
+            </DropdownMenuItem>
+          )
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {

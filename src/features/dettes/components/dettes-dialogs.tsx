@@ -1,6 +1,6 @@
 import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { useDeleteDette } from '../api/dettes-api'
+import { useDeleteDette, useSetDebtSettled } from '../api/dettes-api'
 import { DettesMutateDrawer } from './dettes-mutate-drawer'
 import { useDettes } from './dettes-provider'
 import { DettesRemboursementsDrawer } from './dettes-remboursements-drawer'
@@ -8,6 +8,7 @@ import { DettesRemboursementsDrawer } from './dettes-remboursements-drawer'
 export function DettesDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useDettes()
   const deleteDette = useDeleteDette()
+  const setDebtSettled = useSetDebtSettled()
 
   return (
     <>
@@ -74,6 +75,74 @@ export function DettesDialogs() {
               </>
             }
             confirmText='Supprimer'
+          />
+
+          <ConfirmDialog
+            key='dette-settle'
+            open={open === 'settle'}
+            onOpenChange={() => {
+              setOpen('settle')
+              setTimeout(() => {
+                setCurrentRow(null)
+              }, 500)
+            }}
+            handleConfirm={() => {
+              setDebtSettled.mutate(
+                { debtId: currentRow.id, settled: true },
+                {
+                  onSuccess: () => {
+                    toast.success('Dette marquée comme réglée.')
+                    setOpen(null)
+                    setTimeout(() => setCurrentRow(null), 500)
+                  },
+                }
+              )
+            }}
+            isLoading={setDebtSettled.isPending}
+            className='max-w-md'
+            title='Marquer cette dette comme réglée ?'
+            desc={
+              <>
+                Elle sera considérée comme réglée même si le montant remboursé
+                ne correspond pas exactement au montant dû. Aucun nouveau
+                remboursement ne pourra être ajouté tant que ce n&apos;est pas
+                annulé.
+              </>
+            }
+            confirmText='Marquer comme réglée'
+          />
+
+          <ConfirmDialog
+            key='dette-unsettle'
+            open={open === 'unsettle'}
+            onOpenChange={() => {
+              setOpen('unsettle')
+              setTimeout(() => {
+                setCurrentRow(null)
+              }, 500)
+            }}
+            handleConfirm={() => {
+              setDebtSettled.mutate(
+                { debtId: currentRow.id, settled: false },
+                {
+                  onSuccess: () => {
+                    toast.success('Règlement manuel annulé.')
+                    setOpen(null)
+                    setTimeout(() => setCurrentRow(null), 500)
+                  },
+                }
+              )
+            }}
+            isLoading={setDebtSettled.isPending}
+            className='max-w-md'
+            title='Annuler le règlement manuel de cette dette ?'
+            desc={
+              <>
+                Elle repassera &quot;en cours&quot; si le montant remboursé
+                n&apos;atteint pas le montant dû.
+              </>
+            }
+            confirmText='Annuler le règlement'
           />
         </>
       )}

@@ -28,6 +28,7 @@ export const detteSchema = z.object({
   totalRepaid: z.coerce.number(),
   remaining: z.coerce.number(),
   isRepaid: z.boolean(),
+  isManuallySettled: z.boolean(),
   repayments: z.array(repaymentSchema).default([]),
 })
 

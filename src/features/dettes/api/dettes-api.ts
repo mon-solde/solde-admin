@@ -157,3 +157,21 @@ export function useDeleteRepayment() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: DEBTS_KEY }),
   })
 }
+
+async function setDebtSettled({
+  debtId,
+  settled,
+}: {
+  debtId: string
+  settled: boolean
+}): Promise<void> {
+  return apiClient.patch(`/v1/debts/${debtId}/settled`, { settled })
+}
+
+export function useSetDebtSettled() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: setDebtSettled,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: DEBTS_KEY }),
+  })
+}

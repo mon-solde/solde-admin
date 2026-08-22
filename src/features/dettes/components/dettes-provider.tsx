@@ -3,7 +3,12 @@ import useDialogState from '@/hooks/use-dialog-state'
 import { type Dette } from '../data/schema'
 
 // 'update' commenté — pas d'endpoint backend pour l'instant
-type DettesDialogType = 'create' | /* 'update' | */ 'delete' | 'remboursements'
+type DettesDialogType =
+  | 'create'
+  | /* 'update' | */ 'delete'
+  | 'remboursements'
+  | 'settle'
+  | 'unsettle'
 
 type DettesContextType = {
   open: DettesDialogType | null
