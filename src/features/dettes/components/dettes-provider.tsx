@@ -9,6 +9,8 @@ type DettesDialogType =
   | 'remboursements'
   | 'settle'
   | 'unsettle'
+  | 'forgive'
+  | 'unforgive'
 
 type DettesContextType = {
   open: DettesDialogType | null

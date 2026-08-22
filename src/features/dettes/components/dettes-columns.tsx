@@ -177,6 +177,15 @@ export const dettesColumns: ColumnDef<Dette>[] = [
     ),
     cell: ({ row }) => {
       const isRepaid = row.getValue<boolean>('isRepaid')
+      // Forgiveness takes priority — it's a distinct, deliberate status,
+      // not to be shown as an ordinary "Soldé" even if the numbers happen
+      // to line up.
+      if (row.original.isForgiven)
+        return (
+          <Badge className='border border-sky-200 bg-sky-100 text-sky-700 shadow-none hover:bg-sky-100'>
+            Pardonné
+          </Badge>
+        )
       return isRepaid ? (
         <Badge className='border border-emerald-200 bg-emerald-100 text-emerald-700 shadow-none hover:bg-emerald-100'>
           Soldé

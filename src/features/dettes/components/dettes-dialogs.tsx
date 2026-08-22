@@ -1,6 +1,10 @@
 import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { useDeleteDette, useSetDebtSettled } from '../api/dettes-api'
+import {
+  useDeleteDette,
+  useSetDebtSettled,
+  useSetDebtForgiven,
+} from '../api/dettes-api'
 import { DettesMutateDrawer } from './dettes-mutate-drawer'
 import { useDettes } from './dettes-provider'
 import { DettesRemboursementsDrawer } from './dettes-remboursements-drawer'
@@ -9,6 +13,7 @@ export function DettesDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useDettes()
   const deleteDette = useDeleteDette()
   const setDebtSettled = useSetDebtSettled()
+  const setDebtForgiven = useSetDebtForgiven()
 
   return (
     <>
@@ -143,6 +148,68 @@ export function DettesDialogs() {
               </>
             }
             confirmText='Annuler le règlement'
+          />
+
+          <ConfirmDialog
+            key='dette-forgive'
+            open={open === 'forgive'}
+            onOpenChange={() => {
+              setOpen('forgive')
+              setTimeout(() => {
+                setCurrentRow(null)
+              }, 500)
+            }}
+            handleConfirm={() => {
+              setDebtForgiven.mutate(
+                { debtId: currentRow.id, forgiven: true },
+                {
+                  onSuccess: () => {
+                    toast.success('Dette pardonnée.')
+                    setOpen(null)
+                    setTimeout(() => setCurrentRow(null), 500)
+                  },
+                }
+              )
+            }}
+            isLoading={setDebtForgiven.isPending}
+            className='max-w-md'
+            title='Pardonner cette dette ?'
+            desc={
+              <>
+                Elle ne sera plus considérée comme due, sans qu&apos;aucun
+                remboursement n&apos;ait eu lieu. Aucun nouveau remboursement
+                ne pourra être ajouté tant que ce n&apos;est pas annulé.
+              </>
+            }
+            confirmText='Pardonner'
+          />
+
+          <ConfirmDialog
+            key='dette-unforgive'
+            open={open === 'unforgive'}
+            onOpenChange={() => {
+              setOpen('unforgive')
+              setTimeout(() => {
+                setCurrentRow(null)
+              }, 500)
+            }}
+            handleConfirm={() => {
+              setDebtForgiven.mutate(
+                { debtId: currentRow.id, forgiven: false },
+                {
+                  onSuccess: () => {
+                    toast.success('Pardon annulé.')
+                    setOpen(null)
+                    setTimeout(() => setCurrentRow(null), 500)
+                  },
+                }
+              )
+            }}
+            isLoading={setDebtForgiven.isPending}
+            className='max-w-md'
+            title='Annuler le pardon de cette dette ?'
+            desc={<>Elle redeviendra due, comme avant.</>}
+            confirmText='Annuler le pardon'
           />
         </>
       )}

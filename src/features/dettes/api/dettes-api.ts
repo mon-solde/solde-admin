@@ -12,7 +12,7 @@ export const DEFAULT_PAGE_SIZE = 10
 export type DettesFilters = {
   contactId?: string
   type?: 'prêté' | 'emprunté'
-  status?: 'en cours' | 'remboursé' | 'tous'
+  status?: 'en cours' | 'remboursé' | 'pardonné' | 'tous'
   vehicleId?: string
   // 0-based, matching the backend directly (PaginatedQueryBase) — the only
   // 1-based/0-based conversion happens once, inside useTableUrlState.
@@ -31,7 +31,12 @@ async function fetchDebts(filters: DettesFilters = {}): Promise<DettesPage> {
   // Absent status means "not specified yet", which defaults to 'en cours' —
   // only an explicit 'tous' should skip the status filter entirely.
   if (status !== 'tous')
-    params.status = status === 'remboursé' ? 'REPAID' : 'ONGOING'
+    params.status =
+      status === 'remboursé'
+        ? 'REPAID'
+        : status === 'pardonné'
+          ? 'FORGIVEN'
+          : 'ONGOING'
   if (vehicleId) params.vehicleId = vehicleId
   params.page = pageIndex ?? 0
   params.limit = pageSize ?? DEFAULT_PAGE_SIZE
@@ -172,6 +177,24 @@ export function useSetDebtSettled() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: setDebtSettled,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: DEBTS_KEY }),
+  })
+}
+
+async function setDebtForgiven({
+  debtId,
+  forgiven,
+}: {
+  debtId: string
+  forgiven: boolean
+}): Promise<void> {
+  return apiClient.patch(`/v1/debts/${debtId}/forgiven`, { forgiven })
+}
+
+export function useSetDebtForgiven() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: setDebtForgiven,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: DEBTS_KEY }),
   })
 }

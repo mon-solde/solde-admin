@@ -10,7 +10,7 @@ const dettesSearchSchema = z.object({
   // elsewhere don't have to always carry `status`. Absent means "not
   // specified yet" here; the debts page treats that as 'en cours' — 'tous'
   // is its own explicit choice, only reachable by actually picking it.
-  status: z.enum(['en cours', 'remboursé', 'tous']).optional().catch(undefined),
+  status: z.enum(['en cours', 'remboursé', 'pardonné', 'tous']).optional().catch(undefined),
   contactId: z.string().optional().catch(''),
   vehicleId: z.string().optional().catch(''),
   sortBy: z.enum(['date', 'amount', 'contactName']).optional().catch(undefined),

@@ -1,4 +1,10 @@
-import { ArrowDownLeft, ArrowUpRight, Clock, CheckCircle2 } from 'lucide-react'
+import {
+  ArrowDownLeft,
+  ArrowUpRight,
+  Clock,
+  CheckCircle2,
+  HeartHandshake,
+} from 'lucide-react'
 
 export const detteTypes = [
   {
@@ -23,5 +29,10 @@ export const detteStatuses = [
     label: 'Remboursé',
     value: 'remboursé' as const,
     icon: CheckCircle2,
+  },
+  {
+    label: 'Pardonné',
+    value: 'pardonné' as const,
+    icon: HeartHandshake,
   },
 ]

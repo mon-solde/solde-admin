@@ -1,6 +1,12 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { type Row } from '@tanstack/react-table'
-import { Trash2, Banknote, CheckCircle2, Undo2 } from 'lucide-react'
+import {
+  Trash2,
+  Banknote,
+  CheckCircle2,
+  Undo2,
+  HeartHandshake,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -56,7 +62,7 @@ export function DataTableRowActions<TData>({
             <Banknote size={16} />
           </DropdownMenuShortcut>
         </DropdownMenuItem>
-        {dette.isManuallySettled ? (
+        {dette.isManuallySettled && (
           <DropdownMenuItem
             onClick={() => {
               setCurrentRow(dette)
@@ -68,8 +74,22 @@ export function DataTableRowActions<TData>({
               <Undo2 size={16} />
             </DropdownMenuShortcut>
           </DropdownMenuItem>
-        ) : (
-          !dette.isRepaid && (
+        )}
+        {dette.isForgiven && (
+          <DropdownMenuItem
+            onClick={() => {
+              setCurrentRow(dette)
+              setOpen('unforgive')
+            }}
+          >
+            Annuler le pardon
+            <DropdownMenuShortcut>
+              <Undo2 size={16} />
+            </DropdownMenuShortcut>
+          </DropdownMenuItem>
+        )}
+        {!dette.isManuallySettled && !dette.isForgiven && !dette.isRepaid && (
+          <>
             <DropdownMenuItem
               onClick={() => {
                 setCurrentRow(dette)
@@ -81,7 +101,18 @@ export function DataTableRowActions<TData>({
                 <CheckCircle2 size={16} />
               </DropdownMenuShortcut>
             </DropdownMenuItem>
-          )
+            <DropdownMenuItem
+              onClick={() => {
+                setCurrentRow(dette)
+                setOpen('forgive')
+              }}
+            >
+              Pardonner cette dette
+              <DropdownMenuShortcut>
+                <HeartHandshake size={16} />
+              </DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </>
         )}
         <DropdownMenuSeparator />
         <DropdownMenuItem
