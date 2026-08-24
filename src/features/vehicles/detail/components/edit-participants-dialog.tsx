@@ -1,8 +1,9 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { formatPersonName } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -25,29 +26,9 @@ import {
 import { useUpdateVehicleParticipants } from '../../api/vehicles-api'
 import { type VehicleDetail } from '../../data/schema'
 
-const participantSchema = z.object({
-  contactId: z.string(),
-  profitShare: z.number({ error: 'Requis' }).min(0).max(100),
-})
-
-const formSchema = z
-  .object({
-    participants: z.array(participantSchema),
-  })
-  .refine(
-    // Same rule as vehicle creation: contacts' shares can add up to less
-    // than 100 (the owner keeps the rest), but not more. 0.001 of slack
-    // absorbs machine rounding errors only.
-    (data) =>
-      data.participants.reduce((sum, p) => sum + p.profitShare, 0) - 100 <=
-      0.001,
-    {
-      message: 'La somme des parts des participants ne peut pas dépasser 100%',
-      path: ['participants'],
-    }
-  )
-
-type EditParticipantsForm = z.infer<typeof formSchema>
+type EditParticipantsForm = {
+  participants: { contactId: string; profitShare: number }[]
+}
 
 type EditParticipantsDialogProps = {
   vehicle: VehicleDetail
@@ -62,6 +43,38 @@ export function EditParticipantsDialog({
 }: EditParticipantsDialogProps) {
   const { mutate: updateParticipants, isPending } =
     useUpdateVehicleParticipants(vehicle.id)
+  const { t } = useLingui()
+
+  const participantSchema = useMemo(
+    () =>
+      z.object({
+        contactId: z.string(),
+        profitShare: z.number({ error: t`Requis` }).min(0).max(100),
+      }),
+    [t]
+  )
+
+  const formSchema = useMemo(
+    () =>
+      z
+        .object({
+          participants: z.array(participantSchema),
+        })
+        .refine(
+          // Same rule as vehicle creation: contacts' shares can add up to less
+          // than 100 (the owner keeps the rest), but not more. 0.001 of slack
+          // absorbs machine rounding errors only.
+          (data) =>
+            data.participants.reduce((sum, p) => sum + p.profitShare, 0) -
+              100 <=
+            0.001,
+          {
+            message: t`La somme des parts des participants ne peut pas dépasser 100%`,
+            path: ['participants'],
+          }
+        ),
+    [t, participantSchema]
+  )
 
   const form = useForm<EditParticipantsForm>({
     resolver: zodResolver(formSchema),
@@ -99,12 +112,12 @@ export function EditParticipantsDialog({
       { participants: values.participants },
       {
         onSuccess: () => {
-          toast.success('Parts mises à jour.')
+          toast.success(t`Parts mises à jour.`)
           onOpenChange(false)
         },
         onError: (error: any) =>
           toast.error(
-            error?.response?.data?.message ?? 'Une erreur est survenue.'
+            error?.response?.data?.message ?? t`Une erreur est survenue.`
           ),
       }
     )
@@ -120,9 +133,13 @@ export function EditParticipantsDialog({
     >
       <DialogContent className='sm:max-w-md'>
         <DialogHeader className='text-start'>
-          <DialogTitle>Modifier les parts</DialogTitle>
+          <DialogTitle>
+            <Trans>Modifier les parts</Trans>
+          </DialogTitle>
           <DialogDescription>
-            Ajustez le pourcentage de bénéfice de chaque participant.
+            <Trans>
+              Ajustez le pourcentage de bénéfice de chaque participant.
+            </Trans>
           </DialogDescription>
         </DialogHeader>
 
@@ -133,7 +150,7 @@ export function EditParticipantsDialog({
             className='space-y-3'
           >
             <div className='flex items-center justify-between rounded-md border bg-muted/40 px-3 py-2'>
-              <span className='text-sm font-medium'>Vous</span>
+              <span className='text-sm font-medium'>{t`Vous`}</span>
               <span className='text-sm font-medium tabular-nums'>
                 {ownerShare}%
               </span>
@@ -171,7 +188,7 @@ export function EditParticipantsDialog({
 
         <DialogFooter>
           <Button type='submit' form='participants-form' disabled={isPending}>
-            {isPending ? 'Enregistrement…' : 'Enregistrer'}
+            {isPending ? t`Enregistrement…` : t`Enregistrer`}
           </Button>
         </DialogFooter>
       </DialogContent>

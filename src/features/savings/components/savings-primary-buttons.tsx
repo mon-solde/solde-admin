@@ -1,4 +1,5 @@
 import { PlusIcon } from 'lucide-react'
+import { Trans } from '@lingui/react/macro'
 import { Button } from '@/components/ui/button'
 import { useSavings } from './savings-provider'
 
@@ -6,7 +7,9 @@ export function SavingsPrimaryButtons() {
   const { setOpen } = useSavings()
   return (
     <Button className='space-x-1' onClick={() => setOpen('add')}>
-      <span>Ajouter un mouvement</span>
+      <span>
+        <Trans>Ajouter un mouvement</Trans>
+      </span>
       <PlusIcon size={18} />
     </Button>
   )

@@ -1,4 +1,5 @@
 import { UserPlus } from 'lucide-react'
+import { Trans } from '@lingui/react/macro'
 import { Button } from '@/components/ui/button'
 import { useContacts } from './contacts-provider'
 
@@ -7,7 +8,10 @@ export function ContactsPrimaryButtons() {
   return (
     <div className='flex gap-2'>
       <Button className='space-x-1' onClick={() => setOpen('add')}>
-        <span>Ajouter un contact</span> <UserPlus size={18} />
+        <span>
+          <Trans>Ajouter un contact</Trans>
+        </span>{' '}
+        <UserPlus size={18} />
       </Button>
     </div>
   )

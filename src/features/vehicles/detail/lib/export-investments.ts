@@ -1,4 +1,5 @@
 import ExcelJS from 'exceljs'
+import { t } from '@lingui/core/macro'
 import { centsToEuros } from '@/lib/money'
 import { formatPersonName } from '@/lib/utils'
 import { type VehicleDetail } from '../../data/schema'
@@ -63,7 +64,7 @@ function resolvePersonName(
   ownerId: string,
   vehicle: VehicleDetail
 ): string {
-  if (contactId === ownerId) return 'Moi'
+  if (contactId === ownerId) return t`Moi`
   const participant = vehicle.participants.find(
     (p) => p.contactId === contactId
   )
@@ -81,7 +82,7 @@ type Table = { header: string[]; rows: (string | number)[][] }
 // computeInvestedByResponsibleParty on the backend, so it reads exactly as
 // if that person had paid it themselves.
 function buildDetailTable(vehicle: VehicleDetail, ownerId: string): Table {
-  const header = ['Date', 'Dépense', 'Payé par', 'Montant payé (€)']
+  const header = [t`Date`, t`Dépense`, t`Payé par`, t`Montant payé (€)`]
   // `vehicle.expenses` arrives sorted date desc (see features/vehicles/detail
   // — most-recent-first suits the on-screen list); the export instead reads
   // chronologically, oldest first.
@@ -116,15 +117,24 @@ function buildDetailTable(vehicle: VehicleDetail, ownerId: string): Table {
 
 function buildVehicleInfoTable(vehicle: VehicleDetail): Table {
   const rows: (string | number)[][] = [
-    ['Total des dépenses (€)', centsToEuros(vehicle.financialSummary.totalExpenses)],
+    [
+      t`Total des dépenses (€)`,
+      centsToEuros(vehicle.financialSummary.totalExpenses),
+    ],
   ]
   if (vehicle.soldVehicle) {
-    rows.push(['Prix de vente (€)', centsToEuros(vehicle.soldVehicle.salePrice)])
+    rows.push([
+      t`Prix de vente (€)`,
+      centsToEuros(vehicle.soldVehicle.salePrice),
+    ])
   }
   if (vehicle.financialSummary.profit !== null) {
-    rows.push(['Bénéfice net (€)', centsToEuros(vehicle.financialSummary.profit)])
+    rows.push([
+      t`Bénéfice net (€)`,
+      centsToEuros(vehicle.financialSummary.profit),
+    ])
   }
-  return { header: ['Métrique', 'Valeur'], rows }
+  return { header: [t`Métrique`, t`Valeur`], rows }
 }
 
 function buildSummaryTable(vehicle: VehicleDetail): Table & { isDeficit: boolean } {
@@ -137,11 +147,11 @@ function buildSummaryTable(vehicle: VehicleDetail): Table & { isDeficit: boolean
   // be misleading on a deficit, since it played no part in the split).
   const isDeficit = financialSummary.profit !== null && financialSummary.profit < 0
   const header = [
-    'Participant',
-    isDeficit ? 'Répartition' : '% bénéfice',
-    'Total investi (€)',
+    t`Participant`,
+    isDeficit ? t`Répartition` : t`% bénéfice`,
+    t`Total investi (€)`,
   ]
-  if (isSold) header.push('Bénéfice net (€)', 'Montant à recevoir (€)')
+  if (isSold) header.push(t`Bénéfice net (€)`, t`Montant à recevoir (€)`)
 
   const rows: (string | number)[][] = []
   const pushParticipantRow = (
@@ -153,7 +163,7 @@ function buildSummaryTable(vehicle: VehicleDetail): Table & { isDeficit: boolean
   ) => {
     const row: (string | number)[] = [
       name,
-      isDeficit ? 'Égale (déficit)' : profitShare,
+      isDeficit ? t`Égale (déficit)` : profitShare,
       centsToEuros(totalInvested),
     ]
     if (isSold) {
@@ -166,7 +176,7 @@ function buildSummaryTable(vehicle: VehicleDetail): Table & { isDeficit: boolean
   }
 
   pushParticipantRow(
-    'Moi',
+    t`Moi`,
     financialSummary.owner.profitShare,
     financialSummary.owner.totalInvested,
     financialSummary.owner.profitFromSale,
@@ -240,7 +250,7 @@ export async function exportVehicleInvestmentsToExcel(
   ownerId: string
 ) {
   const workbook = new ExcelJS.Workbook()
-  const sheet = workbook.addWorksheet('Investissements')
+  const sheet = workbook.addWorksheet(t`Investissements`)
   sheet.columns = [
     { width: 22 },
     { width: 32 },
@@ -253,7 +263,7 @@ export async function exportVehicleInvestmentsToExcel(
   const { headerRow: detailHeaderRow, nextRow: afterDetail } = addTable(
     sheet,
     1,
-    'Dépenses',
+    t`Dépenses`,
     detail,
     { 3: CURRENCY_FORMAT }
   )
@@ -268,7 +278,7 @@ export async function exportVehicleInvestmentsToExcel(
   const { nextRow: afterVehicleInfo } = addTable(
     sheet,
     afterDetail,
-    'Résumé véhicule',
+    t`Résumé véhicule`,
     vehicleInfo,
     { 1: CURRENCY_FORMAT }
   )
@@ -283,7 +293,7 @@ export async function exportVehicleInvestmentsToExcel(
   addTable(
     sheet,
     afterVehicleInfo,
-    'Répartition entre participants',
+    t`Répartition entre participants`,
     summary,
     summaryColumnFormats
   )

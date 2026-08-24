@@ -1,5 +1,6 @@
 import { type Row } from '@tanstack/react-table'
 import { MoreHorizontal, Trash2 } from 'lucide-react'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -16,6 +17,7 @@ type DataTableRowActionsProps = {
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const { setOpen, setCurrentRow } = useSavings()
+  const { t } = useLingui()
 
   if (row.original.sourceType !== 'manual') return null
 
@@ -32,7 +34,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'
         >
           <MoreHorizontal size={16} />
-          <span className='sr-only'>Ouvrir le menu</span>
+          <span className='sr-only'>{t`Ouvrir le menu`}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end'>
@@ -41,7 +43,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           onClick={openDeleteDialog}
         >
           <Trash2 size={14} className='me-2' />
-          Supprimer
+          <Trans>Supprimer</Trans>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

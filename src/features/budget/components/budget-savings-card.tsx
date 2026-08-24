@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Trans } from '@lingui/react/macro'
 import { centsToEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -40,13 +41,13 @@ export function BudgetSavingsCard({
       <Card>
         <CardHeader className='pb-3'>
           <CardTitle className='text-sm font-medium text-muted-foreground'>
-            Épargne
+            <Trans>Épargne</Trans>
           </CardTitle>
         </CardHeader>
         <CardContent className='space-y-4'>
           <div className='flex items-center justify-between'>
             <span className='text-sm text-muted-foreground'>
-              Disponible pour épargner
+              <Trans>Disponible pour épargner</Trans>
             </span>
             <span
               className={cn(
@@ -66,7 +67,7 @@ export function BudgetSavingsCard({
             className='flex w-full items-center justify-between rounded-md border px-4 py-3 text-left transition-colors hover:bg-muted'
           >
             <span className='text-sm text-muted-foreground'>
-              Mis de côté ce mois
+              <Trans>Mis de côté ce mois</Trans>
             </span>
             <span className='font-semibold text-green-600'>
               {formatEuros(centsToEuros(totalSaved))}
@@ -76,7 +77,9 @@ export function BudgetSavingsCard({
           <Separator />
 
           <div className='flex items-center justify-between'>
-            <span className='text-sm font-medium'>Reste à retirer</span>
+            <span className='text-sm font-medium'>
+              <Trans>Reste à retirer</Trans>
+            </span>
             <span
               className={cn(
                 'font-bold',

@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { toast } from 'sonner'
+import { useLingui } from '@lingui/react/macro'
 import { eurosToCents } from '@/lib/money'
 import useDialogState from '@/hooks/use-dialog-state'
 import { useCreateSavingsEvent, useDeleteSavingsEvent } from '../api/savings-api'
@@ -36,6 +37,7 @@ const SavingsContext = React.createContext<SavingsContextType | null>(null)
 export function SavingsProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useDialogState<SavingsDialogType>(null)
   const [currentRow, setCurrentRow] = useState<SavingsHistoryEntry | null>(null)
+  const { t } = useLingui()
 
   const { mutate: createEvent, isPending: isAddingMovement } =
     useCreateSavingsEvent()
@@ -56,12 +58,12 @@ export function SavingsProvider({ children }: { children: React.ReactNode }) {
       },
       {
         onSuccess: () => {
-          toast.success('Mouvement enregistré')
+          toast.success(t`Mouvement enregistré`)
           callbacks?.onSuccess?.()
         },
         onError: (error: any) =>
           toast.error(
-            error?.response?.data?.message ?? 'Une erreur est survenue.'
+            error?.response?.data?.message ?? t`Une erreur est survenue.`
           ),
       }
     )
@@ -70,12 +72,12 @@ export function SavingsProvider({ children }: { children: React.ReactNode }) {
   function deleteMovement(id: string, callbacks?: { onSuccess?: () => void }) {
     deleteEvent(id, {
       onSuccess: () => {
-        toast.success('Mouvement supprimé')
+        toast.success(t`Mouvement supprimé`)
         callbacks?.onSuccess?.()
       },
       onError: (error: any) =>
         toast.error(
-          error?.response?.data?.message ?? 'Une erreur est survenue.'
+          error?.response?.data?.message ?? t`Une erreur est survenue.`
         ),
     })
   }

@@ -1,4 +1,5 @@
 import { toast } from 'sonner'
+import { Trans, useLingui } from '@lingui/react/macro'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,16 +25,17 @@ export function VehiclesDeleteDialog({
   onOpenChange,
 }: VehiclesDeleteDialogProps) {
   const { mutate: deleteVehicle, isPending } = useDeleteVehicle()
+  const { t } = useLingui()
 
   const handleDelete = () => {
     deleteVehicle(currentRow.id, {
       onSuccess: () => {
-        toast.success('Véhicule supprimé.')
+        toast.success(t`Véhicule supprimé.`)
         onOpenChange(false)
       },
       onError: (error: any) =>
         toast.error(
-          error?.response?.data?.message ?? 'Une erreur est survenue.'
+          error?.response?.data?.message ?? t`Une erreur est survenue.`
         ),
     })
   }
@@ -42,24 +44,30 @@ export function VehiclesDeleteDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Supprimer le véhicule</AlertDialogTitle>
+          <AlertDialogTitle>
+            <Trans>Supprimer le véhicule</Trans>
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            Êtes-vous sûr de vouloir supprimer{' '}
-            <span className='font-medium text-foreground'>
-              {currentRow.name}
-            </span>{' '}
-            ? Cette action est irréversible et supprimera toutes les dépenses
-            associées.
+            <Trans>
+              Êtes-vous sûr de vouloir supprimer{' '}
+              <span className='font-medium text-foreground'>
+                {currentRow.name}
+              </span>{' '}
+              ? Cette action est irréversible et supprimera toutes les
+              dépenses associées.
+            </Trans>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Annuler</AlertDialogCancel>
+          <AlertDialogCancel>
+            <Trans>Annuler</Trans>
+          </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
             disabled={isPending}
             className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
           >
-            {isPending ? 'Suppression…' : 'Supprimer'}
+            {isPending ? t`Suppression…` : t`Supprimer`}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

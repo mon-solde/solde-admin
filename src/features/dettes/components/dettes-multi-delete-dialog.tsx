@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
 import { sleep } from '@/lib/utils'
@@ -16,33 +17,35 @@ type DettesMultiDeleteDialogProps<TData> = {
   table: Table<TData>
 }
 
-const CONFIRM_WORD = 'SUPPRIMER'
-
 export function DettesMultiDeleteDialog<TData>({
   open,
   onOpenChange,
   table,
 }: DettesMultiDeleteDialogProps<TData>) {
   const [value, setValue] = useState('')
+  const { t } = useLingui()
+  // The word the user must retype to confirm — translated too, so an
+  // English-speaking user isn't asked to type a French word.
+  const confirmWord = t`SUPPRIMER`
 
   const selectedRows = table.getFilteredSelectedRowModel().rows
 
   const handleDelete = () => {
-    if (value.trim() !== CONFIRM_WORD) {
-      toast.error(`Veuillez taper "${CONFIRM_WORD}" pour confirmer.`)
+    if (value.trim() !== confirmWord) {
+      toast.error(t`Veuillez taper "${confirmWord}" pour confirmer.`)
       return
     }
 
     onOpenChange(false)
 
     toast.promise(sleep(2000), {
-      loading: 'Suppression en cours...',
+      loading: t`Suppression en cours...`,
       success: () => {
         setValue('')
         table.resetRowSelection()
-        return `${selectedRows.length} dette${selectedRows.length > 1 ? 's' : ''} supprimée${selectedRows.length > 1 ? 's' : ''}.`
+        return t`${selectedRows.length} dette${selectedRows.length > 1 ? 's' : ''} supprimée${selectedRows.length > 1 ? 's' : ''}.`
       },
-      error: 'Erreur',
+      error: t`Erreur`,
     })
   }
 
@@ -51,42 +54,51 @@ export function DettesMultiDeleteDialog<TData>({
       open={open}
       onOpenChange={onOpenChange}
       handleConfirm={handleDelete}
-      disabled={value.trim() !== CONFIRM_WORD}
+      disabled={value.trim() !== confirmWord}
       title={
         <span className='text-destructive'>
           <AlertTriangle
             className='me-1 inline-block stroke-destructive'
             size={18}
           />{' '}
-          Supprimer {selectedRows.length} dette
-          {selectedRows.length > 1 ? 's' : ''}
+          <Trans>
+            Supprimer {selectedRows.length} dette
+            {selectedRows.length > 1 ? 's' : ''}
+          </Trans>
         </span>
       }
       desc={
         <div className='space-y-4'>
           <p className='mb-2'>
-            Êtes-vous sûr de vouloir supprimer les dettes sélectionnées ? <br />
-            Cette action est irréversible.
+            <Trans>
+              Êtes-vous sûr de vouloir supprimer les dettes sélectionnées ?{' '}
+              <br />
+              Cette action est irréversible.
+            </Trans>
           </p>
 
           <Label className='my-4 flex flex-col items-start gap-1.5'>
-            <span>Confirmez en tapant &quot;{CONFIRM_WORD}&quot; :</span>
+            <span>
+              <Trans>Confirmez en tapant &quot;{confirmWord}&quot; :</Trans>
+            </span>
             <Input
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              placeholder={`Tapez "${CONFIRM_WORD}" pour confirmer.`}
+              placeholder={t`Tapez "${confirmWord}" pour confirmer.`}
             />
           </Label>
 
           <Alert variant='destructive'>
-            <AlertTitle>Attention !</AlertTitle>
+            <AlertTitle>
+              <Trans>Attention !</Trans>
+            </AlertTitle>
             <AlertDescription>
-              Cette opération ne peut pas être annulée.
+              <Trans>Cette opération ne peut pas être annulée.</Trans>
             </AlertDescription>
           </Alert>
         </div>
       }
-      confirmText='Supprimer'
+      confirmText={t`Supprimer`}
       destructive
     />
   )

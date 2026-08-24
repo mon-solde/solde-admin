@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   type VisibilityState,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { useLingui } from '@lingui/react'
+import { Trans } from '@lingui/react/macro'
 import { cn } from '@/lib/utils'
 import { type UseTableUrlStateReturn } from '@/hooks/use-table-url-state'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -17,7 +19,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination } from '@/components/data-table'
-import { budgetListColumns as columns } from './budget-list-columns'
+import { getBudgetListColumns } from './budget-list-columns'
 import { type MonthlyBudget } from '../data/schema'
 
 type BudgetListTableProps = Pick<
@@ -41,6 +43,8 @@ export function BudgetListTable({
 }: BudgetListTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const { i18n } = useLingui()
+  const columns = useMemo(() => getBudgetListColumns(i18n), [i18n])
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -136,7 +140,7 @@ export function BudgetListTable({
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  Aucun mois trouvé.
+                  <Trans>Aucun mois trouvé.</Trans>
                 </TableCell>
               </TableRow>
             )}

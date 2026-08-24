@@ -1,4 +1,5 @@
 import { getRouteApi } from '@tanstack/react-router'
+import { Trans } from '@lingui/react/macro'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
 import { Header } from '@/components/layout/header'
@@ -82,9 +83,11 @@ export function Vehicles() {
       <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
         <div className='flex flex-wrap items-end justify-between gap-2'>
           <div>
-            <h2 className='text-2xl font-bold tracking-tight'>Véhicules</h2>
+            <h2 className='text-2xl font-bold tracking-tight'>
+              <Trans>Véhicules</Trans>
+            </h2>
             <p className='text-muted-foreground'>
-              Gérez vos véhicules et suivez leur rentabilité.
+              <Trans>Gérez vos véhicules et suivez leur rentabilité.</Trans>
             </p>
           </div>
           <VehiclesPrimaryButtons />

@@ -1,37 +1,891 @@
+#
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2026-08-24 22:14+0200\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"X-Generator: @lingui/cli\n"
-"Language: en\n"
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-24 22:14+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: \n"
+"X-Generator: @lingui/cli\n"
+
+#. placeholder {0}: duplicate.fullName
+#: src/features/contacts/components/contacts-action-dialog.tsx:143
+msgid "\"{0}\" a été réactivé."
+msgstr "\"{0}\" was reactivated."
+
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:465
+msgid "(optionnel)"
+msgstr "(optional)"
+
+#. placeholder {0}: vehicle.expenses.length
+#: src/features/vehicles/detail/index.tsx:318
+msgid "{0, plural, one {# dépense} other {# dépenses}}"
+msgstr "{0, plural, one {# expense} other {# expenses}}"
+
+#. placeholder {0}: vehicle.name
+#. placeholder {1}: centsToEuros(financialSummary.totalExpenses).toLocaleString( 'fr-FR' )
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:251
+msgid "{0} — Total investi : <0>{1} €</0>"
+msgstr "{0} — Total invested: <0>{1} €</0>"
+
+#. placeholder {0}: i18n._(MONTH_MESSAGES[month - 1])
+#. placeholder {1}: formatEuros(centsToEuros(availableForSavings))
+#: src/features/budget/components/budget-savings-sheet.tsx:117
+msgid "{0} {year} · Disponible : {1}"
+msgstr "{0} {year} · Available: {1}"
+
+#. placeholder {0}: selectedRows.length
+#. placeholder {1}: selectedRows.length > 1 ? 's' : ''
+#. placeholder {2}: selectedRows.length > 1 ? 's' : ''
+#: src/features/dettes/components/dettes-multi-delete-dialog.tsx:46
+msgid "{0} dette{1} supprimée{2}."
+msgstr "{0} debt{1} deleted{2}."
+
+#. placeholder {0}: payers.length
+#. placeholder {1}: payers.length > 1 ? 's' : ''
+#. placeholder {2}: delegations.length
+#. placeholder {3}: delegations.length > 1 ? 's' : ''
+#: src/features/vehicles/detail/components/payers-cell.tsx:23
+msgid "{0} payeur{1} ({2} délégation{3})"
+msgstr "{0} payer{1} ({2} delegation{3})"
+
+#. placeholder {0}: payers.length
+#: src/features/vehicles/detail/components/payers-cell.tsx:24
+msgid "{0} payeurs"
+msgstr "{0} payers"
+
+#. placeholder {0}: formatEuros(centsToEuros(totalSaved))
+#: src/features/budget/components/budget-savings-sheet.tsx:127
+msgid "{0} retirés"
+msgstr "{0} withdrawn"
+
+#: src/features/budget/components/budget-overview-cards.tsx:80
+msgid "{automaticCount} auto · {manualCount, plural, one {# manuelle} other {# manuelles}}"
+msgstr "{automaticCount} auto · {manualCount, plural, one {# manual} other {# manual}}"
+
+#: src/features/contacts/components/contacts-multi-delete-dialog.tsx:29
+msgid "{hardDeletedCount, plural, one {# supprimé} other {# supprimés}}"
+msgstr "{hardDeletedCount, plural, one {# deleted} other {# deleted}}"
+
+#: src/features/contacts/components/contacts-multi-delete-dialog.tsx:34
+msgid "{hiddenCount, plural, one {# masqué (historique conservé)} other {# masqués (historique conservé)}}"
+msgstr "{hiddenCount, plural, one {# hidden (history kept)} other {# hidden (history kept)}}"
+
+#: src/features/dettes/index.tsx:154
+msgid "{nbEmprunts, plural, one {# emprunt} other {# emprunts}}"
+msgstr "{nbEmprunts, plural, one {# debt} other {# debts}}"
+
+#: src/features/dettes/index.tsx:140
+msgid "{nbPrets, plural, one {# prêt} other {# prêts}}"
+msgstr "{nbPrets, plural, one {# loan} other {# loans}}"
+
+#: src/features/budget/components/budget-overview-cards.tsx:75
+msgid "{totalCount, plural, one {# charge} other {# charges}}"
+msgstr "{totalCount, plural, one {# charge} other {# charges}}"
+
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:273
+msgid "/ mois"
+msgstr "/ month"
+
+#: src/features/vehicles/detail/index.tsx:464
+msgid "% bénéf."
+msgstr "% profit"
+
+#: src/features/vehicles/detail/lib/export-investments.ts:151
+msgid "% bénéfice"
+msgstr "% profit"
+
+#. placeholder {0}: new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', }).format(centsToEuros(dette.amount))
+#: src/features/dettes/components/dettes-remboursements-drawer.tsx:47
+msgid "<0>{lenderLabel}</0> a prêté <1>{0}</1> à <2>{borrowerLabel}</2>"
+msgstr "<0>{lenderLabel}</0> lent <1>{0}</1> to <2>{borrowerLabel}</2>"
+
+#: src/features/dettes/components/dettes-columns.tsx:85
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:336
+msgid "À qui ?"
+msgstr "To whom?"
+
+#: src/features/vehicles/detail/index.tsx:471
+msgid "À recevoir"
+msgstr "To receive"
+
+#: src/features/subscriptions/data/data.ts:15
+msgid "Actif"
+msgstr "Active"
+
+#: src/components/data-table/bulk-actions.tsx:147
+msgid "Actions groupées pour {selectedCount} {entityLabelPlural} sélectionné(s)"
+msgstr "Bulk actions for {selectedCount} selected {entityLabelPlural}"
+
+#: src/features/subscriptions/components/data-table-row-actions.tsx:79
+msgid "Activation..."
+msgstr "Activating..."
+
+#: src/features/subscriptions/components/data-table-row-actions.tsx:90
+msgid "Activer"
+msgstr "Activate"
+
+#: src/components/data-table/view-options.tsx:30
+msgid "Affichage"
+msgstr "View"
+
+#: src/components/ui/sidebar.tsx:201
+msgid "Affiche la barre latérale sur mobile."
+msgstr "Displays the mobile sidebar."
+
+#: src/components/layout/app-title.tsx:62
+#: src/components/ui/sidebar.tsx:280
+#: src/components/ui/sidebar.tsx:294
+#: src/components/ui/sidebar.tsx:297
+msgid "Afficher/masquer la barre latérale"
+msgstr "Toggle sidebar"
+
+#: src/components/data-table/view-options.tsx:35
+msgid "Afficher/masquer les colonnes"
+msgstr "Toggle columns"
+
+#: src/features/savings/components/savings-action-dialog.tsx:137
+#: src/features/savings/data/data.ts:29
+msgid "Ajout"
+msgstr "Addition"
+
+#: src/features/contacts/components/contacts-columns.tsx:62
+msgid "Ajouté le"
+msgstr "Added on"
+
+#: src/features/dettes/components/dettes-primary-buttons.tsx:12
+#: src/features/vehicles/detail/components/event-mutate-dialog.tsx:134
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:457
+#: src/features/vehicles/detail/index.tsx:559
+#: src/features/vehicles/detail/index.tsx:692
+msgid "Ajouter"
+msgstr "Add"
+
+#: src/components/payment-drawer.tsx:365
+msgid "Ajouter le versement"
+msgstr "Add the payment"
+
+#: src/features/contacts/components/contacts-action-dialog.tsx:174
+#: src/features/contacts/components/contacts-primary-buttons.tsx:12
+msgid "Ajouter un contact"
+msgstr "Add a contact"
+
+#: src/features/vehicles/detail/components/event-mutate-dialog.tsx:96
+msgid "Ajouter un événement"
+msgstr "Add an event"
+
+#: src/features/savings/components/savings-action-dialog.tsx:108
+#: src/features/savings/components/savings-primary-buttons.tsx:11
+msgid "Ajouter un mouvement"
+msgstr "Add a movement"
+
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:312
+msgid "Ajouter un participant"
+msgstr "Add a participant"
+
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:438
+msgid "Ajouter un payeur"
+msgstr "Add a payer"
+
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:189
+msgid "Ajouter une dépense"
+msgstr "Add an expense"
+
+#: src/components/config-drawer.tsx:66
+msgid "Ajustez l'apparence et la mise en page selon vos préférences."
+msgstr "Adjust the appearance and layout to suit your preferences."
+
+#: src/features/vehicles/detail/components/edit-participants-dialog.tsx:140
+msgid "Ajustez le pourcentage de bénéfice de chaque participant."
+msgstr "Adjust each participant's profit percentage."
+
+#: src/components/data-table/pagination.tsx:131
+msgid "Aller à la dernière page"
+msgstr "Go to last page"
+
+#: src/components/data-table/pagination.tsx:109
+msgid "Aller à la page {pageNumber}"
+msgstr "Go to page {pageNumber}"
+
+#: src/components/data-table/pagination.tsx:94
+msgid "Aller à la page précédente"
+msgstr "Go to previous page"
+
+#: src/components/data-table/pagination.tsx:122
+msgid "Aller à la page suivante"
+msgstr "Go to next page"
+
+#: src/components/data-table/pagination.tsx:85
+msgid "Aller à la première page"
+msgstr "Go to first page"
+
+#: src/components/skip-to-main.tsx:9
+msgid "Aller au contenu principal"
+msgstr "Skip to main content"
+
+#: src/components/confirm-dialog.tsx:55
+#: src/features/budget/components/budget-init-month-dialog.tsx:120
+#: src/features/contacts/components/contact-duplicate-dialog.tsx:59
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:509
+#: src/features/savings/components/savings-delete-dialog.tsx:52
+#: src/features/subscriptions/components/subscriptions-delete-dialog.tsx:53
+#: src/features/vehicles/components/vehicles-delete-dialog.tsx:63
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:476
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:399
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:449
+msgid "Annuler"
+msgstr "Cancel"
+
+#: src/features/dettes/components/data-table-row-actions.tsx:88
+#: src/features/dettes/components/dettes-dialogs.tsx:214
+msgid "Annuler le pardon"
+msgstr "Cancel the forgiveness"
+
+#: src/features/dettes/components/dettes-dialogs.tsx:212
+msgid "Annuler le pardon de cette dette ?"
+msgstr "Cancel forgiveness of this debt?"
+
+#: src/features/dettes/components/dettes-dialogs.tsx:152
+msgid "Annuler le règlement"
+msgstr "Cancel settlement"
+
+#: src/features/dettes/components/data-table-row-actions.tsx:75
+msgid "Annuler le règlement manuel"
+msgstr "Cancel the manual settlement"
+
+#: src/features/dettes/components/dettes-dialogs.tsx:145
+msgid "Annuler le règlement manuel de cette dette ?"
+msgstr "Cancel the manual settlement of this debt?"
+
+#: src/features/budget/data/data.ts:17
+msgid "Août"
+msgstr "August"
+
+#. placeholder {0}: item.label
+#: src/components/config-drawer.tsx:151
+msgid "Aperçu de l'option {0}"
+msgstr "Preview of the {0} option"
+
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:297
+msgid "Appliquer aussi au mois en cours"
+msgstr "Also apply to the current month"
+
+#: src/features/vehicles/detail/index.tsx:400
+msgid "Après dépenses et prix d'achat"
+msgstr "After expenses and purchase price"
+
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:194
+msgid "Assurance auto - Golf 6"
+msgstr "Car insurance - Model X"
+
+#: src/features/contacts/components/contacts-delete-dialog.tsx:91
+#: src/features/contacts/components/contacts-multi-delete-dialog.tsx:119
+#: src/features/dettes/components/dettes-multi-delete-dialog.tsx:93
+msgid "Attention !"
+msgstr "Warning!"
+
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:101
+msgid "Au moins un payeur requis"
+msgstr "At least one payer required"
+
+#: src/features/contacts/components/contact-combobox.tsx:82
+msgid "Aucun contact trouvé."
+msgstr "No contact found."
+
+#: src/features/budget/components/budget-list-table.tsx:143
+msgid "Aucun mois trouvé."
+msgstr "No months found."
+
+#: src/features/savings/components/savings-table.tsx:256
+msgid "Aucun mouvement enregistré."
+msgstr "No movement recorded."
+
+#: src/components/command-menu.tsx:39
+msgid "Aucun résultat trouvé."
+msgstr "No results found."
+
+#: src/features/contacts/components/contacts-table.tsx:167
+#: src/features/dettes/components/dettes-table.tsx:309
+msgid "Aucun résultat."
+msgstr "No results."
+
+#: src/features/budget/components/budget-savings-sheet.tsx:156
+msgid "Aucun retrait enregistré"
+msgstr "No withdrawal recorded"
+
+#: src/features/vehicles/components/vehicles-table.tsx:232
+msgid "Aucun véhicule trouvé."
+msgstr "No vehicle found."
+
+#: src/components/payment-drawer.tsx:390
+msgid "Aucun versement enregistré pour l'instant."
+msgstr "No payment recorded yet."
+
+#: src/features/subscriptions/components/subscriptions-table.tsx:260
+msgid "Aucune charge récurrente trouvée."
+msgstr "No recurring charges found."
+
+#: src/features/vehicles/detail/index.tsx:672
+msgid "Aucune dépense enregistrée."
+msgstr "No expenses recorded."
+
+#: src/features/vehicles/detail/index.tsx:670
+msgid "Aucune dépense ne correspond aux filtres."
+msgstr "No expenses match the filters."
+
+#: src/features/vehicles/detail/index.tsx:741
+msgid "Aucune note enregistrée."
+msgstr "No notes recorded."
+
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:175
+msgid "Audi A5 2018"
+msgstr "Audi A5 2018"
+
+#: src/features/budget/data/data.ts:34
+#: src/features/subscriptions/data/data.ts:10
+#: src/features/subscriptions/data/data.ts:26
+msgid "Automatique"
+msgstr "Automatic"
+
+#: src/features/budget/data/data.ts:13
+msgid "Avril"
+msgstr "April"
+
+#: src/components/payment-drawer.tsx:93
+#: src/features/budget/components/budget-savings-sheet.tsx:171
+#: src/features/budget/components/budget-savings-sheet.tsx:237
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:65
+#: src/features/savings/components/savings-action-dialog.tsx:164
+#: src/features/savings/data/data.ts:34
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:333
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:340
+msgid "Banque"
+msgstr "Bank"
+
+#: src/components/payment-drawer.tsx:299
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:418
+msgid "Banque (€)"
+msgstr "Bank (€)"
+
+#: src/components/config-drawer.tsx:254
+#: src/components/ui/sidebar.tsx:198
+msgid "Barre latérale"
+msgstr "Sidebar"
+
+#: src/features/vehicles/detail/index.tsx:379
+msgid "Bénéfice net"
+msgstr "Net profit"
+
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:403
+msgid "Bénéfice net : "
+msgstr "Net profit: "
+
+#: src/features/vehicles/detail/lib/export-investments.ts:133
+#: src/features/vehicles/detail/lib/export-investments.ts:154
+msgid "Bénéfice net (€)"
+msgstr "Net profit (€)"
 
 #: src/features/auth/sign-in/components/user-auth-form.tsx:103
 msgid "Bienvenue !"
 msgstr "Welcome!"
 
+#: src/components/layout/data/sidebar-data.ts:18
+#: src/features/budget/budget-list.tsx:77
+msgid "Budget mensuel"
+msgstr "Monthly budget"
+
+#: src/features/savings/components/savings-overview-cards.tsx:57
+msgid "Calculé à partir de tous les mouvements d'argent de l'application (prêts, remboursements, salaires, ventes de véhicules…), pas seulement de vos ajustements manuels."
+msgstr "Calculated from all money movements in the app (loans, repayments, salaries, vehicle sales…), not just your manual adjustments."
+
+#: src/features/contacts/components/contacts-delete-dialog.tsx:94
+#: src/features/dettes/components/dettes-multi-delete-dialog.tsx:96
+msgid "Cette opération ne peut pas être annulée."
+msgstr "This action cannot be undone."
+
+#: src/features/contacts/components/contacts-multi-delete-dialog.tsx:122
+msgid "Cette opération ne peut pas être annulée. Les contacts ayant des dettes ou dépenses associées seront masqués plutôt que supprimés pour garder l'historique lisible."
+msgstr "This action cannot be undone. Contacts with associated debts or expenses will be hidden rather than deleted to keep the history readable."
+
+#: src/components/language-switch.tsx:22
+msgid "Changer de langue"
+msgstr "Change language"
+
+#: src/components/theme-switch.tsx:32
+msgid "Changer de thème"
+msgstr "Toggle theme"
+
+#: src/features/dettes/components/data-table-bulk-actions.tsx:60
+#: src/features/dettes/components/data-table-bulk-actions.tsx:63
+#: src/features/dettes/components/data-table-bulk-actions.tsx:68
+msgid "Changer le statut"
+msgstr "Change status"
+
+#: src/components/select-dropdown.tsx:51
+msgid "Chargement..."
+msgstr "Loading..."
+
+#: src/features/vehicles/components/vehicles-table.tsx:199
+#: src/features/vehicles/detail/index.tsx:159
+msgid "Chargement…"
+msgstr "Loading…"
+
+#: src/features/budget/components/budget-charges-card.tsx:23
+msgid "Charges"
+msgstr "Charges"
+
+#: src/components/layout/data/sidebar-data.ts:23
+#: src/features/subscriptions/index.tsx:90
+msgid "Charges récurrentes"
+msgstr "Recurring charges"
+
+#: src/features/budget/components/budget-overview-cards.tsx:67
+msgid "Charges totales"
+msgstr "Total charges"
+
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:68
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:239
+msgid "Choisir un type"
+msgstr "Choose a type"
+
+#: src/components/config-drawer.tsx:273
+msgid "Choisissez entre encastrée, flottante, ou barre latérale standard"
+msgstr "Choose between inset, floating, or standard sidebar"
+
+#: src/components/config-drawer.tsx:338
+msgid "Choisissez entre étendue par défaut, icônes compactes, ou mise en page complète"
+msgstr "Choose between default expanded, compact icons, or full layout"
+
+#: src/components/config-drawer.tsx:390
+msgid "Choisissez entre le sens de lecture gauche-à-droite ou droite-à-gauche"
+msgstr "Choose between left-to-right or right-to-left reading direction"
+
+#: src/components/config-drawer.tsx:224
+msgid "Choisissez entre système, clair, ou sombre"
+msgstr "Choose between system, light, or dark"
+
+#: src/components/command-menu.tsx:86
+#: src/components/config-drawer.tsx:188
+#: src/components/theme-switch.tsx:37
+msgid "Clair"
+msgstr "Light"
+
+#: src/features/budget/index.tsx:128
+msgid "Cliquez sur \"Initialiser ce mois\" pour commencer."
+msgstr "Click \"Initialize this month\" to get started."
+
+#: src/features/savings/index.tsx:93
+msgid "Combien vous avez actuellement de côté et pouvez dépenser."
+msgstr "How much you currently have set aside and can spend."
+
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:376
+msgid "Comme l'argent est réparti entre banque et espèces, votre épargne comptera votre part entièrement en banque par défaut. Une fois la répartition réelle connue avec les autres participants, corrigez si besoin avec un mouvement manuel dans l'épargne."
+msgstr "Since the money is split between bank and cash, your savings will count your share entirely as bank by default. Once the real split is known with the other participants, correct it if needed with a manual movement in savings."
+
+#: src/components/config-drawer.tsx:289
+msgid "Compacte"
+msgstr "Compact"
+
+#: src/components/config-drawer.tsx:294
+msgid "Complète"
+msgstr "Full"
+
+#: src/features/savings/components/savings-action-dialog.tsx:154
+#: src/features/savings/components/savings-columns.tsx:52
+#: src/features/savings/components/savings-table.tsx:165
+msgid "Compte"
+msgstr "Account"
+
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:482
+msgid "Confirmer la vente"
+msgstr "Confirm the sale"
+
+#: src/features/contacts/components/contacts-multi-delete-dialog.tsx:108
+#: src/features/dettes/components/dettes-multi-delete-dialog.tsx:82
+msgid "Confirmez en tapant \"{confirmWord}\" :"
+msgstr "Confirm by typing \"{confirmWord}\":"
+
 #: src/features/auth/sign-in/index.tsx:22
 msgid "Connexion"
 msgstr "Sign in"
+
+#: src/features/contacts/components/data-table-bulk-actions.tsx:27
+msgid "contact"
+msgstr "contact"
+
+#: src/features/contacts/components/contacts-action-dialog.tsx:88
+msgid "Contact ajouté."
+msgstr "Contact added."
+
+#: src/features/contacts/components/contacts-delete-dialog.tsx:39
+msgid "Contact masqué : il a des dettes ou dépenses associées, son historique est conservé."
+msgstr "Contact hidden: they have associated debts or expenses, their history is kept."
+
+#: src/features/contacts/components/contacts-action-dialog.tsx:105
+msgid "Contact modifié."
+msgstr "Contact updated."
+
+#: src/features/contacts/components/contacts-delete-dialog.tsx:38
+msgid "Contact supprimé."
+msgstr "Contact deleted."
+
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:235
+msgid "Contacts : {totalShare}%"
+msgstr "Contacts: {totalShare}%"
+
+#: src/lib/handle-server-error.ts:17
+msgid "Contenu introuvable."
+msgstr "Content not found."
+
+#: src/main.tsx:54
+msgid "Contenu non modifié !"
+msgstr "Content not modified!"
+
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:472
+msgid "Contexte, raison du prêt..."
+msgstr "Context, reason for the loan..."
+
+#: src/components/confirm-dialog.tsx:62
+msgid "Continuer"
+msgstr "Continue"
+
+#: src/features/budget/components/budget-list-action-dialog.tsx:218
+msgid "Créer"
+msgstr "Create"
+
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:312
+msgid "Créer la charge"
+msgstr "Create charge"
+
+#. placeholder {0}: i18n._(MONTH_MESSAGES[selectedMonth - 1])
+#: src/features/budget/components/budget-list-action-dialog.tsx:125
+msgid "Créer le budget pour {0} {selectedYear}."
+msgstr "Create the budget for {0} {selectedYear}."
+
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:321
+msgid "Créer le véhicule"
+msgstr "Create the vehicle"
+
+#: src/features/contacts/components/contact-duplicate-dialog.tsx:66
+msgid "Créer quand même"
+msgstr "Create anyway"
+
+#: src/features/contacts/components/contacts-action-dialog.tsx:184
+msgid "Créez un nouveau contact ici. Cliquez sur enregistrer une fois terminé."
+msgstr "Create a new contact here. Click save when done."
+
+#: src/components/data-table/column-header.tsx:56
+msgid "Croissant"
+msgstr "Ascending"
+
+#: src/features/dettes/components/dettes-remboursements-drawer.tsx:84
+msgid "D'où vient cet argent ?"
+msgstr "Where does this money come from?"
+
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:369
+msgid "D'où vient l'argent ?"
+msgstr "Where does the money come from?"
+
+#: src/components/payment-drawer.tsx:328
+#: src/features/dettes/components/dettes-columns.tsx:215
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:448
+#: src/features/savings/components/savings-action-dialog.tsx:203
+#: src/features/savings/components/savings-columns.tsx:24
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:229
+#: src/features/vehicles/detail/lib/export-investments.ts:85
+msgid "Date"
+msgstr "Date"
+
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:191
+#: src/features/vehicles/components/vehicles-columns.tsx:81
+msgid "Date d'achat"
+msgstr "Purchase date"
+
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:284
+msgid "Date de vente"
+msgstr "Sale date"
+
+#: src/features/budget/components/budget-savings-sheet.tsx:254
+msgid "Date du retrait"
+msgstr "Withdrawal date"
+
+#: src/features/budget/components/budget-savings-sheet.tsx:76
+#: src/features/savings/components/savings-action-dialog.tsx:63
+msgid "Date requise"
+msgstr "Date required"
+
+#: src/features/budget/data/data.ts:21
+msgid "Décembre"
+msgstr "December"
+
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:248
+msgid "Déclarer la vente"
+msgstr "Declare the sale"
+
+#: src/features/vehicles/detail/index.tsx:549
+msgid "Déclarer vendu"
+msgstr "Declare sold"
+
+#: src/components/data-table/column-header.tsx:60
+msgid "Décroissant"
+msgstr "Descending"
+
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:403
+msgid "Déficit : "
+msgstr "Deficit: "
+
+#: src/features/vehicles/detail/lib/export-investments.ts:85
+msgid "Dépense"
+msgstr "Expense"
+
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:157
+msgid "Dépense ajoutée."
+msgstr "Expense added."
+
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:157
+msgid "Dépense modifiée."
+msgstr "Expense updated."
+
+#: src/features/vehicles/detail/index.tsx:190
+msgid "Dépense supprimée."
+msgstr "Expense deleted."
+
+#: src/features/vehicles/detail/index.tsx:527
+#: src/features/vehicles/detail/lib/export-investments.ts:266
+msgid "Dépenses"
+msgstr "Expenses"
+
+#: src/features/subscriptions/components/data-table-row-actions.tsx:77
+msgid "Désactivation..."
+msgstr "Deactivating..."
+
+#: src/features/subscriptions/components/data-table-row-actions.tsx:85
+msgid "Désactiver"
+msgstr "Deactivate"
+
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:463
+msgid "Description"
+msgstr "Description"
+
+#: src/features/budget/components/budget-savings-sheet.tsx:224
+msgid "Destination"
+msgstr "Destination"
+
+#: src/features/dettes/components/data-table-bulk-actions.tsx:51
+msgid "dette"
+msgstr "debt"
+
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:172
+msgid "Dette enregistrée."
+msgstr "Debt recorded."
+
+#: src/features/dettes/components/dettes-dialogs.tsx:101
+msgid "Dette marquée comme réglée."
+msgstr "Debt marked as settled."
+
+#: src/features/dettes/components/dettes-dialogs.tsx:169
+msgid "Dette pardonnée."
+msgstr "Debt forgiven."
+
+#: src/features/dettes/components/dettes-dialogs.tsx:69
+msgid "Dette supprimée."
+msgstr "Debt deleted."
+
+#: src/components/layout/data/sidebar-data.ts:28
+#: src/features/dettes/index.tsx:121
+msgid "Dettes"
+msgstr "Debts"
+
+#: src/features/vehicles/detail/index.tsx:749
+msgid "Dettes liées à ce véhicule"
+msgstr "Debts linked to this vehicle"
+
+#: src/components/config-drawer.tsx:371
+#: src/features/dettes/components/dettes-columns.tsx:63
+#: src/features/dettes/components/dettes-table.tsx:181
+msgid "Direction"
+msgstr "Direction"
+
+#: src/features/budget/components/budget-list-columns.tsx:46
+msgid "Dispo épargne"
+msgstr "Savings available"
+
+#: src/features/budget/components/budget-savings-card.tsx:50
+msgid "Disponible pour épargner"
+msgstr "Available to save"
+
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:71
+msgid "Doit être positif"
+msgstr "Must be positive"
+
+#: src/components/config-drawer.tsx:361
+msgid "Droite à gauche"
+msgstr "Right to left"
+
+#: src/features/contacts/components/contacts-action-dialog.tsx:233
+msgid "Dupont"
+msgstr "Doe"
+
+#: src/features/subscriptions/components/subscriptions-columns.tsx:73
+msgid "Échéance"
+msgstr "Due date"
+
+#: src/components/data-table/bulk-actions.tsx:172
+#: src/components/data-table/bulk-actions.tsx:177
+msgid "Effacer la sélection"
+msgstr "Clear selection"
+
+#: src/components/data-table/bulk-actions.tsx:173
+#: src/components/data-table/bulk-actions.tsx:183
+msgid "Effacer la sélection (Échap)"
+msgstr "Clear selection (Escape)"
+
+#: src/features/vehicles/detail/lib/export-investments.ts:166
+msgid "Égale (déficit)"
+msgstr "Equal (deficit)"
+
+#: src/features/dettes/components/dettes-dialogs.tsx:180
+msgid "Elle ne sera plus considérée comme due, sans qu'aucun remboursement n'ait eu lieu. Aucun nouveau remboursement ne pourra être ajouté tant que ce n'est pas annulé."
+msgstr "It will no longer be considered owed, without any repayment having taken place. No new repayment can be added until this is undone."
+
+#: src/features/dettes/components/dettes-dialogs.tsx:213
+msgid "Elle redeviendra due, comme avant."
+msgstr "It will become due again, as before."
+
+#: src/features/dettes/components/dettes-dialogs.tsx:147
+msgid "Elle repassera \"en cours\" si le montant remboursé n'atteint pas le montant dû."
+msgstr "It will go back to \"ongoing\" if the repaid amount does not reach the amount owed."
+
+#: src/features/dettes/components/dettes-dialogs.tsx:112
+msgid "Elle sera considérée comme réglée même si le montant remboursé ne correspond pas exactement au montant dû. Aucun nouveau remboursement ne pourra être ajouté tant que ce n'est pas annulé."
+msgstr "It will be considered settled even if the repaid amount doesn't exactly match the amount owed. No new repayment can be added until this is undone."
+
+#: src/features/auth/sign-in/components/user-auth-form.tsx:140
+msgid "Email"
+msgstr "Email"
 
 #: src/features/auth/sign-in/components/user-auth-form.tsx:115
 msgid "Email ou mot de passe incorrect."
 msgstr "Incorrect email or password."
 
+#: src/features/dettes/components/dettes-columns.tsx:75
+msgid "Emprunt"
+msgstr "Borrowed"
+
 #: src/features/auth/sign-in/index.tsx:36
 msgid "En cliquant sur connexion, vous acceptez nos <0>Conditions d'utilisation</0> et notre <1>Politique de confidentialité</1>."
 msgstr "By signing in, you agree to our <0>Terms of Service</0> and <1>Privacy Policy</1>."
 
+#: src/features/dettes/components/dettes-columns.tsx:206
+#: src/features/dettes/data/data.tsx:28
+#: src/features/subscriptions/data/data.ts:34
+#: src/features/vehicles/data/data.ts:13
+#: src/features/vehicles/data/data.ts:31
+#: src/features/vehicles/detail/index.tsx:290
+msgid "En cours"
+msgstr "Active"
+
+#: src/features/dettes/index.tsx:174
+msgid "En votre défaveur"
+msgstr "Against you"
+
+#: src/features/dettes/index.tsx:172
+msgid "En votre faveur"
+msgstr "In your favor"
+
+#: src/features/vehicles/detail/index.tsx:360
+msgid "Encaissé par <0>{cashierName}</0>"
+msgstr "Cashed in by <0>{cashierName}</0>"
+
+#: src/components/config-drawer.tsx:233
+msgid "Encastrée"
+msgstr "Inset"
+
+#: src/components/payment-drawer.tsx:363
+#: src/features/contacts/components/contacts-action-dialog.tsx:248
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:497
+msgid "Enregistrement..."
+msgstr "Saving..."
+
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:308
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:321
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:482
+#: src/features/vehicles/detail/components/edit-participants-dialog.tsx:191
+#: src/features/vehicles/detail/components/event-mutate-dialog.tsx:134
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:454
+msgid "Enregistrement…"
+msgstr "Saving…"
+
+#: src/features/budget/components/budget-edit-salary-dialog.tsx:116
+#: src/features/budget/components/budget-savings-sheet.tsx:265
+#: src/features/contacts/components/contacts-action-dialog.tsx:248
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:499
+#: src/features/savings/components/savings-action-dialog.tsx:242
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:310
+#: src/features/vehicles/detail/components/edit-participants-dialog.tsx:191
+msgid "Enregistrer"
+msgstr "Save"
+
+#: src/features/budget/components/budget-savings-sheet.tsx:190
+msgid "Enregistrer un retrait"
+msgstr "Record a withdrawal"
+
+#: src/components/payment-drawer.tsx:228
+msgid "Enregistrer un versement"
+msgstr "Record a payment"
+
+#: src/features/savings/components/savings-action-dialog.tsx:111
+msgid "Enregistrez un ajout ou retrait sur votre épargne."
+msgstr "Record an addition or withdrawal on your savings."
+
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:206
+msgid "Enregistrez un prêt ou un emprunt"
+msgstr "Record a loan or a debt"
+
+#: src/features/contacts/components/contacts-delete-dialog.tsx:85
+msgid "Entrez le nom complet pour confirmer."
+msgstr "Enter the full name to confirm."
+
 #: src/features/auth/sign-in/index.tsx:25
 msgid "Entrez votre email et votre mot de passe pour vous connecter à votre compte."
 msgstr "Enter your email and password to sign in to your account."
+
+#: src/components/layout/data/sidebar-data.ts:33
+#: src/features/budget/components/budget-savings-card.tsx:44
+#: src/features/savings/index.tsx:90
+msgid "Épargne"
+msgstr "Savings"
+
+#: src/features/savings/components/savings-overview-cards.tsx:25
+msgid "Épargne Banque"
+msgstr "Bank savings"
+
+#: src/features/savings/components/savings-overview-cards.tsx:38
+msgid "Épargne Espèces"
+msgstr "Cash savings"
+
+#: src/features/budget/components/budget-savings-sheet.tsx:114
+msgid "Épargne mise de côté"
+msgstr "Savings set aside"
+
+#: src/features/dettes/components/data-table-bulk-actions.tsx:44
+#: src/features/dettes/components/dettes-multi-delete-dialog.tsx:48
+msgid "Erreur"
+msgstr "Error"
+
+#: src/main.tsx:70
+msgid "Erreur interne du serveur !"
+msgstr "Internal Server Error!"
+
+#: src/features/contacts/components/contacts-multi-delete-dialog.tsx:74
+msgid "Erreur lors de la suppression."
+msgstr "Error while deleting."
 
 #: src/features/auth/sign-in/components/user-auth-form.tsx:107
 msgid "Erreur réseau. Vérifiez votre connexion."
@@ -42,25 +896,1266 @@ msgstr "Network error. Check your connection."
 msgid "Erreur: {0}"
 msgstr "Error: {0}"
 
+#: src/components/payment-drawer.tsx:94
+#: src/components/payment-drawer.tsx:311
+#: src/features/budget/components/budget-savings-sheet.tsx:173
+#: src/features/budget/components/budget-savings-sheet.tsx:240
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:66
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:430
+#: src/features/savings/components/savings-action-dialog.tsx:167
+#: src/features/savings/data/data.ts:35
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:336
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:363
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:343
+msgid "Espèces"
+msgstr "Cash"
+
+#. placeholder {0}: currentRow.name
+#: src/features/vehicles/components/vehicles-delete-dialog.tsx:51
+msgid "Êtes-vous sûr de vouloir supprimer <0>{0}</0> ? Cette action est irréversible et supprimera toutes les dépenses associées."
+msgstr "Are you sure you want to delete <0>{0}</0>? This action is irreversible and will delete all associated expenses."
+
+#. placeholder {0}: currentRow.label
+#. placeholder {0}: currentRow.name
+#: src/features/savings/components/savings-delete-dialog.tsx:41
+#: src/features/subscriptions/components/subscriptions-delete-dialog.tsx:42
+msgid "Êtes-vous sûr de vouloir supprimer <0>{0}</0> ? Cette action est irréversible."
+msgstr "Are you sure you want to delete <0>{0}</0>? This action is irreversible."
+
+#. placeholder {0}: pendingDeleteExpense.label
+#. placeholder {1}: centsToEuros( pendingDeleteExpense.totalAmount ).toLocaleString('fr-FR')
+#: src/features/vehicles/detail/index.tsx:782
+msgid "Êtes-vous sûr de vouloir supprimer <0>{0}</0> ({1} €) ? Cette action est irréversible."
+msgstr "Are you sure you want to delete <0>{0}</0> ({1} €)? This action is irreversible."
+
+#: src/features/contacts/components/contacts-delete-dialog.tsx:71
+msgid "Êtes-vous sûr de vouloir supprimer <0>{fullName}</0> ?<1/>Cette action est irréversible. S'il a des dettes ou dépenses associées, il sera masqué plutôt que supprimé pour garder l'historique lisible."
+msgstr "Are you sure you want to delete <0>{fullName}</0>?<1/>This action is irreversible. If they have associated debts or expenses, they will be hidden rather than deleted to keep the history readable."
+
+#: src/features/vehicles/detail/index.tsx:811
+msgid "Êtes-vous sûr de vouloir supprimer cette note ? Cette action est irréversible."
+msgstr "Are you sure you want to delete this note? This action is irreversible."
+
+#. placeholder {0}: i18n._(MONTH_MESSAGES[currentRow.month - 1])
+#. placeholder {1}: currentRow.year
+#: src/features/budget/components/budget-list-delete-dialog.tsx:41
+msgid "Êtes-vous sûr de vouloir supprimer le budget de <0>{0} {1}</0> ? Cette action est irréversible."
+msgstr "Are you sure you want to delete the budget for <0>{0} {1}</0>? This action is irreversible."
+
+#: src/features/contacts/components/contacts-multi-delete-dialog.tsx:99
+msgid "Êtes-vous sûr de vouloir supprimer les contacts sélectionnés ? <0/>Cette action est irréversible."
+msgstr "Are you sure you want to delete the selected contacts? <0/>This action is irreversible."
+
+#: src/features/dettes/components/dettes-multi-delete-dialog.tsx:73
+msgid "Êtes-vous sûr de vouloir supprimer les dettes sélectionnées ? <0/>Cette action est irréversible."
+msgstr "Are you sure you want to delete the selected debts? <0/>This action is irreversible."
+
+#: src/components/sign-out-dialog.tsx:41
+msgid "Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à votre compte."
+msgstr "Are you sure you want to sign out? You will need to sign in again to access your account."
+
+#: src/features/vehicles/detail/components/event-mutate-dialog.tsx:64
+msgid "Événement ajouté."
+msgstr "Event added."
+
+#: src/features/vehicles/detail/components/event-mutate-dialog.tsx:64
+msgid "Événement modifié."
+msgstr "Event updated."
+
+#: src/features/vehicles/detail/index.tsx:216
+msgid "Événement supprimé."
+msgstr "Event deleted."
+
+#: src/features/savings/components/savings-action-dialog.tsx:223
+msgid "Ex : Aide maman, remboursement dette..."
+msgstr "E.g.: Helped mom, debt repayment..."
+
+#: src/features/vehicles/detail/components/event-mutate-dialog.tsx:120
+msgid "Ex : Le vendeur a dit démarreur, finalement tout le moteur."
+msgstr "E.g.: The seller said starter, turned out to be the whole engine."
+
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:213
+msgid "Ex : Révision moteur"
+msgstr "E.g.: Engine service"
+
+#: src/components/payment-drawer.tsx:348
+msgid "Ex : virement, espèces..."
+msgstr "E.g.: transfer, cash..."
+
+#: src/features/vehicles/detail/index.tsx:539
+msgid "Exporter Excel"
+msgstr "Export Excel"
+
+#: src/components/payment-drawer.tsx:436
+#: src/components/ui/dialog.tsx:76
+#: src/components/ui/sheet.tsx:76
+msgid "Fermer"
+msgstr "Close"
+
+#: src/features/budget/data/data.ts:11
+msgid "Février"
+msgstr "February"
+
+#: src/features/savings/components/savings-table.tsx:143
+msgid "Filtrer par libellé..."
+msgstr "Filter by label..."
+
+#: src/features/contacts/components/contacts-table.tsx:93
+#: src/features/subscriptions/components/subscriptions-table.tsx:145
+#: src/features/vehicles/components/vehicles-table.tsx:133
+#: src/features/vehicles/detail/index.tsx:567
+msgid "Filtrer par nom..."
+msgstr "Filter by name..."
+
+#: src/components/config-drawer.tsx:238
+msgid "Flottante"
+msgstr "Floating"
+
+#: src/components/config-drawer.tsx:354
+msgid "Gauche à droite"
+msgstr "Left to right"
+
+#: src/components/layout/data/sidebar-data.ts:15
+msgid "Général"
+msgstr "General"
+
+#: src/features/contacts/index.tsx:91
+msgid "Gérez les personnes avec qui vous partagez des dépenses ou des dettes."
+msgstr "Manage the people you share expenses or debts with."
+
+#: src/features/budget/budget-list.tsx:80
+msgid "Gérez vos budgets mensuels ici."
+msgstr "Manage your monthly budgets here."
+
+#: src/features/subscriptions/index.tsx:93
+msgid "Gérez vos charges récurrentes mensuelles."
+msgstr "Manage your monthly recurring charges."
+
+#: src/features/vehicles/index.tsx:90
+msgid "Gérez vos véhicules et suivez leur rentabilité."
+msgstr "Manage your vehicles and track their profitability."
+
+#. placeholder {0}: repayments.length
+#: src/components/payment-drawer.tsx:378
+msgid "Historique ({0, plural, one {# versement} other {# versements}})"
+msgstr "History ({0, plural, one {# payment} other {# payments}})"
+
+#: src/features/errors/not-found-error.tsx:16
+msgid "Il semble que la page que vous recherchez <0/>n'existe pas ou a peut-être été supprimée."
+msgstr "It seems the page you're looking for <0/>doesn't exist or may have been removed."
+
+#: src/features/contacts/components/contacts-delete-dialog.tsx:47
+msgid "Impossible de supprimer ce contact."
+msgstr "Unable to delete this contact."
+
+#: src/features/subscriptions/data/data.ts:16
+#: src/features/subscriptions/data/data.ts:35
+msgid "Inactif"
+msgstr "Inactive"
+
+#: src/features/budget/components/budget-init-month-dialog.tsx:124
+msgid "Initialiser"
+msgstr "Initialize"
+
+#. placeholder {0}: i18n._(MONTH_MESSAGES[month - 1])
+#: src/features/budget/components/budget-init-month-dialog.tsx:86
+msgid "Initialiser {0} {year}"
+msgstr "Initialize {0} {year}"
+
+#: src/features/budget/index.tsx:100
+msgid "Initialiser ce mois"
+msgstr "Initialize this month"
+
+#: src/features/vehicles/detail/index.tsx:467
+msgid "Investi"
+msgstr "Invested"
+
+#: src/features/vehicles/detail/lib/export-investments.ts:253
+msgid "Investissements"
+msgstr "Investments"
+
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:299
+msgid "J'ai emprunté"
+msgstr "I borrowed"
+
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:258
+#: src/features/dettes/data/data.tsx:15
+msgid "J'ai prêté"
+msgstr "I lent"
+
+#: src/features/budget/data/data.ts:10
+msgid "Janvier"
+msgstr "January"
+
+#: src/features/dettes/index.tsx:148
+msgid "Je dois"
+msgstr "I owe"
+
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:307
+msgid "Je dois de l'argent à quelqu'un"
+msgstr "I owe money to someone"
+
+#: src/features/contacts/components/contacts-action-dialog.tsx:208
+msgid "Jean"
+msgstr "John"
+
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:258
+msgid "Jour de prélèvement"
+msgstr "Billing day"
+
+#: src/features/budget/data/data.ts:16
+msgid "Juillet"
+msgstr "July"
+
+#: src/features/budget/data/data.ts:15
+msgid "Juin"
+msgstr "June"
+
+#: src/features/budget/components/budget-list-action-dialog.tsx:59
+#: src/features/budget/components/budget-list-action-dialog.tsx:60
+msgid "L'année doit être comprise entre 2020 et 2100."
+msgstr "The year must be between 2020 and 2100."
+
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:68
+msgid "La date d'achat est requise"
+msgstr "The purchase date is required"
+
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:100
+msgid "La date est requise"
+msgstr "The date is required"
+
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:89
+msgid "La date est requise."
+msgstr "The date is required."
+
+#: src/features/vehicles/detail/components/event-mutate-dialog.tsx:52
+msgid "La note est requise"
+msgstr "The note is required"
+
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:84
+#: src/features/vehicles/detail/components/edit-participants-dialog.tsx:72
+msgid "La somme des parts des participants ne peut pas dépasser 100%"
+msgstr "The sum of participants' shares cannot exceed 100%"
+
+#. placeholder {0}: entry.dueDay
+#: src/features/budget/components/budget-charges-card.tsx:36
+msgid "Le {0, selectordinal, one {#er} other {#}}"
+msgstr "On the {0, selectordinal, one {#st} two {#nd} few {#rd} other {#th}}"
+
+#: src/features/subscriptions/components/subscriptions-columns.tsx:82
+msgid "Le {dueDay, selectordinal, one {#er} other {#}}"
+msgstr "On the {dueDay, selectordinal, one {#st} two {#nd} few {#rd} other {#th}}"
+
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:99
+msgid "Le libellé est requis"
+msgstr "The label is required"
+
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:140
+msgid "Le montant Banque doit être compris entre 0 et le montant total."
+msgstr "The Bank amount must be between 0 and the total amount."
+
+#: src/components/payment-drawer.tsx:155
+msgid "Le montant Banque doit être compris entre 0 et le montant versé."
+msgstr "The Bank amount must be between 0 and the amount paid."
+
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:203
+msgid "Le montant Banque doit être compris entre 0 et le prix de vente."
+msgstr "The Bank amount must be between 0 and the sale price."
+
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:88
+msgid "Le montant doit être positif."
+msgstr "The amount must be positive."
+
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:67
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:89
+msgid "Le montant doit être supérieur à 0"
+msgstr "The amount must be greater than 0"
+
 #: src/features/auth/sign-in/components/user-auth-form.tsx:70
 msgid "Le mot de passe doit contenir au moins 7 caractères"
 msgstr "Password must be at least 7 characters long"
 
-#: src/features/auth/sign-in/components/user-auth-form.tsx:160
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:64
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:67
+msgid "Le nom est requis"
+msgstr "The name is required"
+
+#: src/features/contacts/components/contacts-action-dialog.tsx:63
+msgid "Le prénom est requis."
+msgstr "The first name is required."
+
+#: src/features/budget/components/budget-init-month-dialog.tsx:52
+#: src/features/budget/components/budget-list-action-dialog.tsx:63
+msgid "Le salaire doit être positif."
+msgstr "The salary must be positive."
+
+#: src/features/budget/components/budget-init-month-dialog.tsx:51
+#: src/features/budget/components/budget-list-action-dialog.tsx:62
+msgid "Le salaire est requis."
+msgstr "The salary is required."
+
+#: src/features/budget/components/budget-edit-salary-dialog.tsx:47
+msgid "Le salaire ne peut pas être négatif"
+msgstr "The salary cannot be negative"
+
+#: src/components/payment-drawer.tsx:95
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:67
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:339
+msgid "Les deux"
+msgstr "Both"
+
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:166
+msgid "Les mois déjà générés ne sont pas affectés par cette modification — seuls les futurs mois en tiendront compte."
+msgstr "Months already generated aren't affected by this change — only future months will take it into account."
+
+#: src/features/savings/components/savings-action-dialog.tsx:219
+#: src/features/savings/components/savings-columns.tsx:35
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:209
+msgid "Libellé"
+msgstr "Label"
+
+#: src/features/savings/components/savings-action-dialog.tsx:62
+msgid "Libellé requis"
+msgstr "Label required"
+
+#: src/components/data-table/pagination.tsx:67
+msgid "Lignes par page"
+msgstr "Rows per page"
+
+#: src/features/budget/data/data.ts:14
+msgid "Mai"
+msgstr "May"
+
+#: src/features/budget/data/data.ts:35
+#: src/features/subscriptions/data/data.ts:11
+#: src/features/subscriptions/data/data.ts:27
+msgid "Manuel"
+msgstr "Manual"
+
+#: src/features/dettes/components/dettes-dialogs.tsx:110
+msgid "Marquer cette dette comme réglée ?"
+msgstr "Mark this debt as settled?"
+
+#: src/features/dettes/components/data-table-row-actions.tsx:102
+#: src/features/dettes/components/dettes-dialogs.tsx:119
+msgid "Marquer comme réglée"
+msgstr "Mark as settled"
+
+#: src/features/budget/data/data.ts:12
+msgid "Mars"
+msgstr "March"
+
+#: src/components/data-table/column-header.tsx:67
+msgid "Masquer"
+msgstr "Hide"
+
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:58
+msgid "Max 100%"
+msgstr "Max 100%"
+
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:72
+msgid "Max 31"
+msgstr "Max 31"
+
+#: src/components/layout/data/sidebar-data.ts:43
+#: src/features/contacts/index.tsx:88
+msgid "Mes contacts"
+msgstr "My contacts"
+
+#: src/features/vehicles/detail/lib/export-investments.ts:137
+msgid "Métrique"
+msgstr "Metric"
+
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:71
+msgid "Min 1"
+msgstr "Min 1"
+
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:57
+msgid "Min 1%"
+msgstr "Min 1%"
+
+#: src/features/budget/components/budget-savings-card.tsx:70
+msgid "Mis de côté ce mois"
+msgstr "Set aside this month"
+
+#. placeholder {0}: ownerBreakdown.invested.toLocaleString('fr-FR')
+#. placeholder {0}: p.invested.toLocaleString('fr-FR')
+#. placeholder {1}: ownerBreakdown.profitAmount.toLocaleString('fr-FR', { maximumFractionDigits: 2, })
+#. placeholder {1}: p.profitAmount.toLocaleString('fr-FR', { maximumFractionDigits: 2, })
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:426
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:452
+msgid "Mise : {0} € · Bénéf : {1} €"
+msgstr "Stake: {0} € · Profit: {1} €"
+
+#: src/features/dettes/components/data-table-bulk-actions.tsx:39
+msgid "Mise à jour du statut..."
+msgstr "Updating status..."
+
+#: src/components/config-drawer.tsx:309
+msgid "Mise en page"
+msgstr "Layout"
+
+#: src/features/contacts/components/data-table-row-actions.tsx:43
+#: src/features/subscriptions/components/data-table-row-actions.tsx:96
+#: src/features/vehicles/detail/components/event-mutate-dialog.tsx:134
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:456
+#: src/features/vehicles/detail/index.tsx:452
+msgid "Modifier"
+msgstr "Edit"
+
+#: src/features/vehicles/detail/components/event-mutate-dialog.tsx:94
+msgid "Modifier l’événement"
+msgstr "Edit the event"
+
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:159
+msgid "Modifier la charge récurrente"
+msgstr "Edit the recurring charge"
+
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:187
+msgid "Modifier la dépense"
+msgstr "Edit the expense"
+
+#: src/features/contacts/components/contacts-action-dialog.tsx:172
+msgid "Modifier le contact"
+msgstr "Edit contact"
+
+#: src/features/budget/components/budget-edit-salary-dialog.tsx:82
+msgid "Modifier le salaire"
+msgstr "Edit salary"
+
+#: src/features/vehicles/detail/components/edit-participants-dialog.tsx:137
+msgid "Modifier les parts"
+msgstr "Edit shares"
+
+#: src/features/contacts/components/contacts-action-dialog.tsx:179
+msgid "Modifiez le contact ici. Cliquez sur enregistrer une fois terminé."
+msgstr "Edit the contact here. Click save when done."
+
+#: src/features/vehicles/detail/lib/export-investments.ts:67
+#: src/features/vehicles/detail/lib/export-investments.ts:179
+msgid "Moi"
+msgstr "Me"
+
+#: src/features/budget/components/budget-list-action-dialog.tsx:139
+#: src/features/budget/components/budget-list-columns.tsx:20
+msgid "Mois"
+msgstr "Month"
+
+#: src/features/budget/index.tsx:125
+msgid "Mois non initialisé"
+msgstr "Month not initialized"
+
+#: src/features/budget/components/budget-savings-sheet.tsx:204
+#: src/features/savings/components/savings-action-dialog.tsx:183
+#: src/features/savings/components/savings-columns.tsx:82
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:211
+msgid "Montant"
+msgstr "Amount"
+
+#: src/components/payment-drawer.tsx:242
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:354
+msgid "Montant (€)"
+msgstr "Amount (€)"
+
+#: src/features/subscriptions/components/subscriptions-columns.tsx:62
+msgid "Montant / mois"
+msgstr "Amount / month"
+
+#: src/features/vehicles/detail/lib/export-investments.ts:154
+msgid "Montant à recevoir (€)"
+msgstr "Amount to receive (€)"
+
+#: src/features/dettes/components/dettes-columns.tsx:119
+msgid "Montant initial"
+msgstr "Initial amount"
+
+#: src/features/vehicles/detail/lib/export-investments.ts:85
+msgid "Montant payé (€)"
+msgstr "Amount paid (€)"
+
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:347
+msgid "Montant reçu en banque"
+msgstr "Amount received in bank"
+
+#: src/features/budget/components/budget-savings-sheet.tsx:74
+#: src/features/savings/components/savings-action-dialog.tsx:61
+msgid "Montant requis"
+msgstr "Amount required"
+
+#: src/features/auth/sign-in/components/user-auth-form.tsx:162
 msgid "Mot de passe"
 msgstr "Password"
 
-#: src/features/auth/sign-in/components/user-auth-form.tsx:171
+#: src/features/savings/components/savings-provider.tsx:61
+msgid "Mouvement enregistré"
+msgstr "Movement recorded"
+
+#: src/features/savings/components/savings-provider.tsx:75
+msgid "Mouvement supprimé"
+msgstr "Movement deleted"
+
+#: src/features/contacts/components/contacts-columns.tsx:46
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:190
+#: src/features/subscriptions/components/subscriptions-columns.tsx:52
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:171
+#: src/features/vehicles/detail/index.tsx:461
+msgid "Nom"
+msgstr "Name"
+
+#: src/features/contacts/components/contacts-action-dialog.tsx:224
+msgid "Nom <0>(optionnel)</0>"
+msgstr "Last name <0>(optional)</0>"
+
+#: src/features/contacts/components/contacts-delete-dialog.tsx:81
+msgid "Nom complet :"
+msgstr "Full name:"
+
+#: src/features/dettes/components/dettes-columns.tsx:153
+#: src/features/vehicles/detail/components/event-mutate-dialog.tsx:116
+msgid "Note"
+msgstr "Note"
+
+#: src/components/payment-drawer.tsx:343
+msgid "Note (optionnel)"
+msgstr "Note (optional)"
+
+#: src/features/vehicles/detail/index.tsx:683
+msgid "Notes"
+msgstr "Notes"
+
+#: src/features/errors/general-error.tsx:25
+msgid "Nous nous excusons pour la gêne occasionnée. <0/> Veuillez réessayer plus tard."
+msgstr "We apologize for the inconvenience. <0/> Please try again later."
+
+#: src/features/budget/components/budget-list-action-dialog.tsx:122
+#: src/features/budget/components/budget-list-primary-buttons.tsx:11
+msgid "Nouveau mois"
+msgstr "New month"
+
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:149
+#: src/features/vehicles/components/vehicles-primary-buttons.tsx:11
+msgid "Nouveau véhicule"
+msgstr "New vehicle"
+
+#: src/features/subscriptions/components/subscriptions-primary-buttons.tsx:11
+msgid "Nouvelle charge"
+msgstr "New charge"
+
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:161
+msgid "Nouvelle charge récurrente"
+msgstr "New recurring charge"
+
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:203
+msgid "Nouvelle dette"
+msgstr "New debt"
+
+#: src/features/budget/data/data.ts:20
+msgid "Novembre"
+msgstr "November"
+
+#: src/features/budget/data/data.ts:19
+msgid "Octobre"
+msgstr "October"
+
+#: src/features/dettes/data/data.tsx:20
+msgid "On m'a prêté"
+msgstr "I was lent"
+
+#: src/features/dettes/index.tsx:134
+msgid "On me doit"
+msgstr "I am owed"
+
+#: src/features/dettes/components/dettes-remboursements-drawer.tsx:84
+msgid "Où avez-vous reçu cet argent ?"
+msgstr "Where did you receive this money?"
+
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:322
+msgid "Où est allé l'argent ?"
+msgstr "Where did the money go?"
+
+#: src/components/payment-drawer.tsx:254
+msgid "Où va cet argent ?"
+msgstr "Where is this money going?"
+
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:371
+msgid "Où va l'argent ?"
+msgstr "Where is the money going?"
+
+#: src/features/errors/not-found-error.tsx:13
+msgid "Oups ! Page introuvable !"
+msgstr "Oops! Page not found!"
+
+#. placeholder {0}: `:')`
+#: src/features/errors/general-error.tsx:23
+msgid "Oups ! Une erreur est survenue {0}"
+msgstr "Oops! Something went wrong {0}"
+
+#: src/features/budget/components/budget-list-data-table-row-actions.tsx:45
+#: src/features/contacts/components/data-table-row-actions.tsx:33
+#: src/features/dettes/components/data-table-row-actions.tsx:42
+#: src/features/savings/components/data-table-row-actions.tsx:37
+#: src/features/subscriptions/components/data-table-row-actions.tsx:67
+#: src/features/vehicles/components/data-table-row-actions.tsx:33
+msgid "Ouvrir le menu"
+msgstr "Open menu"
+
+#: src/components/config-drawer.tsx:53
+msgid "Ouvrir les paramètres d'apparence"
+msgstr "Open appearance settings"
+
+#: src/components/data-table/pagination.tsx:44
+#: src/components/data-table/pagination.tsx:74
+msgid "Page {currentPage} sur {totalPages}"
+msgstr "Page {currentPage} of {totalPages}"
+
+#: src/components/ui/command.tsx:47
+msgid "Palette de commandes"
+msgstr "Command Palette"
+
+#: src/components/config-drawer.tsx:284
+msgid "Par défaut"
+msgstr "Default"
+
+#: src/components/config-drawer.tsx:63
+msgid "Paramètres d'apparence"
+msgstr "Appearance settings"
+
+#: src/features/dettes/components/dettes-dialogs.tsx:203
+msgid "Pardon annulé."
+msgstr "Forgiveness cancelled."
+
+#: src/features/dettes/components/dettes-columns.tsx:197
+#: src/features/dettes/data/data.tsx:38
+msgid "Pardonné"
+msgstr "Forgiven"
+
+#: src/features/dettes/components/dettes-dialogs.tsx:186
+msgid "Pardonner"
+msgstr "Forgive"
+
+#: src/features/dettes/components/data-table-row-actions.tsx:113
+msgid "Pardonner cette dette"
+msgstr "Forgive this debt"
+
+#: src/features/dettes/components/dettes-dialogs.tsx:178
+msgid "Pardonner cette dette ?"
+msgstr "Forgive this debt?"
+
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:287
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:379
+#: src/features/vehicles/detail/index.tsx:574
+#: src/features/vehicles/detail/lib/export-investments.ts:150
+msgid "Participant"
+msgstr "Participant"
+
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:230
+#: src/features/vehicles/components/vehicles-columns.tsx:93
+#: src/features/vehicles/detail/index.tsx:417
+#: src/features/vehicles/detail/index.tsx:441
+msgid "Participants"
+msgstr "Participants"
+
+#: src/features/vehicles/detail/components/edit-participants-dialog.tsx:115
+msgid "Parts mises à jour."
+msgstr "Shares updated."
+
+#: src/features/vehicles/detail/lib/export-investments.ts:85
+msgid "Payé par"
+msgstr "Paid by"
+
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:416
+msgid "Payé pour quelqu'un d'autre ?"
+msgstr "Paid on behalf of someone else?"
+
+#. placeholder {0}: p.imputedToFirstName
+#: src/features/vehicles/detail/components/payers-cell.tsx:52
+msgid "pour {0}"
+msgstr "for {0}"
+
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:373
+msgid "Pour le compte de"
+msgstr "On behalf of"
+
+#: src/features/contacts/components/contacts-action-dialog.tsx:204
+msgid "Prénom"
+msgstr "First name"
+
+#: src/features/contacts/components/contact-combobox.tsx:70
+msgid "Prénom ou nom..."
+msgstr "First or last name..."
+
+#: src/features/dettes/components/dettes-columns.tsx:70
+msgid "Prêt"
+msgstr "Lent"
+
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:206
+msgid "Prix d'achat"
+msgstr "Purchase price"
+
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:266
+#: src/features/vehicles/detail/index.tsx:330
+msgid "Prix de vente"
+msgstr "Sale price"
+
+#: src/features/vehicles/detail/lib/export-investments.ts:127
+msgid "Prix de vente (€)"
+msgstr "Sale price (€)"
+
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:228
+msgid "Quel est votre rôle ?"
+msgstr "What is your role?"
+
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:266
+msgid "Quelqu'un me doit de l'argent"
+msgstr "Someone owes me money"
+
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:296
+msgid "Qui a encaissé ?"
+msgstr "Who cashed it in?"
+
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:244
+msgid "Qui a payé ?"
+msgstr "Who paid?"
+
+#: src/features/contacts/components/contact-duplicate-dialog.tsx:62
+msgid "Réactiver"
+msgstr "Reactivate"
+
+#: src/components/search.tsx:30
+msgid "Rechercher"
+msgstr "Search"
+
+#: src/features/contacts/components/contact-combobox.tsx:63
+msgid "Rechercher un contact..."
+msgstr "Search for a contact..."
+
+#: src/components/ui/command.tsx:49
+msgid "Recherchez une commande à exécuter..."
+msgstr "Search for a command to run..."
+
+#: src/features/dettes/components/dettes-dialogs.tsx:136
+msgid "Règlement manuel annulé."
+msgstr "Manual settlement cancelled."
+
+#: src/components/config-drawer.tsx:83
+#: src/features/dettes/components/dettes-table.tsx:235
+#: src/features/savings/components/savings-table.tsx:184
+#: src/features/subscriptions/components/subscriptions-table.tsx:186
+#: src/features/vehicles/components/vehicles-table.tsx:159
+#: src/features/vehicles/detail/index.tsx:595
+msgid "Réinitialiser"
+msgstr "Reset"
+
+#: src/components/config-drawer.tsx:81
+msgid "Réinitialiser tous les paramètres par défaut"
+msgstr "Reset all settings to default"
+
+#: src/components/payment-drawer.tsx:201
+#: src/features/dettes/components/dettes-remboursements-drawer.tsx:86
+#: src/features/dettes/data/data.tsx:33
+msgid "Remboursé"
+msgstr "Repaid"
+
+#: src/features/dettes/components/data-table-row-actions.tsx:63
+#: src/features/dettes/components/dettes-remboursements-drawer.tsx:45
+msgid "Remboursements"
+msgstr "Repayments"
+
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:171
+msgid "Renseignez les informations de la nouvelle charge récurrente."
+msgstr "Enter the details of the new recurring charge."
+
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:152
+msgid "Renseignez les informations du véhicule et ses participants."
+msgstr "Fill in the vehicle information and its participants."
+
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:420
+#: src/features/vehicles/detail/lib/export-investments.ts:151
+msgid "Répartition"
+msgstr "Distribution"
+
+#: src/features/vehicles/detail/index.tsx:439
+msgid "Répartition de la vente"
+msgstr "Sale distribution"
+
+#: src/features/vehicles/detail/lib/export-investments.ts:296
+msgid "Répartition entre participants"
+msgstr "Distribution among participants"
+
+#: src/features/budget/components/budget-edit-salary-dialog.tsx:46
+#: src/features/budget/components/budget-savings-sheet.tsx:74
+#: src/features/savings/components/savings-action-dialog.tsx:61
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:66
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:70
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:56
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:70
+#: src/features/vehicles/detail/components/edit-participants-dialog.tsx:52
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:88
+msgid "Requis"
+msgstr "Required"
+
+#: src/features/dettes/components/dettes-columns.tsx:130
+msgid "Restant dû"
+msgstr "Remaining due"
+
+#: src/components/payment-drawer.tsx:215
+#: src/features/dettes/components/dettes-remboursements-drawer.tsx:87
+msgid "Reste à régler"
+msgstr "Remaining to settle"
+
+#: src/features/budget/components/budget-savings-card.tsx:81
+msgid "Reste à retirer"
+msgstr "Left to withdraw"
+
+#: src/features/budget/components/budget-overview-cards.tsx:98
+msgid "Reste disponible"
+msgstr "Remaining available"
+
+#: src/features/vehicles/detail/lib/export-investments.ts:281
+msgid "Résumé véhicule"
+msgstr "Vehicle summary"
+
+#. placeholder {0}: formatFrenchDate(w.date)
+#: src/features/budget/components/budget-savings-sheet.tsx:167
+msgid "Retiré le {0}"
+msgstr "Withdrawn on {0}"
+
+#: src/features/errors/general-error.tsx:33
+#: src/features/errors/not-found-error.tsx:23
+msgid "Retour"
+msgstr "Go Back"
+
+#: src/features/errors/general-error.tsx:36
+#: src/features/errors/not-found-error.tsx:26
+msgid "Retour à l'accueil"
+msgstr "Back to Home"
+
+#: src/features/vehicles/detail/index.tsx:175
+msgid "Retour à la liste"
+msgstr "Back to list"
+
+#: src/features/savings/components/savings-action-dialog.tsx:140
+#: src/features/savings/data/data.ts:30
+msgid "Retrait"
+msgstr "Withdrawal"
+
+#: src/features/budget/components/budget-init-month-dialog.tsx:91
+msgid "Saisissez le salaire reçu pour créer le budget du mois."
+msgstr "Enter the salary received to create the month's budget."
+
+#: src/features/budget/components/budget-edit-salary-dialog.tsx:97
+#: src/features/budget/components/budget-init-month-dialog.tsx:102
+#: src/features/budget/components/budget-list-action-dialog.tsx:197
+#: src/features/budget/components/budget-list-columns.tsx:37
+#: src/features/budget/components/budget-overview-cards.tsx:46
+msgid "Salaire reçu"
+msgstr "Salary received"
+
+#: src/features/auth/sign-in/components/user-auth-form.tsx:173
 msgid "Se connecter"
 msgstr "Sign in"
+
+#: src/components/layout/nav-user.tsx:75
+#: src/components/profile-dropdown.tsx:40
+#: src/components/sign-out-dialog.tsx:40
+#: src/components/sign-out-dialog.tsx:42
+msgid "Se déconnecter"
+msgstr "Sign out"
+
+#: src/components/data-table/bulk-actions.tsx:201
+msgid "Sélection : {selectedCount}"
+msgstr "Selected: {selectedCount}"
+
+#: src/components/data-table/bulk-actions.tsx:48
+msgid "Sélection : {selectedCount} {entityLabelPlural}. Barre d'actions groupées disponible."
+msgstr "Selected: {selectedCount} {entityLabelPlural}. Bulk actions toolbar is available."
+
+#: src/components/data-table/bulk-actions.tsx:206
+msgid "sélectionné(s)"
+msgstr "selected"
+
+#: src/components/select-dropdown.tsx:42
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:329
+msgid "Sélectionner"
+msgstr "Select"
+
+#. placeholder {0}: item.label.toLowerCase()
+#: src/components/config-drawer.tsx:140
+msgid "Sélectionner {0}"
+msgstr "Select {0}"
+
+#: src/features/contacts/components/contacts-columns.tsx:32
+#: src/features/dettes/components/dettes-columns.tsx:53
+#: src/features/subscriptions/components/subscriptions-columns.tsx:42
+#: src/features/vehicles/components/vehicles-columns.tsx:33
+msgid "Sélectionner la ligne"
+msgstr "Select row"
+
+#: src/components/config-drawer.tsx:379
+msgid "Sélectionner le sens de lecture du site"
+msgstr "Select the site's reading direction"
+
+#: src/components/config-drawer.tsx:262
+msgid "Sélectionner le style de la barre latérale"
+msgstr "Select the sidebar style"
+
+#: src/components/config-drawer.tsx:327
+msgid "Sélectionner le style de mise en page"
+msgstr "Select the layout style"
+
+#: src/components/config-drawer.tsx:212
+msgid "Sélectionner le thème"
+msgstr "Select theme"
+
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:54
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:307
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:86
+msgid "Sélectionner un participant"
+msgstr "Select a participant"
+
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:171
+msgid "Sélectionnez qui a encaissé la vente."
+msgstr "Select who cashed in the sale."
+
+#: src/features/budget/data/data.ts:18
+msgid "Septembre"
+msgstr "September"
+
+#: src/main.tsx:64
+msgid "Session expirée !"
+msgstr "Session expired!"
+
+#: src/features/dettes/components/dettes-columns.tsx:202
+msgid "Soldé"
+msgstr "Settled"
+
+#: src/features/dettes/index.tsx:162
+msgid "Solde net"
+msgstr "Net balance"
+
+#: src/components/command-menu.tsx:92
+#: src/components/config-drawer.tsx:193
+#: src/components/theme-switch.tsx:44
+msgid "Sombre"
+msgstr "Dark"
+
+#: src/components/config-drawer.tsx:243
+msgid "Standard"
+msgstr "Standard"
+
+#: src/features/dettes/components/dettes-columns.tsx:187
+#: src/features/dettes/components/dettes-table.tsx:196
+#: src/features/subscriptions/components/subscriptions-columns.tsx:112
+#: src/features/subscriptions/components/subscriptions-table.tsx:152
+#: src/features/vehicles/components/vehicles-columns.tsx:60
+#: src/features/vehicles/components/vehicles-table.tsx:140
+msgid "Statut"
+msgstr "Status"
+
+#. placeholder {0}: selectedDettes.length
+#. placeholder {1}: selectedDettes.length > 1 ? 's' : ''
+#: src/features/dettes/components/data-table-bulk-actions.tsx:42
+msgid "Statut mis à jour pour {0} dette{1}."
+msgstr "Status updated for {0} debt{1}."
+
+#: src/features/dettes/index.tsx:124
+msgid "Suivez vos prêts et emprunts en un seul endroit."
+msgstr "Track your loans and debts in one place."
+
+#: src/features/contacts/components/contacts-multi-delete-dialog.tsx:68
+#: src/features/dettes/components/dettes-multi-delete-dialog.tsx:42
+msgid "Suppression en cours..."
+msgstr "Deleting..."
+
+#: src/features/savings/components/savings-delete-dialog.tsx:59
+#: src/features/vehicles/components/vehicles-delete-dialog.tsx:70
+msgid "Suppression…"
+msgstr "Deleting…"
+
+#: src/features/budget/components/budget-list-data-table-row-actions.tsx:60
+#: src/features/budget/components/budget-list-delete-dialog.tsx:50
+#: src/features/contacts/components/contacts-delete-dialog.tsx:99
+#: src/features/contacts/components/contacts-multi-delete-dialog.tsx:131
+#: src/features/contacts/components/data-table-row-actions.tsx:56
+#: src/features/dettes/components/data-table-row-actions.tsx:127
+#: src/features/dettes/components/dettes-dialogs.tsx:84
+#: src/features/dettes/components/dettes-multi-delete-dialog.tsx:101
+#: src/features/savings/components/data-table-row-actions.tsx:46
+#: src/features/savings/components/savings-delete-dialog.tsx:59
+#: src/features/subscriptions/components/data-table-row-actions.tsx:104
+#: src/features/subscriptions/components/subscriptions-delete-dialog.tsx:60
+#: src/features/vehicles/components/data-table-row-actions.tsx:57
+#: src/features/vehicles/components/vehicles-delete-dialog.tsx:70
+#: src/features/vehicles/detail/index.tsx:795
+#: src/features/vehicles/detail/index.tsx:817
+msgid "Supprimer"
+msgstr "Delete"
+
+#: src/features/contacts/components/contacts-multi-delete-dialog.tsx:53
+#: src/features/dettes/components/dettes-multi-delete-dialog.tsx:29
+msgid "SUPPRIMER"
+msgstr "DELETE"
+
+#. placeholder {0}: selectedRows.length
+#. placeholder {1}: selectedRows.length > 1 ? 's' : ''
+#: src/features/contacts/components/contacts-multi-delete-dialog.tsx:90
+msgid "Supprimer {0} contact{1}"
+msgstr "Delete {0} contact{1}"
+
+#. placeholder {0}: selectedRows.length
+#. placeholder {1}: selectedRows.length > 1 ? 's' : ''
+#: src/features/dettes/components/dettes-multi-delete-dialog.tsx:64
+msgid "Supprimer {0} dette{1}"
+msgstr "Delete {0} debt{1}"
+
+#: src/features/contacts/components/contacts-delete-dialog.tsx:65
+msgid "Supprimer ce contact"
+msgstr "Delete this contact"
+
+#: src/features/budget/components/budget-list-delete-dialog.tsx:38
+msgid "Supprimer ce mois"
+msgstr "Delete this month"
+
+#: src/features/vehicles/detail/index.tsx:808
+msgid "Supprimer cet événement"
+msgstr "Delete this event"
+
+#: src/features/vehicles/detail/index.tsx:779
+msgid "Supprimer cette dépense"
+msgstr "Delete this expense"
+
+#. placeholder {0}: currentRow.id
+#: src/features/dettes/components/dettes-dialogs.tsx:76
+msgid "Supprimer cette dette : {0} ?"
+msgstr "Delete this debt: {0}?"
+
+#: src/features/subscriptions/components/subscriptions-delete-dialog.tsx:39
+msgid "Supprimer la charge récurrente"
+msgstr "Delete the recurring charge"
+
+#: src/features/savings/components/savings-delete-dialog.tsx:38
+msgid "Supprimer le mouvement"
+msgstr "Delete the movement"
+
+#: src/features/vehicles/components/vehicles-delete-dialog.tsx:48
+msgid "Supprimer le véhicule"
+msgstr "Delete the vehicle"
+
+#: src/features/contacts/components/data-table-bulk-actions.tsx:35
+#: src/features/contacts/components/data-table-bulk-actions.tsx:36
+#: src/features/contacts/components/data-table-bulk-actions.tsx:40
+#: src/features/contacts/components/data-table-bulk-actions.tsx:46
+msgid "Supprimer les contacts sélectionnés"
+msgstr "Delete the selected contacts"
+
+#: src/features/dettes/components/data-table-bulk-actions.tsx:93
+#: src/features/dettes/components/data-table-bulk-actions.tsx:97
+#: src/features/dettes/components/data-table-bulk-actions.tsx:102
+msgid "Supprimer les dettes sélectionnées"
+msgstr "Delete the selected debts"
+
+#: src/components/command-menu.tsx:98
+#: src/components/config-drawer.tsx:183
+#: src/components/theme-switch.tsx:51
+msgid "Système"
+msgstr "System"
+
+#: src/features/contacts/components/contacts-multi-delete-dialog.tsx:113
+#: src/features/dettes/components/dettes-multi-delete-dialog.tsx:87
+msgid "Tapez \"{confirmWord}\" pour confirmer."
+msgstr "Type \"{confirmWord}\" to confirm."
+
+#: src/components/command-menu.tsx:35
+msgid "Tapez une commande ou une recherche..."
+msgstr "Type a command or search..."
+
+#: src/components/command-menu.tsx:82
+#: src/components/config-drawer.tsx:204
+msgid "Thème"
+msgstr "Theme"
+
+#. placeholder {0}: totalAmount.toLocaleString('fr-FR')
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:247
+msgid "Total : <0>{0} €</0>"
+msgstr "Total: <0>{0} €</0>"
+
+#: src/features/vehicles/detail/lib/export-investments.ts:121
+msgid "Total des dépenses (€)"
+msgstr "Total expenses (€)"
+
+#: src/features/savings/components/savings-overview-cards.tsx:51
+msgid "Total Global"
+msgstr "Global total"
+
+#: src/features/vehicles/components/vehicles-columns.tsx:114
+#: src/features/vehicles/detail/index.tsx:307
+msgid "Total investi"
+msgstr "Total invested"
+
+#: src/features/vehicles/detail/lib/export-investments.ts:152
+msgid "Total investi (€)"
+msgstr "Total invested (€)"
+
+#: src/features/savings/components/savings-table.tsx:169
+msgid "Tous les comptes"
+msgstr "All accounts"
+
+#: src/features/vehicles/detail/index.tsx:578
+msgid "Tous les participants"
+msgstr "All participants"
+
+#: src/features/dettes/components/dettes-table.tsx:200
+#: src/features/subscriptions/components/subscriptions-table.tsx:156
+#: src/features/vehicles/components/vehicles-table.tsx:144
+msgid "Tous les statuts"
+msgstr "All statuses"
+
+#: src/features/savings/components/savings-table.tsx:154
+#: src/features/subscriptions/components/subscriptions-table.tsx:171
+msgid "Tous les types"
+msgstr "All types"
+
+#: src/features/dettes/components/dettes-table.tsx:219
+msgid "Tous les véhicules"
+msgstr "All vehicles"
+
+#: src/features/contacts/components/contacts-columns.tsx:21
+#: src/features/dettes/components/dettes-columns.tsx:42
+#: src/features/subscriptions/components/subscriptions-columns.tsx:34
+#: src/features/vehicles/components/vehicles-columns.tsx:25
+msgid "Tout sélectionner"
+msgstr "Select all"
+
+#: src/features/dettes/components/dettes-table.tsx:185
+msgid "Toutes les directions"
+msgstr "All directions"
 
 #: src/features/auth/sign-in/components/user-auth-form.tsx:109
 msgid "Trop de tentatives. Réessayez plus tard."
 msgstr "Too many attempts. Try again later."
 
+#: src/features/savings/components/savings-action-dialog.tsx:127
+#: src/features/savings/components/savings-columns.tsx:67
+#: src/features/savings/components/savings-table.tsx:150
+#: src/features/subscriptions/components/subscriptions-action-dialog.tsx:232
+#: src/features/subscriptions/components/subscriptions-columns.tsx:92
+#: src/features/subscriptions/components/subscriptions-table.tsx:167
+msgid "Type"
+msgstr "Type"
+
+#: src/features/contacts/components/contact-duplicate-dialog.tsx:39
+msgid "Un contact \"{fullName}\" existe déjà"
+msgstr "A contact \"{fullName}\" already exists"
+
+#: src/features/contacts/components/contact-duplicate-dialog.tsx:37
+msgid "Un contact \"{fullName}\" existe déjà (masqué)"
+msgstr "A contact \"{fullName}\" already exists (hidden)"
+
+#: src/features/contacts/components/contact-duplicate-dialog.tsx:50
+msgid "Un contact nommé \"{fullName}\" existe déjà dans votre liste. Si c'est une personne différente, vous pouvez créer un nouveau contact quand même."
+msgstr "A contact named \"{fullName}\" already exists in your list. If this is a different person, you can create a new contact anyway."
+
+#: src/lib/handle-server-error.ts:9
+msgid "Une erreur est survenue !"
+msgstr "Something went wrong!"
+
+#: src/features/contacts/components/contacts-action-dialog.tsx:111
+#: src/features/contacts/components/contacts-action-dialog.tsx:133
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:178
+#: src/features/dettes/components/dettes-remboursements-drawer.tsx:73
+#: src/features/dettes/components/dettes-remboursements-drawer.tsx:103
+#: src/features/savings/components/savings-provider.tsx:66
+#: src/features/savings/components/savings-provider.tsx:80
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:132
+#: src/features/vehicles/components/vehicles-delete-dialog.tsx:38
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:186
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:231
+#: src/features/vehicles/detail/components/edit-participants-dialog.tsx:120
+#: src/features/vehicles/detail/components/event-mutate-dialog.tsx:69
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:162
+#: src/features/vehicles/detail/index.tsx:195
+#: src/features/vehicles/detail/index.tsx:221
+msgid "Une erreur est survenue."
+msgstr "An error occurred."
+
 #: src/features/auth/sign-in/components/user-auth-form.tsx:120
 msgid "Une erreur inattendue est survenue."
 msgstr "An unexpected error occurred."
+
+#: src/features/vehicles/detail/components/event-mutate-dialog.tsx:100
+msgid "Une note libre sur ce véhicule, sans montant associé."
+msgstr "A free-form note on this vehicle, with no associated amount."
+
+#: src/features/vehicles/detail/lib/export-investments.ts:137
+msgid "Valeur"
+msgstr "Value"
+
+#: src/features/dettes/components/dettes-columns.tsx:104
+#: src/features/dettes/components/dettes-table.tsx:215
+#: src/features/vehicles/components/vehicles-columns.tsx:43
+msgid "Véhicule"
+msgstr "Vehicle"
+
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:126
+msgid "Véhicule créé."
+msgstr "Vehicle created."
+
+#: src/features/vehicles/detail/index.tsx:407
+msgid "Véhicule en cours"
+msgstr "Vehicle in progress"
+
+#: src/features/vehicles/detail/index.tsx:171
+msgid "Véhicule introuvable."
+msgstr "Vehicle not found."
+
+#: src/features/vehicles/components/vehicles-delete-dialog.tsx:33
+msgid "Véhicule supprimé."
+msgstr "Vehicle deleted."
+
+#: src/components/layout/data/sidebar-data.ts:38
+#: src/features/vehicles/index.tsx:87
+msgid "Véhicules"
+msgstr "Vehicles"
+
+#: src/features/vehicles/data/data.ts:18
+#: src/features/vehicles/data/data.ts:32
+#: src/features/vehicles/detail/index.tsx:290
+msgid "Vendu"
+msgstr "Sold"
+
+#. placeholder {0}: vehicle.soldVehicle.soldAt.toLocaleDateString('fr-FR')
+#: src/features/vehicles/detail/index.tsx:343
+msgid "Vendu le {0}"
+msgstr "Sold on {0}"
+
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:180
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:225
+msgid "Vente déclarée."
+msgstr "Sale declared."
+
+#: src/features/dettes/components/dettes-remboursements-drawer.tsx:100
+msgid "Versement enregistré."
+msgstr "Payment recorded."
+
+#: src/features/dettes/components/dettes-remboursements-drawer.tsx:70
+msgid "Versement supprimé."
+msgstr "Payment deleted."
+
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:130
+msgid "Veuillez indiquer d'où vient l'argent."
+msgstr "Please indicate where the money comes from."
+
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:194
+msgid "Veuillez indiquer où est allé l'argent."
+msgstr "Please indicate where the money went."
+
+#: src/components/payment-drawer.tsx:148
+msgid "Veuillez indiquer où va cet argent."
+msgstr "Please indicate where this money is going."
+
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:131
+msgid "Veuillez indiquer où va l'argent."
+msgstr "Please indicate where the money is going."
 
 #: src/features/auth/sign-in/components/user-auth-form.tsx:65
 msgid "Veuillez saisir votre email"
@@ -69,3 +2164,42 @@ msgstr "Please enter your email"
 #: src/features/auth/sign-in/components/user-auth-form.tsx:69
 msgid "Veuillez saisir votre mot de passe"
 msgstr "Please enter your password"
+
+#: src/features/dettes/components/dettes-mutate-drawer.tsx:87
+msgid "Veuillez sélectionner une personne."
+msgstr "Please select a person."
+
+#: src/features/contacts/components/contacts-multi-delete-dialog.tsx:59
+#: src/features/dettes/components/dettes-multi-delete-dialog.tsx:35
+msgid "Veuillez taper \"{confirmWord}\" pour confirmer."
+msgstr "Please type \"{confirmWord}\" to confirm."
+
+#: src/features/vehicles/components/data-table-row-actions.tsx:46
+msgid "Voir la fiche"
+msgstr "View details"
+
+#: src/features/budget/components/budget-list-data-table-row-actions.tsx:52
+msgid "Voir le détail"
+msgstr "View details"
+
+#: src/features/dettes/components/dettes-remboursements-drawer.tsx:36
+#: src/features/vehicles/components/vehicles-action-dialog.tsx:240
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:98
+#: src/features/vehicles/detail/components/declare-sold-dialog.tsx:424
+#: src/features/vehicles/detail/components/edit-participants-dialog.tsx:153
+#: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:77
+#: src/features/vehicles/detail/index.tsx:357
+#: src/features/vehicles/detail/index.tsx:425
+#: src/features/vehicles/detail/index.tsx:478
+#: src/features/vehicles/detail/index.tsx:580
+msgid "Vous"
+msgstr "You"
+
+#. placeholder {0}: currentRow.id
+#: src/features/dettes/components/dettes-dialogs.tsx:78
+msgid "Vous allez supprimer la dette avec l'ID <0>{0}</0>. <1/>Cette action est irréversible."
+msgstr "You are about to delete the debt with ID <0>{0}</0>. <1/>This action is irreversible."
+
+#: src/features/contacts/components/contact-duplicate-dialog.tsx:44
+msgid "Vous aviez supprimé \"{fullName}\" — s'il s'agit de la même personne, réactivez-le pour garder son historique. Sinon, vous pouvez créer un nouveau contact distinct."
+msgstr "You had deleted \"{fullName}\" — if this is the same person, reactivate them to keep their history. Otherwise, you can create a separate new contact."

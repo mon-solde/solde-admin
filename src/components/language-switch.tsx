@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react'
-import { Check, Languages } from 'lucide-react'
+import { Check } from 'lucide-react'
+import { t } from '@lingui/core/macro'
 import { loadCatalog } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -10,32 +11,59 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-export function LanguageSwitch() {
+export type LanguageOption = {
+  code: string
+  flag: string
+  label: string
+}
+
+// Swap this default (or pass `languages` as a prop) to reuse this component
+// in another project — nothing below depends on these specific codes.
+const DEFAULT_LANGUAGES: LanguageOption[] = [
+  { code: 'fr', flag: '🇫🇷', label: 'Français' },
+  { code: 'en', flag: '🇬🇧', label: 'English' },
+]
+
+type LanguageSwitchProps = {
+  languages?: LanguageOption[]
+  // Defaults to this project's Lingui catalog loader — override to plug
+  // this component into a different i18n setup without touching its internals.
+  onSelectLanguage?: (code: string) => void
+}
+
+export function LanguageSwitch({
+  languages = DEFAULT_LANGUAGES,
+  onSelectLanguage = loadCatalog,
+}: LanguageSwitchProps) {
   const { i18n } = useLingui()
+  const current =
+    languages.find((lang) => lang.code === i18n.locale) ?? languages[0]
 
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button variant='ghost' size='icon' className='scale-95 rounded-full'>
-          <Languages className='size-[1.2rem]' />
-          <span className='sr-only'>Change language</span>
+        <Button variant='ghost' size='sm' className='gap-1.5 rounded-full px-2'>
+          <span className='text-base leading-none'>{current.flag}</span>
+          <span className='text-xs font-medium'>
+            {current.code.toUpperCase()}
+          </span>
+          <span className='sr-only'>{t`Changer de langue`}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end'>
-        <DropdownMenuItem onClick={() => loadCatalog('fr')}>
-          Français
-          <Check
-            size={14}
-            className={cn('ms-auto', i18n.locale !== 'fr' && 'hidden')}
-          />
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => loadCatalog('en')}>
-          English
-          <Check
-            size={14}
-            className={cn('ms-auto', i18n.locale !== 'en' && 'hidden')}
-          />
-        </DropdownMenuItem>
+        {languages.map((lang) => (
+          <DropdownMenuItem
+            key={lang.code}
+            onClick={() => onSelectLanguage(lang.code)}
+          >
+            <span className='text-base leading-none'>{lang.flag}</span>
+            {lang.label}
+            <Check
+              size={14}
+              className={cn('ms-auto', i18n.locale !== lang.code && 'hidden')}
+            />
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   )

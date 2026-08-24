@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -23,6 +24,7 @@ export function ContactsDeleteDialog({
 }: ContactDeleteDialogProps) {
   const [value, setValue] = useState('')
   const deleteContact = useDeleteContact()
+  const { t } = useLingui()
 
   const fullName = `${currentRow.firstName} ${currentRow.lastName ?? ''}`.trim()
 
@@ -33,8 +35,8 @@ export function ContactsDeleteDialog({
       onSuccess: ({ hardDeleted }) => {
         toast.success(
           hardDeleted
-            ? 'Contact supprimé.'
-            : 'Contact masqué : il a des dettes ou dépenses associées, son historique est conservé.'
+            ? t`Contact supprimé.`
+            : t`Contact masqué : il a des dettes ou dépenses associées, son historique est conservé.`
         )
         onOpenChange(false)
         setValue('')
@@ -42,7 +44,7 @@ export function ContactsDeleteDialog({
       onError: (error: any) => {
         toast.error(
           error?.response?.data?.message ??
-            'Impossible de supprimer ce contact.'
+            t`Impossible de supprimer ce contact.`
         )
       },
     })
@@ -60,37 +62,41 @@ export function ContactsDeleteDialog({
             className='me-1 inline-block stroke-destructive'
             size={18}
           />{' '}
-          Supprimer ce contact
+          <Trans>Supprimer ce contact</Trans>
         </span>
       }
       desc={
         <div className='space-y-4'>
           <p className='mb-2'>
-            Êtes-vous sûr de vouloir supprimer{' '}
-            <span className='font-bold'>{fullName}</span> ?<br />
-            Cette action est irréversible. S'il a des dettes ou dépenses
-            associées, il sera masqué plutôt que supprimé pour garder
-            l'historique lisible.
+            <Trans>
+              Êtes-vous sûr de vouloir supprimer{' '}
+              <span className='font-bold'>{fullName}</span> ?<br />
+              Cette action est irréversible. S'il a des dettes ou dépenses
+              associées, il sera masqué plutôt que supprimé pour garder
+              l'historique lisible.
+            </Trans>
           </p>
 
           <Label className='my-2'>
-            Nom complet :
+            <Trans>Nom complet :</Trans>
             <Input
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              placeholder='Entrez le nom complet pour confirmer.'
+              placeholder={t`Entrez le nom complet pour confirmer.`}
             />
           </Label>
 
           <Alert variant='destructive'>
-            <AlertTitle>Attention !</AlertTitle>
+            <AlertTitle>
+              <Trans>Attention !</Trans>
+            </AlertTitle>
             <AlertDescription>
-              Cette opération ne peut pas être annulée.
+              <Trans>Cette opération ne peut pas être annulée.</Trans>
             </AlertDescription>
           </Alert>
         </div>
       }
-      confirmText='Supprimer'
+      confirmText={t`Supprimer`}
       destructive
     />
   )

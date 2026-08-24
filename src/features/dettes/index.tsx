@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { getRouteApi } from '@tanstack/react-router'
+import { Plural, Trans } from '@lingui/react/macro'
 import { centsToEuros } from '@/lib/money'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
 import { useAuthStore } from '@/stores/auth-store'
@@ -116,9 +117,11 @@ export function Dettes() {
       <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
         <div className='flex flex-wrap items-end justify-between gap-2'>
           <div>
-            <h2 className='text-2xl font-bold tracking-tight'>Dettes</h2>
+            <h2 className='text-2xl font-bold tracking-tight'>
+              <Trans>Dettes</Trans>
+            </h2>
             <p className='text-muted-foreground'>
-              Suivez vos prêts et emprunts en un seul endroit.
+              <Trans>Suivez vos prêts et emprunts en un seul endroit.</Trans>
             </p>
           </div>
           <DettesPrimaryButtons />
@@ -128,13 +131,13 @@ export function Dettes() {
           <Card>
             <CardContent className='flex flex-col gap-1 p-5'>
               <Label className='text-xs tracking-widest text-muted-foreground uppercase'>
-                On me doit
+                <Trans>On me doit</Trans>
               </Label>
               <CardTitle className='text-2xl font-bold text-emerald-600 tabular-nums'>
                 +{fmt.format(centsToEuros(onMeDoit))}
               </CardTitle>
               <Label className='text-xs text-muted-foreground'>
-                {nbPrets} prêt{nbPrets !== 1 ? 's' : ''}
+                <Plural value={nbPrets} one='# prêt' other='# prêts' />
               </Label>
             </CardContent>
           </Card>
@@ -142,13 +145,13 @@ export function Dettes() {
           <Card>
             <CardContent className='flex flex-col gap-1 p-5'>
               <Label className='text-xs tracking-widest text-muted-foreground uppercase'>
-                Je dois
+                <Trans>Je dois</Trans>
               </Label>
               <CardTitle className='text-2xl font-bold text-rose-500 tabular-nums'>
                 -{fmt.format(centsToEuros(jeDois))}
               </CardTitle>
               <Label className='text-xs text-muted-foreground'>
-                {nbEmprunts} emprunt{nbEmprunts !== 1 ? 's' : ''}
+                <Plural value={nbEmprunts} one='# emprunt' other='# emprunts' />
               </Label>
             </CardContent>
           </Card>
@@ -156,7 +159,7 @@ export function Dettes() {
           <Card>
             <CardContent className='flex flex-col gap-1 p-5'>
               <Label className='text-xs tracking-widest text-muted-foreground uppercase'>
-                Solde net
+                <Trans>Solde net</Trans>
               </Label>
               <CardTitle
                 className={`text-2xl font-bold tabular-nums ${net >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}
@@ -165,7 +168,11 @@ export function Dettes() {
                 {fmt.format(centsToEuros(net))}
               </CardTitle>
               <Label className='text-xs text-muted-foreground'>
-                {net >= 0 ? 'En votre faveur' : 'En votre défaveur'}
+                {net >= 0 ? (
+                  <Trans>En votre faveur</Trans>
+                ) : (
+                  <Trans>En votre défaveur</Trans>
+                )}
               </Label>
             </CardContent>
           </Card>

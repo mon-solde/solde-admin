@@ -1,8 +1,11 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { z } from 'zod'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { msg } from '@lingui/core/macro'
+import { type MessageDescriptor } from '@lingui/core'
+import { Trans, useLingui } from '@lingui/react/macro'
 import {
   ArrowUpRight,
   ArrowDownLeft,
@@ -49,15 +52,6 @@ import { useCreateDette } from '../api/dettes-api'
 type Role = 'lent' | 'borrowed'
 type SourceType = 'bank' | 'cash' | 'both'
 
-const formSchema = z.object({
-  personId: z.string().min(1, 'Veuillez sélectionner une personne.'),
-  amount: z.number().positive('Le montant doit être positif.'),
-  date: z.string().min(1, 'La date est requise.'),
-  description: z.string().optional(),
-  bankSplit: z.number().min(0).optional(),
-})
-type DetteForm = z.infer<typeof formSchema>
-
 const fmt = new Intl.NumberFormat('fr-FR', {
   style: 'currency',
   currency: 'EUR',
@@ -65,12 +59,12 @@ const fmt = new Intl.NumberFormat('fr-FR', {
 
 const SOURCE_OPTIONS: {
   value: SourceType
-  label: string
+  label: MessageDescriptor
   icon: React.ElementType
 }[] = [
-  { value: 'bank', label: 'Banque', icon: Landmark },
-  { value: 'cash', label: 'Espèces', icon: Banknote },
-  { value: 'both', label: 'Les deux', icon: SplitSquareHorizontal },
+  { value: 'bank', label: msg`Banque`, icon: Landmark },
+  { value: 'cash', label: msg`Espèces`, icon: Banknote },
+  { value: 'both', label: msg`Les deux`, icon: SplitSquareHorizontal },
 ]
 
 type DettesMutateDrawerProps = {
@@ -85,6 +79,20 @@ export function DettesMutateDrawer({
   const [role, setRole] = useState<Role | null>(null)
   const [sourceType, setSourceType] = useState<SourceType | null>(null)
   const createDette = useCreateDette()
+  const { i18n, t } = useLingui()
+
+  const formSchema = useMemo(
+    () =>
+      z.object({
+        personId: z.string().min(1, t`Veuillez sélectionner une personne.`),
+        amount: z.number().positive(t`Le montant doit être positif.`),
+        date: z.string().min(1, t`La date est requise.`),
+        description: z.string().optional(),
+        bankSplit: z.number().min(0).optional(),
+      }),
+    [t]
+  )
+  type DetteForm = z.infer<typeof formSchema>
 
   const form = useForm<DetteForm>({
     resolver: zodResolver(formSchema),
@@ -119,8 +127,8 @@ export function DettesMutateDrawer({
     if (!sourceType) {
       toast.error(
         role === 'lent'
-          ? "Veuillez indiquer d'où vient l'argent."
-          : "Veuillez indiquer où va l'argent."
+          ? t`Veuillez indiquer d'où vient l'argent.`
+          : t`Veuillez indiquer où va l'argent.`
       )
       return
     }
@@ -129,7 +137,7 @@ export function DettesMutateDrawer({
       const split = data.bankSplit ?? 0
       if (split <= 0 || split >= data.amount) {
         toast.error(
-          'Le montant Banque doit être compris entre 0 et le montant total.'
+          t`Le montant Banque doit être compris entre 0 et le montant total.`
         )
         return
       }
@@ -161,13 +169,13 @@ export function DettesMutateDrawer({
       },
       {
         onSuccess: () => {
-          toast.success('Dette enregistrée.')
+          toast.success(t`Dette enregistrée.`)
           onOpenChange(false)
           setTimeout(handleReset, 300)
         },
         onError: (error: any) => {
           toast.error(
-            error?.response?.data?.message ?? 'Une erreur est survenue.'
+            error?.response?.data?.message ?? t`Une erreur est survenue.`
           )
         },
       }
@@ -192,10 +200,10 @@ export function DettesMutateDrawer({
           </Card>
           <Card className='flex-1 gap-0.5 border-0 bg-transparent p-0 shadow-none'>
             <SheetTitle className='text-sm leading-tight font-semibold'>
-              Nouvelle dette
+              <Trans>Nouvelle dette</Trans>
             </SheetTitle>
             <SheetDescription className='text-xs'>
-              Enregistrez un prêt ou un emprunt
+              <Trans>Enregistrez un prêt ou un emprunt</Trans>
             </SheetDescription>
           </Card>
           <SheetClose asChild>
@@ -217,7 +225,7 @@ export function DettesMutateDrawer({
             {/* Sélection du rôle */}
             <Card className='gap-2 border-0 bg-transparent p-0 shadow-none'>
               <Label className='text-xs text-muted-foreground'>
-                Quel est votre rôle ?
+                <Trans>Quel est votre rôle ?</Trans>
               </Label>
               <Card className='grid grid-cols-2 gap-3 rounded-none border-0 bg-transparent p-0 shadow-none'>
                 <Card
@@ -247,7 +255,7 @@ export function DettesMutateDrawer({
                           role === 'lent' ? 'text-white' : ''
                         )}
                       >
-                        J'ai prêté
+                        <Trans>J'ai prêté</Trans>
                       </CardTitle>
                       <CardDescription
                         className={cn(
@@ -255,7 +263,7 @@ export function DettesMutateDrawer({
                           role === 'lent' ? 'text-white/70' : ''
                         )}
                       >
-                        Quelqu'un me doit de l'argent
+                        <Trans>Quelqu'un me doit de l'argent</Trans>
                       </CardDescription>
                     </Card>
                   </CardContent>
@@ -288,7 +296,7 @@ export function DettesMutateDrawer({
                           role === 'borrowed' ? 'text-white' : ''
                         )}
                       >
-                        J'ai emprunté
+                        <Trans>J'ai emprunté</Trans>
                       </CardTitle>
                       <CardDescription
                         className={cn(
@@ -296,7 +304,7 @@ export function DettesMutateDrawer({
                           role === 'borrowed' ? 'text-white/70' : ''
                         )}
                       >
-                        Je dois de l'argent à quelqu'un
+                        <Trans>Je dois de l'argent à quelqu'un</Trans>
                       </CardDescription>
                     </Card>
                   </CardContent>
@@ -324,7 +332,9 @@ export function DettesMutateDrawer({
                     name='personId'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>À qui ?</FormLabel>
+                        <FormLabel>
+                          <Trans>À qui ?</Trans>
+                        </FormLabel>
                         <FormControl>
                           <ContactCombobox
                             value={field.value}
@@ -340,7 +350,9 @@ export function DettesMutateDrawer({
                     name='amount'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Montant (€)</FormLabel>
+                        <FormLabel>
+                          <Trans>Montant (€)</Trans>
+                        </FormLabel>
                         <FormControl>
                           <DecimalInput {...field} placeholder='0,00' />
                         </FormControl>
@@ -353,9 +365,11 @@ export function DettesMutateDrawer({
                   {role && (
                     <Card className='gap-3 border-0 bg-transparent p-0 shadow-none'>
                       <Label className='text-xs text-muted-foreground'>
-                        {role === 'lent'
-                          ? "D'où vient l'argent ?"
-                          : "Où va l'argent ?"}
+                        {role === 'lent' ? (
+                          <Trans>D'où vient l'argent ?</Trans>
+                        ) : (
+                          <Trans>Où va l'argent ?</Trans>
+                        )}
                       </Label>
                       <Card className='grid grid-cols-3 gap-2 rounded-none border-0 bg-transparent p-0 shadow-none'>
                         {SOURCE_OPTIONS.map(({ value, label, icon: Icon }) => (
@@ -385,7 +399,7 @@ export function DettesMutateDrawer({
                                   sourceType === value ? 'text-white' : ''
                                 )}
                               >
-                                {label}
+                                {i18n._(label)}
                               </Label>
                             </CardContent>
                           </Card>
@@ -400,7 +414,8 @@ export function DettesMutateDrawer({
                             render={({ field }) => (
                               <FormItem>
                                 <FormLabel className='flex items-center gap-1.5'>
-                                  <Landmark size={13} /> Banque (€)
+                                  <Landmark size={13} />{' '}
+                                  <Trans>Banque (€)</Trans>
                                 </FormLabel>
                                 <FormControl>
                                   <DecimalInput {...field} placeholder='0,00' />
@@ -412,7 +427,7 @@ export function DettesMutateDrawer({
                           <Card className='gap-0 rounded-lg p-0 shadow-none'>
                             <CardContent className='flex items-center justify-between px-3 py-2.5'>
                               <CardDescription className='flex items-center gap-1.5'>
-                                <Banknote size={13} /> Espèces
+                                <Banknote size={13} /> <Trans>Espèces</Trans>
                               </CardDescription>
                               <CardTitle className='text-sm font-semibold tabular-nums'>
                                 {fmt.format(cashComputed)}
@@ -429,7 +444,9 @@ export function DettesMutateDrawer({
                     name='date'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Date</FormLabel>
+                        <FormLabel>
+                          <Trans>Date</Trans>
+                        </FormLabel>
                         <FormControl>
                           <Input {...field} type='date' />
                         </FormControl>
@@ -443,16 +460,16 @@ export function DettesMutateDrawer({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Description{' '}
+                          <Trans>Description</Trans>{' '}
                           <span className='font-normal text-muted-foreground'>
-                            (optionnel)
+                            <Trans>(optionnel)</Trans>
                           </span>
                         </FormLabel>
                         <FormControl>
                           <Textarea
                             {...field}
                             rows={3}
-                            placeholder='Contexte, raison du prêt...'
+                            placeholder={t`Contexte, raison du prêt...`}
                             className='resize-none'
                           />
                         </FormControl>
@@ -476,7 +493,11 @@ export function DettesMutateDrawer({
             disabled={!role || createDette.isPending}
             className='h-11 w-full rounded-xl font-semibold'
           >
-            {createDette.isPending ? 'Enregistrement...' : 'Enregistrer'}
+            {createDette.isPending ? (
+              <Trans>Enregistrement...</Trans>
+            ) : (
+              <Trans>Enregistrer</Trans>
+            )}
           </Button>
           <SheetClose asChild>
             <Button
@@ -485,7 +506,7 @@ export function DettesMutateDrawer({
               disabled={createDette.isPending}
               className='h-11 w-full rounded-xl'
             >
-              Annuler
+              <Trans>Annuler</Trans>
             </Button>
           </SheetClose>
         </SheetFooter>

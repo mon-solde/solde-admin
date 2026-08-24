@@ -1,5 +1,6 @@
 import { signOut } from 'firebase/auth'
 import { useNavigate, useLocation } from '@tanstack/react-router'
+import { useLingui } from '@lingui/react/macro'
 import { firebaseAuth } from '@/lib/firebase'
 import { useAuthStore } from '@/stores/auth-store'
 import { ConfirmDialog } from '@/components/confirm-dialog'
@@ -13,6 +14,7 @@ export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
   const navigate = useNavigate()
   const location = useLocation()
   const { auth } = useAuthStore()
+  const { t } = useLingui()
 
   const handleSignOut = async () => {
     // Without this, Firebase's own persisted session stays valid — the
@@ -35,9 +37,9 @@ export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
     <ConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
-      title='Sign out'
-      desc='Are you sure you want to sign out? You will need to sign in again to access your account.'
-      confirmText='Sign out'
+      title={t`Se déconnecter`}
+      desc={t`Êtes-vous sûr de vouloir vous déconnecter ? Vous devrez vous reconnecter pour accéder à votre compte.`}
+      confirmText={t`Se déconnecter`}
       destructive
       handleConfirm={handleSignOut}
       className='sm:max-w-sm'

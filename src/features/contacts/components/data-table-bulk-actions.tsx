@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
 import { Trash2 } from 'lucide-react'
+import { Trans, useLingui } from '@lingui/react/macro'
+import { msg } from '@lingui/core/macro'
 import { Button } from '@/components/ui/button'
 import {
   Tooltip,
@@ -18,10 +20,11 @@ export function DataTableBulkActions<TData>({
   table,
 }: DataTableBulkActionsProps<TData>) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const { t } = useLingui()
 
   return (
     <>
-      <BulkActionsToolbar table={table} entityName='contact'>
+      <BulkActionsToolbar table={table} entityName={msg`contact`}>
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -29,17 +32,19 @@ export function DataTableBulkActions<TData>({
               size='icon'
               onClick={() => setShowDeleteConfirm(true)}
               className='size-8'
-              aria-label='Supprimer les contacts sélectionnés'
-              title='Supprimer les contacts sélectionnés'
+              aria-label={t`Supprimer les contacts sélectionnés`}
+              title={t`Supprimer les contacts sélectionnés`}
             >
               <Trash2 />
               <span className='sr-only'>
-                Supprimer les contacts sélectionnés
+                <Trans>Supprimer les contacts sélectionnés</Trans>
               </span>
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Supprimer les contacts sélectionnés</p>
+            <p>
+              <Trans>Supprimer les contacts sélectionnés</Trans>
+            </p>
           </TooltipContent>
         </Tooltip>
       </BulkActionsToolbar>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Cross2Icon } from '@radix-ui/react-icons'
 import {
   type VisibilityState,
@@ -6,6 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { cn } from '@/lib/utils'
 import {
   type NavigateFn,
@@ -36,7 +37,7 @@ import {
   subscriptionTypeFilterOptions,
 } from '../data/data'
 import { type Subscription } from '../data/schema'
-import { subscriptionsColumns as columns } from './subscriptions-columns'
+import { getSubscriptionsColumns } from './subscriptions-columns'
 
 type SubscriptionsTableProps = Pick<
   UseTableUrlStateReturn,
@@ -71,6 +72,8 @@ export function SubscriptionsTable({
 }: SubscriptionsTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const { i18n, t } = useLingui()
+  const columns = useMemo(() => getSubscriptionsColumns(i18n), [i18n])
 
   // What the charge list is filtered by — the backend does the actual
   // filtering, this just reflects/updates the URL. 'en cours' is the
@@ -139,33 +142,37 @@ export function SubscriptionsTable({
       <div className='flex items-center justify-between'>
         <div className='flex flex-1 flex-wrap items-center gap-2'>
           <Input
-            placeholder='Filtrer par nom...'
+            placeholder={t`Filtrer par nom...`}
             value={globalFilter ?? ''}
             onChange={(event) => onGlobalFilterChange?.(event.target.value)}
             className='h-8 w-full sm:w-[250px]'
           />
           <Select value={status} onValueChange={onStatusChange}>
             <SelectTrigger className='h-8 w-[150px]'>
-              <SelectValue placeholder='Statut' />
+              <SelectValue placeholder={t`Statut`} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='tous'>Tous les statuts</SelectItem>
+              <SelectItem value='tous'>
+                <Trans>Tous les statuts</Trans>
+              </SelectItem>
               {subscriptionStatusFilterOptions.map((s) => (
                 <SelectItem key={s.value} value={s.value}>
-                  {s.label}
+                  {i18n._(s.label)}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
           <Select value={type} onValueChange={onTypeChange}>
             <SelectTrigger className='h-8 w-[150px]'>
-              <SelectValue placeholder='Type' />
+              <SelectValue placeholder={t`Type`} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='tous'>Tous les types</SelectItem>
-              {subscriptionTypeFilterOptions.map((t) => (
-                <SelectItem key={t.value} value={t.value}>
-                  {t.label}
+              <SelectItem value='tous'>
+                <Trans>Tous les types</Trans>
+              </SelectItem>
+              {subscriptionTypeFilterOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {i18n._(option.label)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -176,7 +183,7 @@ export function SubscriptionsTable({
               onClick={resetFilters}
               className='h-8 px-2 lg:px-3'
             >
-              Réinitialiser
+              <Trans>Réinitialiser</Trans>
               <Cross2Icon className='ms-2 h-4 w-4' />
             </Button>
           )}
@@ -250,7 +257,7 @@ export function SubscriptionsTable({
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  Aucune charge récurrente trouvée.
+                  <Trans>Aucune charge récurrente trouvée.</Trans>
                 </TableCell>
               </TableRow>
             )}

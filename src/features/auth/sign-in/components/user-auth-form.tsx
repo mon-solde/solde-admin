@@ -136,7 +136,9 @@ export function UserAuthForm({
           name='email'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>
+                <Trans>Email</Trans>
+              </FormLabel>
               <FormControl>
                 <Input
                   placeholder='name@example.com'

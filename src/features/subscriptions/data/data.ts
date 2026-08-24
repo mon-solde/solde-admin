@@ -1,27 +1,38 @@
 import { CheckCircle2, XCircle, Zap, Hand } from 'lucide-react'
+import { msg } from '@lingui/core/macro'
+import { type MessageDescriptor } from '@lingui/core'
 
 // Keyed by the real API values — used for the type/status badge cells.
+// `label` is a message descriptor, not a resolved string — resolve with
+// `i18n._(item.label)` at the point of use to stay reactive to language
+// switches (see budget/data/data.ts for the same pattern).
 export const subscriptionTypes = [
-  { label: 'Automatique', value: 'AUTOMATIC' as const, icon: Zap },
-  { label: 'Manuel', value: 'MANUAL' as const, icon: Hand },
+  { label: msg`Automatique`, value: 'AUTOMATIC' as const, icon: Zap },
+  { label: msg`Manuel`, value: 'MANUAL' as const, icon: Hand },
 ]
 
 export const subscriptionStatuses = [
-  { label: 'Actif', value: 'active' as const, icon: CheckCircle2 },
-  { label: 'Inactif', value: 'inactive' as const, icon: XCircle },
+  { label: msg`Actif`, value: 'active' as const, icon: CheckCircle2 },
+  { label: msg`Inactif`, value: 'inactive' as const, icon: XCircle },
 ]
 
 // Keyed by the French URL filter values (see vehicles' equivalent split) —
 // used for the Type/Statut Selects in the table toolbar, distinct from the
 // badge-display arrays above.
-export const subscriptionTypeFilterOptions = [
-  { label: 'Automatique', value: 'AUTOMATIC' as const },
-  { label: 'Manuel', value: 'MANUAL' as const },
+export const subscriptionTypeFilterOptions: Array<{
+  label: MessageDescriptor
+  value: 'AUTOMATIC' | 'MANUAL'
+}> = [
+  { label: msg`Automatique`, value: 'AUTOMATIC' },
+  { label: msg`Manuel`, value: 'MANUAL' },
 ]
 
-export const subscriptionStatusFilterOptions = [
-  { label: 'En cours', value: 'en cours' as const },
-  { label: 'Inactif', value: 'inactif' as const },
+export const subscriptionStatusFilterOptions: Array<{
+  label: MessageDescriptor
+  value: 'en cours' | 'inactif'
+}> = [
+  { label: msg`En cours`, value: 'en cours' },
+  { label: msg`Inactif`, value: 'inactif' },
 ]
 
 export const typeColorMap: Record<string, string> = {
@@ -32,11 +43,6 @@ export const typeColorMap: Record<string, string> = {
 export const statusColorMap: Record<string, string> = {
   active: 'text-green-600 bg-green-50 border-green-200',
   inactive: 'text-gray-500 bg-gray-50 border-gray-200',
-}
-
-export function formatBillingDay(day: number) {
-  if (day === 1) return 'Le 1er'
-  return `Le ${day}`
 }
 
 export function formatAmountInEuros(amount: number) {

@@ -1,3 +1,6 @@
+import { type MessageDescriptor } from '@lingui/core'
+import { msg } from '@lingui/core/macro'
+
 export type SavingsHistoryEntry = {
   id: string
   sourceType: 'debt' | 'repayment' | 'budget' | 'manual' | 'vehicle_sale'
@@ -22,14 +25,14 @@ export function computeSavingsTotals(history: SavingsHistoryEntry[]) {
   return { bank, cash, total: bank + cash }
 }
 
-export const savingsMovementKinds = [
-  { label: 'Ajout', value: 'addition' },
-  { label: 'Retrait', value: 'withdrawal' },
+export const savingsMovementKinds: { label: MessageDescriptor; value: string }[] = [
+  { label: msg`Ajout`, value: 'addition' },
+  { label: msg`Retrait`, value: 'withdrawal' },
 ]
 
-export const savingsSources = [
-  { label: 'Banque', value: 'bank' },
-  { label: 'Espèces', value: 'cash' },
+export const savingsSources: { label: MessageDescriptor; value: string }[] = [
+  { label: msg`Banque`, value: 'bank' },
+  { label: msg`Espèces`, value: 'cash' },
 ]
 
 export function formatEuros(amount: number): string {

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Info, TrendingDown, TrendingUp } from 'lucide-react'
 import { toast } from 'sonner'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { useAuthStore } from '@/stores/auth-store'
 import { centsToEuros, eurosToCents } from '@/lib/money'
 import { formatPersonName } from '@/lib/utils'
@@ -89,9 +90,14 @@ export function DeclareSoldDialog({
   const [bankSplit, setBankSplit] = useState<number>(NaN)
   const { mutate: declareSale, isPending } = useDeclareSale(vehicle.id)
   const { auth } = useAuthStore()
+  const { t } = useLingui()
   const ownerId = auth.user?.accountNo ?? ''
   const cashierOptions = [
-    { contactId: ownerId, firstName: 'Vous', lastName: null as string | null },
+    {
+      contactId: ownerId,
+      firstName: t`Vous`,
+      lastName: null as string | null,
+    },
     ...vehicle.participants,
   ]
   const cashierIsOwner = cashierId === ownerId
@@ -162,7 +168,7 @@ export function DeclareSoldDialog({
 
   const handleConfirm = () => {
     if (!cashierId) {
-      toast.error('Sélectionnez qui a encaissé la vente.')
+      toast.error(t`Sélectionnez qui a encaissé la vente.`)
       return
     }
 
@@ -171,13 +177,13 @@ export function DeclareSoldDialog({
         { salePrice: salePriceCents, soldAt, cashierId },
         {
           onSuccess: () => {
-            toast.success('Vente déclarée.')
+            toast.success(t`Vente déclarée.`)
             reset()
             onOpenChange(false)
           },
           onError: (error: any) =>
             toast.error(
-              error?.response?.data?.message ?? 'Une erreur est survenue.'
+              error?.response?.data?.message ?? t`Une erreur est survenue.`
             ),
         }
       )
@@ -185,7 +191,7 @@ export function DeclareSoldDialog({
     }
 
     if (!sourceType) {
-      toast.error("Veuillez indiquer où est allé l'argent.")
+      toast.error(t`Veuillez indiquer où est allé l'argent.`)
       return
     }
 
@@ -194,7 +200,7 @@ export function DeclareSoldDialog({
       (bankSplitNum <= 0 || bankSplitNum >= salePriceNum)
     ) {
       toast.error(
-        'Le montant Banque doit être compris entre 0 et le prix de vente.'
+        t`Le montant Banque doit être compris entre 0 et le prix de vente.`
       )
       return
     }
@@ -216,13 +222,13 @@ export function DeclareSoldDialog({
       { salePrice: salePriceCents, soldAt, cashierId, bankAmount, cashAmount },
       {
         onSuccess: () => {
-          toast.success('Vente déclarée.')
+          toast.success(t`Vente déclarée.`)
           reset()
           onOpenChange(false)
         },
         onError: (error: any) =>
           toast.error(
-            error?.response?.data?.message ?? 'Une erreur est survenue.'
+            error?.response?.data?.message ?? t`Une erreur est survenue.`
           ),
       }
     )
@@ -238,18 +244,27 @@ export function DeclareSoldDialog({
     >
       <DialogContent className='sm:max-w-md'>
         <DialogHeader className='text-start'>
-          <DialogTitle>Déclarer la vente</DialogTitle>
+          <DialogTitle>
+            <Trans>Déclarer la vente</Trans>
+          </DialogTitle>
           <DialogDescription>
-            {vehicle.name} — Total investi :{' '}
-            <span className='font-medium text-foreground'>
-              {centsToEuros(financialSummary.totalExpenses).toLocaleString('fr-FR')} €
-            </span>
+            <Trans>
+              {vehicle.name} — Total investi :{' '}
+              <span className='font-medium text-foreground'>
+                {centsToEuros(financialSummary.totalExpenses).toLocaleString(
+                  'fr-FR'
+                )}{' '}
+                €
+              </span>
+            </Trans>
           </DialogDescription>
         </DialogHeader>
 
         <div className='space-y-4'>
           <div className='space-y-2'>
-            <Label htmlFor='sale-price'>Prix de vente</Label>
+            <Label htmlFor='sale-price'>
+              <Trans>Prix de vente</Trans>
+            </Label>
             <div className='relative'>
               <DecimalInput
                 id='sale-price'
@@ -265,7 +280,9 @@ export function DeclareSoldDialog({
           </div>
 
           <div className='space-y-2'>
-            <Label htmlFor='sold-at'>Date de vente</Label>
+            <Label htmlFor='sold-at'>
+              <Trans>Date de vente</Trans>
+            </Label>
             <Input
               id='sold-at'
               type='date'
@@ -275,7 +292,9 @@ export function DeclareSoldDialog({
           </div>
 
           <div className='space-y-2'>
-            <Label>Qui a encaissé ?</Label>
+            <Label>
+              <Trans>Qui a encaissé ?</Trans>
+            </Label>
             <Select
               value={cashierId}
               onValueChange={(v) => {
@@ -285,7 +304,7 @@ export function DeclareSoldDialog({
               }}
             >
               <SelectTrigger>
-                <SelectValue placeholder='Sélectionner un participant' />
+                <SelectValue placeholder={t`Sélectionner un participant`} />
               </SelectTrigger>
               <SelectContent>
                 {cashierOptions.map((p) => (
@@ -299,24 +318,34 @@ export function DeclareSoldDialog({
 
           {cashierIsOwner && (
             <div className='space-y-2'>
-              <Label>Où est allé l&apos;argent ?</Label>
+              <Label>
+                <Trans>Où est allé l&apos;argent ?</Trans>
+              </Label>
               <Select
                 value={sourceType ?? ''}
                 onValueChange={(v) => setSourceType(v as SourceType)}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder='Sélectionner' />
+                  <SelectValue placeholder={t`Sélectionner`} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='BANK'>Banque</SelectItem>
-                  <SelectItem value='CASH'>Espèces</SelectItem>
-                  <SelectItem value='BOTH'>Les deux</SelectItem>
+                  <SelectItem value='BANK'>
+                    <Trans>Banque</Trans>
+                  </SelectItem>
+                  <SelectItem value='CASH'>
+                    <Trans>Espèces</Trans>
+                  </SelectItem>
+                  <SelectItem value='BOTH'>
+                    <Trans>Les deux</Trans>
+                  </SelectItem>
                 </SelectContent>
               </Select>
 
               {sourceType === 'BOTH' && (
                 <div className='space-y-2 rounded-md border p-3'>
-                  <Label htmlFor='bank-split'>Montant reçu en banque</Label>
+                  <Label htmlFor='bank-split'>
+                    <Trans>Montant reçu en banque</Trans>
+                  </Label>
                   <div className='relative'>
                     <DecimalInput
                       id='bank-split'
@@ -330,20 +359,28 @@ export function DeclareSoldDialog({
                     </span>
                   </div>
                   <div className='flex items-center justify-between text-sm text-muted-foreground'>
-                    <span>Espèces</span>
+                    <span>
+                      <Trans>Espèces</Trans>
+                    </span>
                     <span className='font-medium text-foreground'>
-                      {centsToEuros(cashComputedCents).toLocaleString('fr-FR')} €
+                      {centsToEuros(cashComputedCents).toLocaleString(
+                        'fr-FR'
+                      )}{' '}
+                      €
                     </span>
                   </div>
                   {vehicle.participants.length > 0 && (
                     <div className='flex items-start gap-2 rounded-md bg-muted/40 p-2 text-xs text-muted-foreground'>
                       <Info size={14} className='mt-0.5 shrink-0' />
                       <span>
-                        Comme l&apos;argent est réparti entre banque et espèces,
-                        votre épargne comptera votre part entièrement en banque
-                        par défaut. Une fois la répartition réelle connue avec
-                        les autres participants, corrigez si besoin avec un
-                        mouvement manuel dans l&apos;épargne.
+                        <Trans>
+                          Comme l&apos;argent est réparti entre banque et
+                          espèces, votre épargne comptera votre part
+                          entièrement en banque par défaut. Une fois la
+                          répartition réelle connue avec les autres
+                          participants, corrigez si besoin avec un mouvement
+                          manuel dans l&apos;épargne.
+                        </Trans>
                       </span>
                     </div>
                   )}
@@ -363,7 +400,7 @@ export function DeclareSoldDialog({
                   <TrendingUp size={14} className='text-green-600' />
                 )}
                 <span className='text-sm font-medium'>
-                  {isDeficit ? 'Déficit : ' : 'Bénéfice net : '}
+                  {isDeficit ? t`Déficit : ` : t`Bénéfice net : `}
                   <span
                     className={isDeficit ? 'text-red-500' : 'text-green-600'}
                   >
@@ -379,17 +416,21 @@ export function DeclareSoldDialog({
               <Separator />
 
               <div className='space-y-3'>
-                <p className='text-sm font-medium'>Répartition</p>
+                <p className='text-sm font-medium'>
+                  <Trans>Répartition</Trans>
+                </p>
                 <div className='flex items-center justify-between rounded-md border bg-muted/40 p-3'>
                   <div>
-                    <p className='text-sm font-medium'>Vous</p>
+                    <p className='text-sm font-medium'>{t`Vous`}</p>
                     <p className='text-xs text-muted-foreground'>
-                      Mise : {ownerBreakdown.invested.toLocaleString('fr-FR')} €
-                      · Bénéf :{' '}
-                      {ownerBreakdown.profitAmount.toLocaleString('fr-FR', {
-                        maximumFractionDigits: 2,
-                      })}{' '}
-                      €
+                      <Trans>
+                        Mise : {ownerBreakdown.invested.toLocaleString('fr-FR')}{' '}
+                        € · Bénéf :{' '}
+                        {ownerBreakdown.profitAmount.toLocaleString('fr-FR', {
+                          maximumFractionDigits: 2,
+                        })}{' '}
+                        €
+                      </Trans>
                     </p>
                   </div>
                   <span
@@ -408,11 +449,14 @@ export function DeclareSoldDialog({
                         {formatPersonName(p.firstName, p.lastName)}
                       </p>
                       <p className='text-xs text-muted-foreground'>
-                        Mise : {p.invested.toLocaleString('fr-FR')} € · Bénéf :{' '}
-                        {p.profitAmount.toLocaleString('fr-FR', {
-                          maximumFractionDigits: 2,
-                        })}{' '}
-                        €
+                        <Trans>
+                          Mise : {p.invested.toLocaleString('fr-FR')} € ·
+                          Bénéf :{' '}
+                          {p.profitAmount.toLocaleString('fr-FR', {
+                            maximumFractionDigits: 2,
+                          })}{' '}
+                          €
+                        </Trans>
                       </p>
                     </div>
                     <span
@@ -429,13 +473,13 @@ export function DeclareSoldDialog({
 
         <DialogFooter>
           <Button variant='outline' onClick={() => onOpenChange(false)}>
-            Annuler
+            <Trans>Annuler</Trans>
           </Button>
           <Button
             onClick={handleConfirm}
             disabled={!salePrice || salePriceNum <= 0 || isPending}
           >
-            {isPending ? 'Enregistrement…' : 'Confirmer la vente'}
+            {isPending ? t`Enregistrement…` : t`Confirmer la vente`}
           </Button>
         </DialogFooter>
       </DialogContent>

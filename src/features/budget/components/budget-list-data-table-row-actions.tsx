@@ -1,5 +1,6 @@
 import { useNavigate } from '@tanstack/react-router'
 import { type Row } from '@tanstack/react-table'
+import { Trans } from '@lingui/react/macro'
 import { Eye, MoreHorizontal, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -40,13 +41,15 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'
         >
           <MoreHorizontal size={16} />
-          <span className='sr-only'>Ouvrir le menu</span>
+          <span className='sr-only'>
+            <Trans>Ouvrir le menu</Trans>
+          </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end'>
         <DropdownMenuItem onClick={openDetail}>
           <Eye size={14} className='me-2' />
-          Voir le détail
+          <Trans>Voir le détail</Trans>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
@@ -54,7 +57,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           onClick={openDeleteDialog}
         >
           <Trash2 size={14} className='me-2' />
-          Supprimer
+          <Trans>Supprimer</Trans>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

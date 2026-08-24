@@ -1,4 +1,5 @@
 import { getRouteApi } from '@tanstack/react-router'
+import { Trans } from '@lingui/react/macro'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -73,10 +74,10 @@ export function BudgetList() {
         <div className='flex flex-wrap items-end justify-between gap-2'>
           <div>
             <h2 className='text-2xl font-bold tracking-tight'>
-              Budget mensuel
+              <Trans>Budget mensuel</Trans>
             </h2>
             <p className='text-muted-foreground'>
-              Gérez vos budgets mensuels ici.
+              <Trans>Gérez vos budgets mensuels ici.</Trans>
             </p>
           </div>
           <BudgetListPrimaryButtons />

@@ -1,21 +1,8 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useLingui } from '@lingui/react'
 import { type NavigateFn } from '@/hooks/use-table-url-state'
 import { Button } from '@/components/ui/button'
-
-const FRENCH_MONTHS = [
-  'Janvier',
-  'Février',
-  'Mars',
-  'Avril',
-  'Mai',
-  'Juin',
-  'Juillet',
-  'Août',
-  'Septembre',
-  'Octobre',
-  'Novembre',
-  'Décembre',
-]
+import { MONTH_MESSAGES } from '../data/data'
 
 type BudgetMonthNavigatorProps = {
   year: number
@@ -28,6 +15,8 @@ export function BudgetMonthNavigator({
   month,
   navigate,
 }: BudgetMonthNavigatorProps) {
+  const { i18n } = useLingui()
+
   function goToPreviousMonth() {
     if (month === 1)
       navigate({ search: (p) => ({ ...p, year: year - 1, month: 12 }) })
@@ -46,7 +35,7 @@ export function BudgetMonthNavigator({
         <ChevronLeft size={16} />
       </Button>
       <span className='min-w-40 text-center text-lg font-semibold'>
-        {FRENCH_MONTHS[month - 1]} {year}
+        {i18n._(MONTH_MESSAGES[month - 1])} {year}
       </span>
       <Button variant='outline' size='icon' onClick={goToNextMonth}>
         <ChevronRight size={16} />

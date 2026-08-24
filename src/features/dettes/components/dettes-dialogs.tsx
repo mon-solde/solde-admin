@@ -1,4 +1,5 @@
 import { toast } from 'sonner'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import {
   useDeleteDette,
@@ -14,6 +15,7 @@ export function DettesDialogs() {
   const deleteDette = useDeleteDette()
   const setDebtSettled = useSetDebtSettled()
   const setDebtForgiven = useSetDebtForgiven()
+  const { t } = useLingui()
 
   return (
     <>
@@ -64,22 +66,22 @@ export function DettesDialogs() {
             handleConfirm={() => {
               deleteDette.mutate(currentRow.id, {
                 onSuccess: () => {
-                  toast.success('Dette supprimée.')
+                  toast.success(t`Dette supprimée.`)
                   setOpen(null)
                   setTimeout(() => setCurrentRow(null), 500)
                 },
               })
             }}
             className='max-w-md'
-            title={`Supprimer cette dette : ${currentRow.id} ?`}
+            title={t`Supprimer cette dette : ${currentRow.id} ?`}
             desc={
-              <>
+              <Trans>
                 Vous allez supprimer la dette avec l&apos;ID{' '}
                 <strong>{currentRow.id}</strong>. <br />
                 Cette action est irréversible.
-              </>
+              </Trans>
             }
-            confirmText='Supprimer'
+            confirmText={t`Supprimer`}
           />
 
           <ConfirmDialog
@@ -96,7 +98,7 @@ export function DettesDialogs() {
                 { debtId: currentRow.id, settled: true },
                 {
                   onSuccess: () => {
-                    toast.success('Dette marquée comme réglée.')
+                    toast.success(t`Dette marquée comme réglée.`)
                     setOpen(null)
                     setTimeout(() => setCurrentRow(null), 500)
                   },
@@ -105,16 +107,16 @@ export function DettesDialogs() {
             }}
             isLoading={setDebtSettled.isPending}
             className='max-w-md'
-            title='Marquer cette dette comme réglée ?'
+            title={t`Marquer cette dette comme réglée ?`}
             desc={
-              <>
+              <Trans>
                 Elle sera considérée comme réglée même si le montant remboursé
                 ne correspond pas exactement au montant dû. Aucun nouveau
                 remboursement ne pourra être ajouté tant que ce n&apos;est pas
                 annulé.
-              </>
+              </Trans>
             }
-            confirmText='Marquer comme réglée'
+            confirmText={t`Marquer comme réglée`}
           />
 
           <ConfirmDialog
@@ -131,7 +133,7 @@ export function DettesDialogs() {
                 { debtId: currentRow.id, settled: false },
                 {
                   onSuccess: () => {
-                    toast.success('Règlement manuel annulé.')
+                    toast.success(t`Règlement manuel annulé.`)
                     setOpen(null)
                     setTimeout(() => setCurrentRow(null), 500)
                   },
@@ -140,14 +142,14 @@ export function DettesDialogs() {
             }}
             isLoading={setDebtSettled.isPending}
             className='max-w-md'
-            title='Annuler le règlement manuel de cette dette ?'
+            title={t`Annuler le règlement manuel de cette dette ?`}
             desc={
-              <>
+              <Trans>
                 Elle repassera &quot;en cours&quot; si le montant remboursé
                 n&apos;atteint pas le montant dû.
-              </>
+              </Trans>
             }
-            confirmText='Annuler le règlement'
+            confirmText={t`Annuler le règlement`}
           />
 
           <ConfirmDialog
@@ -164,7 +166,7 @@ export function DettesDialogs() {
                 { debtId: currentRow.id, forgiven: true },
                 {
                   onSuccess: () => {
-                    toast.success('Dette pardonnée.')
+                    toast.success(t`Dette pardonnée.`)
                     setOpen(null)
                     setTimeout(() => setCurrentRow(null), 500)
                   },
@@ -173,15 +175,15 @@ export function DettesDialogs() {
             }}
             isLoading={setDebtForgiven.isPending}
             className='max-w-md'
-            title='Pardonner cette dette ?'
+            title={t`Pardonner cette dette ?`}
             desc={
-              <>
+              <Trans>
                 Elle ne sera plus considérée comme due, sans qu&apos;aucun
                 remboursement n&apos;ait eu lieu. Aucun nouveau remboursement
                 ne pourra être ajouté tant que ce n&apos;est pas annulé.
-              </>
+              </Trans>
             }
-            confirmText='Pardonner'
+            confirmText={t`Pardonner`}
           />
 
           <ConfirmDialog
@@ -198,7 +200,7 @@ export function DettesDialogs() {
                 { debtId: currentRow.id, forgiven: false },
                 {
                   onSuccess: () => {
-                    toast.success('Pardon annulé.')
+                    toast.success(t`Pardon annulé.`)
                     setOpen(null)
                     setTimeout(() => setCurrentRow(null), 500)
                   },
@@ -207,9 +209,9 @@ export function DettesDialogs() {
             }}
             isLoading={setDebtForgiven.isPending}
             className='max-w-md'
-            title='Annuler le pardon de cette dette ?'
-            desc={<>Elle redeviendra due, comme avant.</>}
-            confirmText='Annuler le pardon'
+            title={t`Annuler le pardon de cette dette ?`}
+            desc={<Trans>Elle redeviendra due, comme avant.</Trans>}
+            confirmText={t`Annuler le pardon`}
           />
         </>
       )}

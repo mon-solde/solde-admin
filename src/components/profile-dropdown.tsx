@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro'
 import useDialogState from '@/hooks/use-dialog-state'
 import { useAuthStore } from '@/stores/auth-store'
 import { getInitialsFromEmail } from '@/lib/utils'
@@ -36,7 +37,7 @@ export function ProfileDropdown() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem variant='destructive' onClick={() => setOpen(true)}>
-            Sign out
+            <Trans>Se déconnecter</Trans>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -1,6 +1,8 @@
+import { useMemo } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { Loader2 } from 'lucide-react'
 import { centsToEuros, eurosToCents } from '@/lib/money'
 import { Button } from '@/components/ui/button'
@@ -22,14 +24,6 @@ import {
 } from '@/components/ui/form'
 import { useUpdateSalary } from '../api/budget-api'
 
-const editSalaryFormSchema = z.object({
-  receivedSalary: z
-    .number({ error: 'Requis' })
-    .min(0, 'Le salaire ne peut pas être négatif'),
-})
-
-type EditSalaryFormValues = z.infer<typeof editSalaryFormSchema>
-
 type BudgetEditSalaryDialogProps = {
   budgetId: string | undefined
   currentSalary: number
@@ -44,6 +38,17 @@ export function BudgetEditSalaryDialog({
   onOpenChange,
 }: BudgetEditSalaryDialogProps) {
   const { mutate: updateSalary, isPending } = useUpdateSalary()
+  const { t } = useLingui()
+  const editSalaryFormSchema = useMemo(
+    () =>
+      z.object({
+        receivedSalary: z
+          .number({ error: t`Requis` })
+          .min(0, t`Le salaire ne peut pas être négatif`),
+      }),
+    [t]
+  )
+  type EditSalaryFormValues = z.infer<typeof editSalaryFormSchema>
 
   const form = useForm<EditSalaryFormValues>({
     resolver: zodResolver(editSalaryFormSchema),
@@ -73,7 +78,9 @@ export function BudgetEditSalaryDialog({
     >
       <DialogContent className='sm:max-w-sm'>
         <DialogHeader>
-          <DialogTitle>Modifier le salaire</DialogTitle>
+          <DialogTitle>
+            <Trans>Modifier le salaire</Trans>
+          </DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form
@@ -87,7 +94,7 @@ export function BudgetEditSalaryDialog({
               render={({ field }) => (
                 <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                   <FormLabel className='col-span-2 text-end'>
-                    Salaire reçu
+                    <Trans>Salaire reçu</Trans>
                   </FormLabel>
                   <FormControl>
                     <div className='relative col-span-4'>
@@ -106,7 +113,7 @@ export function BudgetEditSalaryDialog({
         <DialogFooter>
           <Button type='submit' form='edit-salary-form' disabled={isPending}>
             {isPending && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-            Enregistrer
+            <Trans>Enregistrer</Trans>
           </Button>
         </DialogFooter>
       </DialogContent>

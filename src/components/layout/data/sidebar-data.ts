@@ -6,40 +6,41 @@ import {
   Car,
   Handshake,
 } from 'lucide-react'
+import { msg } from '@lingui/core/macro'
 import { type SidebarData } from '../types'
 
 export const sidebarData: SidebarData = {
   navGroups: [
     {
-      title: 'General',
+      title: msg`Général`,
       items: [
         {
-          title: 'Budget mensuel',
+          title: msg`Budget mensuel`,
           url: '/budget',
           icon: Wallet,
         },
         {
-          title: 'Charges récurrentes',
+          title: msg`Charges récurrentes`,
           url: '/subscriptions',
           icon: Repeat,
         },
         {
-          title: 'Dettes',
+          title: msg`Dettes`,
           url: '/dettes',
           icon: Handshake,
         },
         {
-          title: 'Épargne',
+          title: msg`Épargne`,
           url: '/savings',
           icon: PiggyBank,
         },
         {
-          title: 'Véhicules',
+          title: msg`Véhicules`,
           url: '/vehicles',
           icon: Car,
         },
         {
-          title: 'Mes contacts',
+          title: msg`Mes contacts`,
           url: '/contacts',
           icon: Users,
         },

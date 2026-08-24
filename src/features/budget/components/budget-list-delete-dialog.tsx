@@ -1,6 +1,7 @@
+import { Trans, useLingui } from '@lingui/react/macro'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useDeleteMonthlyBudget } from '../api/budget-api'
-import { FRENCH_MONTHS } from '../data/data'
+import { MONTH_MESSAGES } from '../data/data'
 import { type MonthlyBudget } from '../data/schema'
 import { useBudgetList } from './budget-list-provider'
 
@@ -17,6 +18,7 @@ export function BudgetListDeleteDialog({
 }: BudgetListDeleteDialogProps) {
   const { setCurrentRow } = useBudgetList()
   const { mutate: deleteBudget, isPending } = useDeleteMonthlyBudget()
+  const { i18n, t } = useLingui()
 
   function handleDelete() {
     deleteBudget(currentRow.id, {
@@ -33,17 +35,19 @@ export function BudgetListDeleteDialog({
       onOpenChange={onOpenChange}
       handleConfirm={handleDelete}
       isLoading={isPending}
-      title='Supprimer ce mois'
+      title={t`Supprimer ce mois`}
       desc={
         <p>
-          Êtes-vous sûr de vouloir supprimer le budget de{' '}
-          <span className='font-bold'>
-            {FRENCH_MONTHS[currentRow.month - 1]} {currentRow.year}
-          </span>{' '}
-          ? Cette action est irréversible.
+          <Trans>
+            Êtes-vous sûr de vouloir supprimer le budget de{' '}
+            <span className='font-bold'>
+              {i18n._(MONTH_MESSAGES[currentRow.month - 1])} {currentRow.year}
+            </span>{' '}
+            ? Cette action est irréversible.
+          </Trans>
         </p>
       }
-      confirmText='Supprimer'
+      confirmText={t`Supprimer`}
       destructive
     />
   )

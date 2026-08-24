@@ -1,9 +1,12 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { z } from 'zod'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { fr } from 'date-fns/locale'
+import { msg } from '@lingui/core/macro'
+import { type MessageDescriptor } from '@lingui/core'
+import { Plural, Trans, useLingui } from '@lingui/react/macro'
 import {
   Plus,
   Trash2,
@@ -77,14 +80,6 @@ type PaymentDrawerProps = {
   onDeleteRepayment?: (repaymentId: string) => void
 }
 
-const formSchema = z.object({
-  amount: z.number().positive('Le montant doit être positif.'),
-  date: z.string().min(1, 'La date est requise.'),
-  note: z.string().optional(),
-  bankSplit: z.number().min(0).optional(),
-})
-type PaymentForm = z.infer<typeof formSchema>
-
 const fmt = new Intl.NumberFormat('fr-FR', {
   style: 'currency',
   currency: 'EUR',
@@ -92,12 +87,12 @@ const fmt = new Intl.NumberFormat('fr-FR', {
 
 const SOURCE_OPTIONS: {
   value: SourceType
-  label: string
+  label: MessageDescriptor
   icon: React.ElementType
 }[] = [
-  { value: 'bank', label: 'Banque', icon: Landmark },
-  { value: 'cash', label: 'Espèces', icon: Banknote },
-  { value: 'both', label: 'Les deux', icon: SplitSquareHorizontal },
+  { value: 'bank', label: msg`Banque`, icon: Landmark },
+  { value: 'cash', label: msg`Espèces`, icon: Banknote },
+  { value: 'both', label: msg`Les deux`, icon: SplitSquareHorizontal },
 ]
 
 export function PaymentDrawer({
@@ -110,13 +105,17 @@ export function PaymentDrawer({
   remaining,
   repayments,
   isPending,
-  sourceSelectorLabel = 'Où va cet argent ?',
-  paidLabel = 'Remboursé',
-  remainingLabel = 'Reste à régler',
+  sourceSelectorLabel,
+  paidLabel,
+  remainingLabel,
   onSubmit,
   onDeleteRepayment,
 }: PaymentDrawerProps) {
   const [sourceType, setSourceType] = useState<SourceType | null>(null)
+  const { i18n, t } = useLingui()
+
+  const formSchema = useMemoFormSchema(t)
+  type PaymentForm = z.infer<typeof formSchema>
 
   const progression = Math.min(100, (amountPaid / amountDue) * 100)
 
@@ -146,14 +145,14 @@ export function PaymentDrawer({
 
   const handleSubmit = (data: PaymentForm) => {
     if (!sourceType) {
-      toast.error('Veuillez indiquer où va cet argent.')
+      toast.error(t`Veuillez indiquer où va cet argent.`)
       return
     }
     if (sourceType === 'both') {
       const split = data.bankSplit ?? 0
       if (split <= 0 || split >= data.amount) {
         toast.error(
-          'Le montant Banque doit être compris entre 0 et le montant versé.'
+          t`Le montant Banque doit être compris entre 0 et le montant versé.`
         )
         return
       }
@@ -198,7 +197,9 @@ export function PaymentDrawer({
           {/* Progression */}
           <div className='space-y-3 rounded-lg border p-4'>
             <div className='flex justify-between text-sm'>
-              <span className='text-muted-foreground'>{paidLabel}</span>
+              <span className='text-muted-foreground'>
+                {paidLabel ?? <Trans>Remboursé</Trans>}
+              </span>
               <span className='font-semibold tabular-nums'>
                 {fmt.format(amountPaid)} / {fmt.format(amountDue)}
               </span>
@@ -210,7 +211,9 @@ export function PaymentDrawer({
               />
             </div>
             <div className='flex justify-between text-sm'>
-              <span className='text-muted-foreground'>{remainingLabel}</span>
+              <span className='text-muted-foreground'>
+                {remainingLabel ?? <Trans>Reste à régler</Trans>}
+              </span>
               <Badge variant={remaining === 0 ? 'default' : 'secondary'}>
                 {fmt.format(remaining)}
               </Badge>
@@ -221,7 +224,9 @@ export function PaymentDrawer({
 
           {/* Formulaire */}
           <div>
-            <p className='mb-3 text-sm font-medium'>Enregistrer un versement</p>
+            <p className='mb-3 text-sm font-medium'>
+              <Trans>Enregistrer un versement</Trans>
+            </p>
             <Form {...form}>
               <form
                 id='payment-form'
@@ -233,7 +238,9 @@ export function PaymentDrawer({
                   name='amount'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Montant (€)</FormLabel>
+                      <FormLabel>
+                        <Trans>Montant (€)</Trans>
+                      </FormLabel>
                       <FormControl>
                         <DecimalInput {...field} placeholder='0,00' />
                       </FormControl>
@@ -244,7 +251,7 @@ export function PaymentDrawer({
 
                 <Card className='gap-3 border-0 bg-transparent p-0 shadow-none'>
                   <Label className='text-xs text-muted-foreground'>
-                    {sourceSelectorLabel}
+                    {sourceSelectorLabel ?? <Trans>Où va cet argent ?</Trans>}
                   </Label>
                   <Card className='grid grid-cols-3 gap-2 rounded-none border-0 bg-transparent p-0 shadow-none'>
                     {SOURCE_OPTIONS.map(({ value, label, icon: Icon }) => (
@@ -274,7 +281,7 @@ export function PaymentDrawer({
                               sourceType === value ? 'text-white' : ''
                             )}
                           >
-                            {label}
+                            {i18n._(label)}
                           </Label>
                         </CardContent>
                       </Card>
@@ -289,7 +296,7 @@ export function PaymentDrawer({
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className='flex items-center gap-1.5'>
-                              <Landmark size={13} /> Banque (€)
+                              <Landmark size={13} /> <Trans>Banque (€)</Trans>
                             </FormLabel>
                             <FormControl>
                               <DecimalInput {...field} placeholder='0,00' />
@@ -301,7 +308,7 @@ export function PaymentDrawer({
                       <Card className='gap-0 rounded-lg p-0 shadow-none'>
                         <CardContent className='flex items-center justify-between px-3 py-2.5'>
                           <CardDescription className='flex items-center gap-1.5'>
-                            <Banknote size={13} /> Espèces
+                            <Banknote size={13} /> <Trans>Espèces</Trans>
                           </CardDescription>
                           <CardTitle className='text-sm font-semibold tabular-nums'>
                             {fmt.format(cashComputed)}
@@ -317,7 +324,9 @@ export function PaymentDrawer({
                   name='date'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Date</FormLabel>
+                      <FormLabel>
+                        <Trans>Date</Trans>
+                      </FormLabel>
                       <FormControl>
                         <Input {...field} type='date' />
                       </FormControl>
@@ -330,11 +339,13 @@ export function PaymentDrawer({
                   name='note'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Note (optionnel)</FormLabel>
+                      <FormLabel>
+                        <Trans>Note (optionnel)</Trans>
+                      </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
-                          placeholder='Ex : virement, espèces...'
+                          placeholder={t`Ex : virement, espèces...`}
                         />
                       </FormControl>
                       <FormMessage />
@@ -348,7 +359,11 @@ export function PaymentDrawer({
                 >
                   <Plus size={16} />
                   <span>
-                    {isPending ? 'Enregistrement...' : 'Ajouter le versement'}
+                    {isPending ? (
+                      <Trans>Enregistrement...</Trans>
+                    ) : (
+                      <Trans>Ajouter le versement</Trans>
+                    )}
                   </span>
                 </Button>
               </form>
@@ -360,12 +375,19 @@ export function PaymentDrawer({
           {/* Historique */}
           <div>
             <p className='mb-3 text-sm font-medium'>
-              Historique ({repayments.length} versement
-              {repayments.length !== 1 ? 's' : ''})
+              <Trans>
+                Historique (
+                <Plural
+                  value={repayments.length}
+                  one='# versement'
+                  other='# versements'
+                />
+                )
+              </Trans>
             </p>
             {sortedRepayments.length === 0 ? (
               <p className='text-sm text-muted-foreground'>
-                Aucun versement enregistré pour l&apos;instant.
+                <Trans>Aucun versement enregistré pour l&apos;instant.</Trans>
               </p>
             ) : (
               <ul className='space-y-2'>
@@ -410,10 +432,28 @@ export function PaymentDrawer({
 
         <SheetFooter className='gap-2'>
           <SheetClose asChild>
-            <Button variant='outline'>Fermer</Button>
+            <Button variant='outline'>
+              <Trans>Fermer</Trans>
+            </Button>
           </SheetClose>
         </SheetFooter>
       </SheetContent>
     </Sheet>
+  )
+}
+
+// Rebuilt whenever the active language changes — otherwise these messages
+// would stay frozen in whichever language was active when the component
+// first rendered.
+function useMemoFormSchema(t: ReturnType<typeof useLingui>['t']) {
+  return useMemo(
+    () =>
+      z.object({
+        amount: z.number().positive(t`Le montant doit être positif.`),
+        date: z.string().min(1, t`La date est requise.`),
+        note: z.string().optional(),
+        bankSplit: z.number().min(0).optional(),
+      }),
+    [t]
   )
 }

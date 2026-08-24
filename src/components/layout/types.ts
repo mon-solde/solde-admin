@@ -1,7 +1,8 @@
 import { type LinkProps } from '@tanstack/react-router'
+import { type MessageDescriptor } from '@lingui/core'
 
 type BaseNavItem = {
-  title: string
+  title: MessageDescriptor
   badge?: string
   icon?: React.ElementType
 }
@@ -19,7 +20,7 @@ type NavCollapsible = BaseNavItem & {
 type NavItem = NavCollapsible | NavLink
 
 type NavGroup = {
-  title: string
+  title: MessageDescriptor
   items: NavItem[]
 }
 

@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,23 +35,29 @@ export function SubscriptionsDeleteDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Supprimer la charge récurrente</AlertDialogTitle>
+          <AlertDialogTitle>
+            <Trans>Supprimer la charge récurrente</Trans>
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            Êtes-vous sûr de vouloir supprimer{' '}
-            <span className='font-medium text-foreground'>
-              {currentRow.name}
-            </span>{' '}
-            ? Cette action est irréversible.
+            <Trans>
+              Êtes-vous sûr de vouloir supprimer{' '}
+              <span className='font-medium text-foreground'>
+                {currentRow.name}
+              </span>{' '}
+              ? Cette action est irréversible.
+            </Trans>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Annuler</AlertDialogCancel>
+          <AlertDialogCancel>
+            <Trans>Annuler</Trans>
+          </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
             disabled={isPending}
             className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
           >
-            Supprimer
+            <Trans>Supprimer</Trans>
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

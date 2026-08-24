@@ -1,4 +1,5 @@
 import { getRouteApi } from '@tanstack/react-router'
+import { Trans } from '@lingui/react/macro'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
 import { Header } from '@/components/layout/header'
@@ -85,9 +86,13 @@ export function Savings() {
       <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
         <div className='flex flex-wrap items-end justify-between gap-2'>
           <div>
-            <h2 className='text-2xl font-bold tracking-tight'>Épargne</h2>
+            <h2 className='text-2xl font-bold tracking-tight'>
+              <Trans>Épargne</Trans>
+            </h2>
             <p className='text-muted-foreground'>
-              Combien vous avez actuellement de côté et pouvez dépenser.
+              <Trans>
+                Combien vous avez actuellement de côté et pouvez dépenser.
+              </Trans>
             </p>
           </div>
           <SavingsPrimaryButtons />

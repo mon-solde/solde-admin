@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   type VisibilityState,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { cn } from '@/lib/utils'
 import { type UseTableUrlStateReturn } from '@/hooks/use-table-url-state'
 import { Input } from '@/components/ui/input'
@@ -20,7 +21,7 @@ import {
 import { DataTablePagination } from '@/components/data-table'
 import { DataTableViewOptions } from '@/components/data-table/view-options'
 import { type Contact } from '../data/schema'
-import { contactsColumns as columns } from './contacts-columns'
+import { getContactsColumns } from './contacts-columns'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 
 type DataTableProps = Pick<
@@ -52,8 +53,10 @@ export function ContactsTable({
 }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const { i18n, t } = useLingui()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const columns = useMemo(() => getContactsColumns(), [i18n])
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,
@@ -87,7 +90,7 @@ export function ContactsTable({
     >
       <div className='flex items-center justify-between'>
         <Input
-          placeholder='Filtrer par nom...'
+          placeholder={t`Filtrer par nom...`}
           value={globalFilter ?? ''}
           onChange={(event) => onGlobalFilterChange?.(event.target.value)}
           className='h-8 w-full sm:w-[250px]'
@@ -161,7 +164,7 @@ export function ContactsTable({
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  Aucun résultat.
+                  <Trans>Aucun résultat.</Trans>
                 </TableCell>
               </TableRow>
             )}

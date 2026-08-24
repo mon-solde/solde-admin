@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,6 +24,7 @@ export function SavingsDeleteDialog({
   onOpenChange,
 }: SavingsDeleteDialogProps) {
   const { deleteMovement, isDeletingMovement } = useSavings()
+  const { t } = useLingui()
 
   function handleDelete() {
     deleteMovement(currentRow.id, { onSuccess: () => onOpenChange(false) })
@@ -32,23 +34,29 @@ export function SavingsDeleteDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Supprimer le mouvement</AlertDialogTitle>
+          <AlertDialogTitle>
+            <Trans>Supprimer le mouvement</Trans>
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            Êtes-vous sûr de vouloir supprimer{' '}
-            <span className='font-medium text-foreground'>
-              {currentRow.label}
-            </span>{' '}
-            ? Cette action est irréversible.
+            <Trans>
+              Êtes-vous sûr de vouloir supprimer{' '}
+              <span className='font-medium text-foreground'>
+                {currentRow.label}
+              </span>{' '}
+              ? Cette action est irréversible.
+            </Trans>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Annuler</AlertDialogCancel>
+          <AlertDialogCancel>
+            <Trans>Annuler</Trans>
+          </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
             disabled={isDeletingMovement}
             className='text-destructive-foreground bg-destructive hover:bg-destructive/90'
           >
-            {isDeletingMovement ? 'Suppression…' : 'Supprimer'}
+            {isDeletingMovement ? t`Suppression…` : t`Supprimer`}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

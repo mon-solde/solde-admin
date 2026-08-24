@@ -1,6 +1,7 @@
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
 import { MixerHorizontalIcon } from '@radix-ui/react-icons'
 import { type Table } from '@tanstack/react-table'
+import { Trans } from '@lingui/react/macro'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -26,11 +27,13 @@ export function DataTableViewOptions<TData>({
           className='ms-auto hidden h-8 lg:flex'
         >
           <MixerHorizontalIcon className='size-4' />
-          View
+          <Trans>Affichage</Trans>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-[150px]'>
-        <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+        <DropdownMenuLabel>
+          <Trans>Afficher/masquer les colonnes</Trans>
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()

@@ -1,13 +1,9 @@
+import { SelectOrdinal, Trans, useLingui } from '@lingui/react/macro'
 import { centsToEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import {
-  chargeTypeColorMap,
-  chargeTypeLabels,
-  formatBillingDay,
-  formatEuros,
-} from '../data/data'
+import { chargeTypeColorMap, CHARGE_TYPE_MESSAGES, formatEuros } from '../data/data'
 import { type MonthlyRecurringCharge } from '../data/schema'
 
 type BudgetChargesCardProps = {
@@ -15,6 +11,7 @@ type BudgetChargesCardProps = {
 }
 
 export function BudgetChargesCard({ entries }: BudgetChargesCardProps) {
+  const { i18n } = useLingui()
   const sortedEntries = [...entries].sort((a, b) =>
     a.label.localeCompare(b.label, 'fr')
   )
@@ -23,7 +20,7 @@ export function BudgetChargesCard({ entries }: BudgetChargesCardProps) {
     <Card>
       <CardHeader className='pb-3'>
         <CardTitle className='text-sm font-medium text-muted-foreground'>
-          Charges
+          <Trans>Charges</Trans>
         </CardTitle>
       </CardHeader>
       <CardContent className='space-y-2'>
@@ -36,7 +33,10 @@ export function BudgetChargesCard({ entries }: BudgetChargesCardProps) {
               <span className='text-sm font-medium'>{entry.label}</span>
               {entry.type === 'AUTOMATIC' && entry.dueDay && (
                 <span className='text-xs text-muted-foreground'>
-                  {formatBillingDay(entry.dueDay)}
+                  <Trans>
+                    Le{' '}
+                    <SelectOrdinal value={entry.dueDay} one='#er' other='#' />
+                  </Trans>
                 </span>
               )}
             </div>
@@ -48,7 +48,7 @@ export function BudgetChargesCard({ entries }: BudgetChargesCardProps) {
                 variant='outline'
                 className={cn('text-xs', chargeTypeColorMap[entry.type])}
               >
-                {chargeTypeLabels[entry.type]}
+                {i18n._(CHARGE_TYPE_MESSAGES[entry.type])}
               </Badge>
             </div>
           </div>

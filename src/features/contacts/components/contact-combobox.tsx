@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Check, ChevronsUpDown, Loader2 } from 'lucide-react'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -26,6 +27,7 @@ type ContactComboboxProps = {
 export function ContactCombobox({ value, onChange }: ContactComboboxProps) {
   const [open, setOpen] = useState(false)
   const [inputValue, setInputValue] = useState('')
+  const { t } = useLingui()
   // Not a table — this is a search-as-you-type dropdown that needs every
   // contact available client-side, so it asks for a generous page size
   // rather than the table's default.
@@ -58,14 +60,14 @@ export function ContactCombobox({ value, onChange }: ContactComboboxProps) {
         >
           {selectedContact
             ? `${selectedContact.firstName} ${selectedContact.lastName ?? ''}`
-            : 'Rechercher un contact...'}
+            : t`Rechercher un contact...`}
           <ChevronsUpDown className='ml-2 size-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>
       <PopoverContent className='w-full p-0' align='start'>
         <Command shouldFilter={false}>
           <CommandInput
-            placeholder='Prénom ou nom...'
+            placeholder={t`Prénom ou nom...`}
             value={inputValue}
             onValueChange={setInputValue}
           />
@@ -76,7 +78,9 @@ export function ContactCombobox({ value, onChange }: ContactComboboxProps) {
               </div>
             )}
             {!isFetching && filtered.length === 0 && (
-              <CommandEmpty>Aucun contact trouvé.</CommandEmpty>
+              <CommandEmpty>
+                <Trans>Aucun contact trouvé.</Trans>
+              </CommandEmpty>
             )}
             <CommandGroup>
               {filtered.map((contact) => (

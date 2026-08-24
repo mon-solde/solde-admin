@@ -1,4 +1,5 @@
 import { Pencil } from 'lucide-react'
+import { Plural, Trans } from '@lingui/react/macro'
 import { centsToEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -42,7 +43,7 @@ export function BudgetOverviewCards({
       <Card>
         <CardHeader className='flex flex-row items-center justify-between pb-2'>
           <CardTitle className='text-sm font-medium text-muted-foreground'>
-            Salaire reçu
+            <Trans>Salaire reçu</Trans>
           </CardTitle>
           <Button
             variant='ghost'
@@ -63,7 +64,7 @@ export function BudgetOverviewCards({
       <Card>
         <CardHeader className='pb-2'>
           <CardTitle className='text-sm font-medium text-muted-foreground'>
-            Charges totales
+            <Trans>Charges totales</Trans>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -71,12 +72,20 @@ export function BudgetOverviewCards({
             − {formatEuros(centsToEuros(totalCharges))}
           </p>
           <p className='mt-1 text-xs text-muted-foreground'>
-            {totalCount} charge{totalCount > 1 ? 's' : ''}
+            <Plural value={totalCount} one='# charge' other='# charges' />
             {automaticCount > 0 && manualCount > 0 && (
               <span>
                 {' '}
-                ({automaticCount} auto · {manualCount} manuelle
-                {manualCount > 1 ? 's' : ''})
+                (
+                <Trans>
+                  {automaticCount} auto ·{' '}
+                  <Plural
+                    value={manualCount}
+                    one='# manuelle'
+                    other='# manuelles'
+                  />
+                </Trans>
+                )
               </span>
             )}
           </p>
@@ -86,7 +95,7 @@ export function BudgetOverviewCards({
       <Card>
         <CardHeader className='pb-2'>
           <CardTitle className='text-sm font-medium text-muted-foreground'>
-            Reste disponible
+            <Trans>Reste disponible</Trans>
           </CardTitle>
         </CardHeader>
         <CardContent>

@@ -1,4 +1,5 @@
 import { getRouteApi, Link } from '@tanstack/react-router'
+import { Trans } from '@lingui/react/macro'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -96,7 +97,7 @@ function BudgetContent() {
           <BudgetMonthNavigator year={year} month={month} navigate={navigate} />
           {!isLoading && !budget && (
             <Button onClick={() => setOpen('initMonth')}>
-              Initialiser ce mois
+              <Trans>Initialiser ce mois</Trans>
             </Button>
           )}
         </div>
@@ -120,9 +121,13 @@ function BudgetContent() {
           />
         ) : (
           <div className='flex flex-1 flex-col items-center justify-center gap-2 text-center text-muted-foreground'>
-            <p className='text-lg font-medium'>Mois non initialisé</p>
+            <p className='text-lg font-medium'>
+              <Trans>Mois non initialisé</Trans>
+            </p>
             <p className='text-sm'>
-              Cliquez sur "Initialiser ce mois" pour commencer.
+              <Trans>
+                Cliquez sur "Initialiser ce mois" pour commencer.
+              </Trans>
             </p>
           </div>
         )}

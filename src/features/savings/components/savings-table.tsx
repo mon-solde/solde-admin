@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Cross2Icon } from '@radix-ui/react-icons'
 import {
   type VisibilityState,
@@ -6,6 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { cn } from '@/lib/utils'
 import {
   type NavigateFn,
@@ -35,7 +36,7 @@ import {
   savingsMovementKinds,
   savingsSources,
 } from '../data/data'
-import { savingsColumns as columns } from './savings-columns'
+import { getSavingsColumns } from './savings-columns'
 
 type SavingsTableProps = Pick<
   UseTableUrlStateReturn,
@@ -70,6 +71,8 @@ export function SavingsTable({
 }: SavingsTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const { i18n, t } = useLingui()
+  const columns = useMemo(() => getSavingsColumns(i18n), [i18n])
 
   const kind = (search.kind as string) || 'tous'
   const source = (search.source as string) || 'tous'
@@ -137,33 +140,37 @@ export function SavingsTable({
     >
       <div className='flex flex-1 flex-wrap items-center gap-2'>
         <Input
-          placeholder='Filtrer par libellé...'
+          placeholder={t`Filtrer par libellé...`}
           value={globalFilter ?? ''}
           onChange={(event) => onGlobalFilterChange?.(event.target.value)}
           className='h-8 w-full sm:w-[250px]'
         />
         <Select value={kind} onValueChange={onKindChange}>
           <SelectTrigger className='h-8 w-[150px]'>
-            <SelectValue placeholder='Type' />
+            <SelectValue placeholder={t`Type`} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value='tous'>Tous les types</SelectItem>
+            <SelectItem value='tous'>
+              <Trans>Tous les types</Trans>
+            </SelectItem>
             {savingsMovementKinds.map((k) => (
               <SelectItem key={k.value} value={k.value}>
-                {k.label}
+                {i18n._(k.label)}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
         <Select value={source} onValueChange={onSourceChange}>
           <SelectTrigger className='h-8 w-[150px]'>
-            <SelectValue placeholder='Compte' />
+            <SelectValue placeholder={t`Compte`} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value='tous'>Tous les comptes</SelectItem>
+            <SelectItem value='tous'>
+              <Trans>Tous les comptes</Trans>
+            </SelectItem>
             {savingsSources.map((s) => (
               <SelectItem key={s.value} value={s.value}>
-                {s.label}
+                {i18n._(s.label)}
               </SelectItem>
             ))}
           </SelectContent>
@@ -174,7 +181,7 @@ export function SavingsTable({
             onClick={resetFilters}
             className='h-8 px-2 lg:px-3'
           >
-            Réinitialiser
+            <Trans>Réinitialiser</Trans>
             <Cross2Icon className='ms-2 h-4 w-4' />
           </Button>
         )}
@@ -246,7 +253,7 @@ export function SavingsTable({
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  Aucun mouvement enregistré.
+                  <Trans>Aucun mouvement enregistré.</Trans>
                 </TableCell>
               </TableRow>
             )}

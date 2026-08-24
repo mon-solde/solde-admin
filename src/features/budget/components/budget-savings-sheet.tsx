@@ -1,6 +1,8 @@
+import { useMemo } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { centsToEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -33,20 +35,12 @@ import {
   formatEuros,
   formatFrenchDate,
   getTodayAsInputValue,
-  FRENCH_MONTHS,
+  MONTH_MESSAGES,
 } from '../data/data'
 import {
   type BudgetSavingsWithdrawal,
   type SavingsDestination,
 } from '../data/schema'
-
-const addWithdrawalFormSchema = z.object({
-  amount: z.number({ error: 'Requis' }).min(0.01, 'Montant requis'),
-  destination: z.union([z.literal('BANK'), z.literal('CASH')]),
-  withdrawalDate: z.string().min(1, 'Date requise'),
-})
-
-type AddWithdrawalFormValues = z.infer<typeof addWithdrawalFormSchema>
 
 type BudgetSavingsSheetProps = {
   savingsWithdrawals: BudgetSavingsWithdrawal[]
@@ -73,6 +67,18 @@ export function BudgetSavingsSheet({
   onOpenChange,
   onAddWithdrawal,
 }: BudgetSavingsSheetProps) {
+  const { i18n, t } = useLingui()
+  const addWithdrawalFormSchema = useMemo(
+    () =>
+      z.object({
+        amount: z.number({ error: t`Requis` }).min(0.01, t`Montant requis`),
+        destination: z.union([z.literal('BANK'), z.literal('CASH')]),
+        withdrawalDate: z.string().min(1, t`Date requise`),
+      }),
+    [t]
+  )
+  type AddWithdrawalFormValues = z.infer<typeof addWithdrawalFormSchema>
+
   const form = useForm<AddWithdrawalFormValues>({
     resolver: zodResolver(addWithdrawalFormSchema),
     defaultValues: {
@@ -104,17 +110,23 @@ export function BudgetSavingsSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className='flex w-full flex-col gap-0 sm:max-w-md'>
         <SheetHeader className='pb-4'>
-          <SheetTitle>Épargne mise de côté</SheetTitle>
+          <SheetTitle>
+            <Trans>Épargne mise de côté</Trans>
+          </SheetTitle>
           <SheetDescription>
-            {FRENCH_MONTHS[month - 1]} {year} · Disponible :{' '}
-            {formatEuros(centsToEuros(availableForSavings))}
+            <Trans>
+              {i18n._(MONTH_MESSAGES[month - 1])} {year} · Disponible :{' '}
+              {formatEuros(centsToEuros(availableForSavings))}
+            </Trans>
           </SheetDescription>
         </SheetHeader>
 
         <div className='space-y-2 pb-4'>
           <div className='flex items-center justify-between text-sm'>
             <span className='text-muted-foreground'>
-              {formatEuros(centsToEuros(totalSaved))} retirés
+              <Trans>
+                {formatEuros(centsToEuros(totalSaved))} retirés
+              </Trans>
             </span>
             <span
               className={cn(
@@ -141,7 +153,7 @@ export function BudgetSavingsSheet({
         <div className='flex-1 overflow-y-auto py-4'>
           {savingsWithdrawals.length === 0 ? (
             <p className='text-center text-sm text-muted-foreground'>
-              Aucun retrait enregistré
+              <Trans>Aucun retrait enregistré</Trans>
             </p>
           ) : (
             <div className='space-y-3'>
@@ -152,10 +164,14 @@ export function BudgetSavingsSheet({
                 >
                   <div>
                     <p className='text-sm font-medium'>
-                      Retiré le {formatFrenchDate(w.date)}
+                      <Trans>Retiré le {formatFrenchDate(w.date)}</Trans>
                     </p>
                     <p className='text-xs text-muted-foreground'>
-                      {w.source === 'BANK' ? 'Banque' : 'Espèces'}
+                      {w.source === 'BANK' ? (
+                        <Trans>Banque</Trans>
+                      ) : (
+                        <Trans>Espèces</Trans>
+                      )}
                     </p>
                   </div>
                   <span className='font-semibold text-green-600'>
@@ -170,7 +186,9 @@ export function BudgetSavingsSheet({
         <Separator />
 
         <div className='pt-4'>
-          <p className='mb-3 text-sm font-medium'>Enregistrer un retrait</p>
+          <p className='mb-3 text-sm font-medium'>
+            <Trans>Enregistrer un retrait</Trans>
+          </p>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(handleSubmit)}
@@ -182,7 +200,9 @@ export function BudgetSavingsSheet({
                   name='amount'
                   render={({ field }) => (
                     <FormItem className='flex-1 space-y-1'>
-                      <FormLabel className='text-xs'>Montant</FormLabel>
+                      <FormLabel className='text-xs'>
+                        <Trans>Montant</Trans>
+                      </FormLabel>
                       <FormControl>
                         <div className='relative'>
                           <DecimalInput placeholder='0' {...field} />
@@ -200,7 +220,9 @@ export function BudgetSavingsSheet({
                   name='destination'
                   render={({ field }) => (
                     <FormItem className='flex-1 space-y-1'>
-                      <FormLabel className='text-xs'>Destination</FormLabel>
+                      <FormLabel className='text-xs'>
+                        <Trans>Destination</Trans>
+                      </FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         value={field.value}
@@ -211,8 +233,12 @@ export function BudgetSavingsSheet({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value='BANK'>Banque</SelectItem>
-                          <SelectItem value='CASH'>Espèces</SelectItem>
+                          <SelectItem value='BANK'>
+                            <Trans>Banque</Trans>
+                          </SelectItem>
+                          <SelectItem value='CASH'>
+                            <Trans>Espèces</Trans>
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -224,7 +250,9 @@ export function BudgetSavingsSheet({
                   name='withdrawalDate'
                   render={({ field }) => (
                     <FormItem className='flex-1 space-y-1'>
-                      <FormLabel className='text-xs'>Date du retrait</FormLabel>
+                      <FormLabel className='text-xs'>
+                        <Trans>Date du retrait</Trans>
+                      </FormLabel>
                       <FormControl>
                         <Input type='date' {...field} />
                       </FormControl>
@@ -234,7 +262,7 @@ export function BudgetSavingsSheet({
                 />
               </div>
               <Button type='submit' className='w-full'>
-                Enregistrer
+                <Trans>Enregistrer</Trans>
               </Button>
             </form>
           </Form>

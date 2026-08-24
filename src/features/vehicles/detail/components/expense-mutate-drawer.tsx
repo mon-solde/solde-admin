@@ -1,8 +1,10 @@
+import { useMemo } from 'react'
 import { z } from 'zod'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusIcon, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { useAuthStore } from '@/stores/auth-store'
 import { centsToEuros, eurosToCents } from '@/lib/money'
 import { formatPersonName } from '@/lib/utils'
@@ -38,22 +40,16 @@ import { SelectDropdown } from '@/components/select-dropdown'
 import { useAddExpense, useUpdateExpense } from '../../api/vehicles-api'
 import { type Expense, type VehicleDetail } from '../../data/schema'
 
-const payerSchema = z.object({
-  payerId: z.string().min(1, 'Sélectionner un participant'),
-  amount: z
-    .number({ error: 'Requis' })
-    .min(0.01, 'Le montant doit être supérieur à 0'),
-  source: z.enum(['BANK', 'CASH']),
-  imputedToId: z.string().optional(),
-})
-
-const formSchema = z.object({
-  label: z.string().min(1, 'Le libellé est requis'),
-  date: z.string().min(1, 'La date est requise'),
-  payers: z.array(payerSchema).min(1, 'Au moins un payeur requis'),
-})
-
-type ExpenseForm = z.infer<typeof formSchema>
+type ExpenseForm = {
+  label: string
+  date: string
+  payers: {
+    payerId: string
+    amount: number
+    source: 'BANK' | 'CASH'
+    imputedToId?: string
+  }[]
+}
 
 type ExpenseMutateDrawerProps = {
   vehicle: VehicleDetail
@@ -73,11 +69,39 @@ export function ExpenseMutateDrawer({
   const updateExpense = useUpdateExpense(vehicle.id)
   const isPending = addExpense.isPending || updateExpense.isPending
   const { auth } = useAuthStore()
+  const { t } = useLingui()
   const ownerId = auth.user?.accountNo ?? ''
   const payerOptions = [
-    { contactId: ownerId, firstName: 'Vous', lastName: null as string | null },
+    {
+      contactId: ownerId,
+      firstName: t`Vous`,
+      lastName: null as string | null,
+    },
     ...vehicle.participants,
   ]
+
+  const payerSchema = useMemo(
+    () =>
+      z.object({
+        payerId: z.string().min(1, t`Sélectionner un participant`),
+        amount: z
+          .number({ error: t`Requis` })
+          .min(0.01, t`Le montant doit être supérieur à 0`),
+        source: z.enum(['BANK', 'CASH']),
+        imputedToId: z.string().optional(),
+      }),
+    [t]
+  )
+
+  const formSchema = useMemo(
+    () =>
+      z.object({
+        label: z.string().min(1, t`Le libellé est requis`),
+        date: z.string().min(1, t`La date est requise`),
+        payers: z.array(payerSchema).min(1, t`Au moins un payeur requis`),
+      }),
+    [t, payerSchema]
+  )
 
   const form = useForm<ExpenseForm>({
     resolver: zodResolver(formSchema),
@@ -130,12 +154,12 @@ export function ExpenseMutateDrawer({
       })),
     }
     const onSuccess = () => {
-      toast.success(isEdit ? 'Dépense modifiée.' : 'Dépense ajoutée.')
+      toast.success(isEdit ? t`Dépense modifiée.` : t`Dépense ajoutée.`)
       form.reset()
       onOpenChange(false)
     }
     const onError = (error: any) =>
-      toast.error(error?.response?.data?.message ?? 'Une erreur est survenue.')
+      toast.error(error?.response?.data?.message ?? t`Une erreur est survenue.`)
 
     if (currentExpense) {
       updateExpense.mutate(
@@ -159,7 +183,11 @@ export function ExpenseMutateDrawer({
       <DialogContent className='flex max-h-[90dvh] flex-col gap-0 p-0 sm:max-w-md'>
         <DialogHeader className='px-6 py-5'>
           <DialogTitle>
-            {isEdit ? 'Modifier la dépense' : 'Ajouter une dépense'}
+            {isEdit ? (
+              <Trans>Modifier la dépense</Trans>
+            ) : (
+              <Trans>Ajouter une dépense</Trans>
+            )}
           </DialogTitle>
           <DialogDescription>{vehicle.name}</DialogDescription>
         </DialogHeader>
@@ -177,10 +205,12 @@ export function ExpenseMutateDrawer({
               name='label'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Libellé</FormLabel>
+                  <FormLabel>
+                    <Trans>Libellé</Trans>
+                  </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder='Ex : Révision moteur'
+                      placeholder={t`Ex : Révision moteur`}
                       autoComplete='off'
                       {...field}
                     />
@@ -195,7 +225,9 @@ export function ExpenseMutateDrawer({
               name='date'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Date</FormLabel>
+                  <FormLabel>
+                    <Trans>Date</Trans>
+                  </FormLabel>
                   <FormControl>
                     <Input type='date' {...field} />
                   </FormControl>
@@ -208,12 +240,16 @@ export function ExpenseMutateDrawer({
 
             <div className='space-y-3'>
               <div className='flex items-center justify-between'>
-                <p className='text-sm font-medium'>Qui a payé ?</p>
+                <p className='text-sm font-medium'>
+                  <Trans>Qui a payé ?</Trans>
+                </p>
                 <span className='text-sm font-medium'>
-                  Total :{' '}
-                  <span className='text-foreground'>
-                    {totalAmount.toLocaleString('fr-FR')} €
-                  </span>
+                  <Trans>
+                    Total :{' '}
+                    <span className='text-foreground'>
+                      {totalAmount.toLocaleString('fr-FR')} €
+                    </span>
+                  </Trans>
                 </span>
               </div>
 
@@ -248,7 +284,7 @@ export function ExpenseMutateDrawer({
                                     )
                                   }
                                 }}
-                                placeholder='Participant'
+                                placeholder={t`Participant`}
                                 items={payerOptions.map((p) => ({
                                   label: formatPersonName(
                                     p.firstName,
@@ -300,9 +336,11 @@ export function ExpenseMutateDrawer({
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value='BANK'>Banque</SelectItem>
+                                    <SelectItem value='BANK'>
+                                      <Trans>Banque</Trans>
+                                    </SelectItem>
                                     <SelectItem value='CASH'>
-                                      Espèces
+                                      <Trans>Espèces</Trans>
                                     </SelectItem>
                                   </SelectContent>
                                 </Select>
@@ -332,13 +370,13 @@ export function ExpenseMutateDrawer({
                           <FormItem className='ms-1 space-y-1'>
                             <div className='flex items-center gap-2'>
                               <span className='text-xs text-muted-foreground'>
-                                Pour le compte de
+                                <Trans>Pour le compte de</Trans>
                               </span>
                               <div className='flex-1'>
                                 <SelectDropdown
                                   defaultValue={f.value ?? ''}
                                   onValueChange={f.onChange}
-                                  placeholder='Participant'
+                                  placeholder={t`Participant`}
                                   items={otherParticipants.map((p) => ({
                                     label: formatPersonName(
                                       p.firstName,
@@ -358,7 +396,7 @@ export function ExpenseMutateDrawer({
                                 }
                                 className='text-xs text-muted-foreground hover:text-foreground'
                               >
-                                Annuler
+                                <Trans>Annuler</Trans>
                               </button>
                             </div>
                           </FormItem>
@@ -375,7 +413,7 @@ export function ExpenseMutateDrawer({
                           )
                         }
                       >
-                        Payé pour quelqu'un d'autre ?
+                        <Trans>Payé pour quelqu'un d'autre ?</Trans>
                       </button>
                     )}
                   </div>
@@ -397,7 +435,7 @@ export function ExpenseMutateDrawer({
                 }
               >
                 <PlusIcon size={14} className='me-1' />
-                Ajouter un payeur
+                <Trans>Ajouter un payeur</Trans>
               </Button>
             </div>
           </form>
@@ -407,14 +445,16 @@ export function ExpenseMutateDrawer({
 
         <DialogFooter className='px-6 py-4'>
           <DialogClose asChild>
-            <Button variant='outline'>Annuler</Button>
+            <Button variant='outline'>
+              <Trans>Annuler</Trans>
+            </Button>
           </DialogClose>
           <Button form='expense-form' type='submit' disabled={isPending}>
             {isPending
-              ? 'Enregistrement…'
+              ? t`Enregistrement…`
               : isEdit
-                ? 'Modifier'
-                : 'Ajouter'}
+                ? t`Modifier`
+                : t`Ajouter`}
           </Button>
         </DialogFooter>
       </DialogContent>

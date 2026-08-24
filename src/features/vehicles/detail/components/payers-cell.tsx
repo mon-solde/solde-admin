@@ -1,4 +1,5 @@
 import { ArrowRight } from 'lucide-react'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { centsToEuros } from '@/lib/money'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,13 +14,14 @@ type PayersCellProps = {
 }
 
 export function PayersCell({ payers }: PayersCellProps) {
+  const { t } = useLingui()
   const delegations = payers.filter((p) => p.imputedToId)
   const summary =
     payers.length === 1 && delegations.length === 0
       ? `${payers[0].firstName} ${centsToEuros(payers[0].amount).toLocaleString('fr-FR')} €`
       : delegations.length > 0
-        ? `${payers.length} payeur${payers.length > 1 ? 's' : ''} (${delegations.length} délégation${delegations.length > 1 ? 's' : ''})`
-        : `${payers.length} payeurs`
+        ? t`${payers.length} payeur${payers.length > 1 ? 's' : ''} (${delegations.length} délégation${delegations.length > 1 ? 's' : ''})`
+        : t`${payers.length} payeurs`
 
   if (payers.length === 1 && delegations.length === 0) {
     return <span className='text-sm text-muted-foreground'>{summary}</span>
@@ -47,7 +49,7 @@ export function PayersCell({ payers }: PayersCellProps) {
               {p.imputedToId && (
                 <span className='flex items-center gap-1 text-muted-foreground'>
                   <ArrowRight size={12} />
-                  pour {p.imputedToFirstName}
+                  <Trans>pour {p.imputedToFirstName}</Trans>
                 </span>
               )}
             </div>

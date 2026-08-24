@@ -12,6 +12,7 @@ import {
   TrendingUp,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { Plural, Trans, useLingui } from '@lingui/react/macro'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
 import { centsToEuros } from '@/lib/money'
 import { cn, formatPersonName } from '@/lib/utils'
@@ -84,6 +85,7 @@ function VehicleDetailContent() {
   const navigate = route.useNavigate()
   const { setOpen, setCurrentExpense, setCurrentVehicleEvent } =
     useVehicleDetail()
+  const { t } = useLingui()
   const { data: vehicle, isLoading } = useGetVehicleDetail(vehicleId)
   const {
     pagination: dettesPagination,
@@ -153,7 +155,9 @@ function VehicleDetailContent() {
     return (
       <Main>
         <div className='flex items-center justify-center py-24'>
-          <p className='text-muted-foreground'>Chargement…</p>
+          <p className='text-muted-foreground'>
+            <Trans>Chargement…</Trans>
+          </p>
         </div>
       </Main>
     )
@@ -163,9 +167,13 @@ function VehicleDetailContent() {
     return (
       <Main>
         <div className='flex flex-col items-center justify-center gap-4 py-24'>
-          <p className='text-muted-foreground'>Véhicule introuvable.</p>
+          <p className='text-muted-foreground'>
+            <Trans>Véhicule introuvable.</Trans>
+          </p>
           <Button asChild variant='outline'>
-            <Link to='/vehicles'>Retour à la liste</Link>
+            <Link to='/vehicles'>
+              <Trans>Retour à la liste</Trans>
+            </Link>
           </Button>
         </div>
       </Main>
@@ -179,12 +187,12 @@ function VehicleDetailContent() {
     if (!pendingDeleteExpense) return
     deleteExpense(pendingDeleteExpense.id, {
       onSuccess: () => {
-        toast.success('Dépense supprimée.')
+        toast.success(t`Dépense supprimée.`)
         setPendingDeleteExpense(null)
       },
       onError: (error: any) => {
         toast.error(
-          error?.response?.data?.message ?? 'Une erreur est survenue.'
+          error?.response?.data?.message ?? t`Une erreur est survenue.`
         )
         setPendingDeleteExpense(null)
       },
@@ -205,12 +213,12 @@ function VehicleDetailContent() {
     if (!pendingDeleteEvent) return
     deleteVehicleEvent(pendingDeleteEvent.id, {
       onSuccess: () => {
-        toast.success('Événement supprimé.')
+        toast.success(t`Événement supprimé.`)
         setPendingDeleteEvent(null)
       },
       onError: (error: any) => {
         toast.error(
-          error?.response?.data?.message ?? 'Une erreur est survenue.'
+          error?.response?.data?.message ?? t`Une erreur est survenue.`
         )
         setPendingDeleteEvent(null)
       },
@@ -279,7 +287,7 @@ function VehicleDetailContent() {
               ) : (
                 <CircleDashed size={12} className='me-1' />
               )}
-              {isSold ? 'Vendu' : 'En cours'}
+              {isSold ? <Trans>Vendu</Trans> : <Trans>En cours</Trans>}
             </Badge>
           </div>
         </div>
@@ -296,16 +304,22 @@ function VehicleDetailContent() {
           <Card>
             <CardHeader className='pb-2'>
               <CardTitle className='text-sm font-medium text-muted-foreground'>
-                Total investi
+                <Trans>Total investi</Trans>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className='text-2xl font-bold'>
-                {centsToEuros(financialSummary.totalExpenses).toLocaleString('fr-FR')} €
+                {centsToEuros(financialSummary.totalExpenses).toLocaleString(
+                  'fr-FR'
+                )}{' '}
+                €
               </p>
               <p className='text-xs text-muted-foreground'>
-                {vehicle.expenses.length} dépense
-                {vehicle.expenses.length > 1 ? 's' : ''}
+                <Plural
+                  value={vehicle.expenses.length}
+                  one='# dépense'
+                  other='# dépenses'
+                />
               </p>
             </CardContent>
           </Card>
@@ -313,18 +327,23 @@ function VehicleDetailContent() {
           <Card>
             <CardHeader className='pb-2'>
               <CardTitle className='text-sm font-medium text-muted-foreground'>
-                Prix de vente
+                <Trans>Prix de vente</Trans>
               </CardTitle>
             </CardHeader>
             <CardContent>
               {vehicle.soldVehicle ? (
                 <>
                   <p className='text-2xl font-bold text-green-600'>
-                    {centsToEuros(vehicle.soldVehicle.salePrice).toLocaleString('fr-FR')} €
+                    {centsToEuros(
+                      vehicle.soldVehicle.salePrice
+                    ).toLocaleString('fr-FR')}{' '}
+                    €
                   </p>
                   <p className='text-xs text-muted-foreground'>
-                    Vendu le{' '}
-                    {vehicle.soldVehicle.soldAt.toLocaleDateString('fr-FR')}
+                    <Trans>
+                      Vendu le{' '}
+                      {vehicle.soldVehicle.soldAt.toLocaleDateString('fr-FR')}
+                    </Trans>
                   </p>
                   {(() => {
                     const cashier = vehicle.participants.find(
@@ -335,13 +354,15 @@ function VehicleDetailContent() {
                     // contacts.
                     const cashierName = cashier
                       ? formatPersonName(cashier.firstName, cashier.lastName)
-                      : 'Vous'
+                      : t`Vous`
                     return (
                       <p className='text-xs text-muted-foreground'>
-                        Encaissé par{' '}
-                        <span className='font-medium text-foreground'>
-                          {cashierName}
-                        </span>
+                        <Trans>
+                          Encaissé par{' '}
+                          <span className='font-medium text-foreground'>
+                            {cashierName}
+                          </span>
+                        </Trans>
                       </p>
                     )
                   })()}
@@ -355,7 +376,7 @@ function VehicleDetailContent() {
           <Card>
             <CardHeader className='pb-2'>
               <CardTitle className='text-sm font-medium text-muted-foreground'>
-                Bénéfice net
+                <Trans>Bénéfice net</Trans>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -370,17 +391,20 @@ function VehicleDetailContent() {
                     )}
                   >
                     {financialSummary.profit >= 0 ? '+' : ''}
-                    {centsToEuros(financialSummary.profit).toLocaleString('fr-FR')} €
+                    {centsToEuros(financialSummary.profit).toLocaleString(
+                      'fr-FR'
+                    )}{' '}
+                    €
                   </p>
                   <p className='text-xs text-muted-foreground'>
-                    Après dépenses et prix d&apos;achat
+                    <Trans>Après dépenses et prix d&apos;achat</Trans>
                   </p>
                 </>
               ) : (
                 <>
                   <p className='text-2xl font-bold text-muted-foreground'>—</p>
                   <p className='text-xs text-muted-foreground'>
-                    Véhicule en cours
+                    <Trans>Véhicule en cours</Trans>
                   </p>
                 </>
               )}
@@ -390,7 +414,7 @@ function VehicleDetailContent() {
           <Card>
             <CardHeader className='pb-2'>
               <CardTitle className='text-sm font-medium text-muted-foreground'>
-                Participants
+                <Trans>Participants</Trans>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -398,7 +422,7 @@ function VehicleDetailContent() {
                 {vehicle.participants.length + 1}
               </p>
               <p className='text-xs text-muted-foreground'>
-                {['Vous', ...vehicle.participants.map((p) => p.firstName)].join(
+                {[t`Vous`, ...vehicle.participants.map((p) => p.firstName)].join(
                   ', '
                 )}
               </p>
@@ -411,7 +435,11 @@ function VehicleDetailContent() {
           <div className='space-y-3'>
             <div className='flex items-center justify-between'>
               <h3 className='font-semibold'>
-                {isSold ? 'Répartition de la vente' : 'Participants'}
+                {isSold ? (
+                  <Trans>Répartition de la vente</Trans>
+                ) : (
+                  <Trans>Participants</Trans>
+                )}
               </h3>
               {!isSold && (
                 <Button
@@ -421,7 +449,7 @@ function VehicleDetailContent() {
                   onClick={() => setOpen('edit-participants')}
                 >
                   <Pencil size={14} />
-                  Modifier
+                  <Trans>Modifier</Trans>
                 </Button>
               )}
             </div>
@@ -429,17 +457,25 @@ function VehicleDetailContent() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Nom</TableHead>
-                    <TableHead className='text-end'>% bénéf.</TableHead>
-                    <TableHead className='text-end'>Investi</TableHead>
+                    <TableHead>
+                      <Trans>Nom</Trans>
+                    </TableHead>
+                    <TableHead className='text-end'>
+                      <Trans>% bénéf.</Trans>
+                    </TableHead>
+                    <TableHead className='text-end'>
+                      <Trans>Investi</Trans>
+                    </TableHead>
                     {isSold && (
-                      <TableHead className='text-end'>À recevoir</TableHead>
+                      <TableHead className='text-end'>
+                        <Trans>À recevoir</Trans>
+                      </TableHead>
                     )}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   <TableRow>
-                    <TableCell className='font-medium'>Vous</TableCell>
+                    <TableCell className='font-medium'>{t`Vous`}</TableCell>
                     <TableCell className='text-end'>
                       <Badge variant='outline'>
                         {financialSummary.owner.profitShare}%
@@ -487,7 +523,9 @@ function VehicleDetailContent() {
           {/* Dépenses */}
           <div className='min-w-0 space-y-3 lg:col-span-2'>
             <div className='flex items-center justify-between'>
-              <h3 className='font-semibold'>Dépenses</h3>
+              <h3 className='font-semibold'>
+                <Trans>Dépenses</Trans>
+              </h3>
               <div className='flex gap-2'>
                 <Button
                   variant='outline'
@@ -498,7 +536,7 @@ function VehicleDetailContent() {
                   }}
                 >
                   <FileSpreadsheet size={14} />
-                  Exporter Excel
+                  <Trans>Exporter Excel</Trans>
                 </Button>
                 {!isSold && (
                   <Button
@@ -508,7 +546,7 @@ function VehicleDetailContent() {
                     onClick={() => setOpen('declare-sold')}
                   >
                     <TrendingUp size={14} />
-                    Déclarer vendu
+                    <Trans>Déclarer vendu</Trans>
                   </Button>
                 )}
                 {!isSold && (
@@ -518,7 +556,7 @@ function VehicleDetailContent() {
                     onClick={() => setOpen('add-expense')}
                   >
                     <PlusIcon size={14} />
-                    Ajouter
+                    <Trans>Ajouter</Trans>
                   </Button>
                 )}
               </div>
@@ -526,18 +564,20 @@ function VehicleDetailContent() {
 
             <div className='flex flex-wrap gap-2'>
               <Input
-                placeholder='Filtrer par nom...'
+                placeholder={t`Filtrer par nom...`}
                 value={expenseSearch}
                 onChange={(event) => setExpenseSearch(event.target.value)}
                 className='h-8 w-full sm:w-[250px]'
               />
               <Select value={payerFilter} onValueChange={setPayerFilter}>
                 <SelectTrigger className='h-8 w-full sm:w-[180px]'>
-                  <SelectValue placeholder='Participant' />
+                  <SelectValue placeholder={t`Participant`} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value='all'>Tous les participants</SelectItem>
-                  <SelectItem value={ownerId}>Vous</SelectItem>
+                  <SelectItem value='all'>
+                    <Trans>Tous les participants</Trans>
+                  </SelectItem>
+                  <SelectItem value={ownerId}>{t`Vous`}</SelectItem>
                   {vehicle.participants.map((p) => (
                     <SelectItem key={p.contactId} value={p.contactId}>
                       {formatPersonName(p.firstName, p.lastName)}
@@ -552,7 +592,7 @@ function VehicleDetailContent() {
                   onClick={resetExpenseFilters}
                   className='h-8 px-2 lg:px-3'
                 >
-                  Réinitialiser
+                  <Trans>Réinitialiser</Trans>
                   <Cross2Icon className='ms-2 h-4 w-4' />
                 </Button>
               )}
@@ -626,9 +666,11 @@ function VehicleDetailContent() {
               </div>
             ) : (
               <div className='rounded-md border py-12 text-center text-sm text-muted-foreground'>
-                {hasActiveFilter
-                  ? 'Aucune dépense ne correspond aux filtres.'
-                  : 'Aucune dépense enregistrée.'}
+                {hasActiveFilter ? (
+                  <Trans>Aucune dépense ne correspond aux filtres.</Trans>
+                ) : (
+                  <Trans>Aucune dépense enregistrée.</Trans>
+                )}
               </div>
             )}
           </div>
@@ -637,7 +679,9 @@ function VehicleDetailContent() {
         {/* Notes libres */}
         <div className='space-y-3'>
           <div className='flex items-center justify-between'>
-            <h3 className='font-semibold'>Notes</h3>
+            <h3 className='font-semibold'>
+              <Trans>Notes</Trans>
+            </h3>
             <Button
               variant='outline'
               size='sm'
@@ -645,7 +689,7 @@ function VehicleDetailContent() {
               onClick={() => setOpen('add-event')}
             >
               <PlusIcon size={14} />
-              Ajouter
+              <Trans>Ajouter</Trans>
             </Button>
           </div>
 
@@ -694,14 +738,16 @@ function VehicleDetailContent() {
             </div>
           ) : (
             <div className='rounded-md border py-8 text-center text-sm text-muted-foreground'>
-              Aucune note enregistrée.
+              <Trans>Aucune note enregistrée.</Trans>
             </div>
           )}
         </div>
 
         <DettesProvider>
           <div className='space-y-3'>
-            <h3 className='font-semibold'>Dettes liées à ce véhicule</h3>
+            <h3 className='font-semibold'>
+              <Trans>Dettes liées à ce véhicule</Trans>
+            </h3>
             <DettesTable
               data={vehicleDettes}
               rowCount={vehicleDettesPage?.count ?? 0}
@@ -730,17 +776,23 @@ function VehicleDetailContent() {
           }}
           handleConfirm={confirmDeleteExpense}
           isLoading={isDeletingExpense}
-          title='Supprimer cette dépense'
+          title={t`Supprimer cette dépense`}
           desc={
             <p>
-              Êtes-vous sûr de vouloir supprimer{' '}
-              <span className='font-bold'>{pendingDeleteExpense.label}</span>{' '}
-              (
-              {centsToEuros(pendingDeleteExpense.totalAmount).toLocaleString('fr-FR')} €) ?
-              Cette action est irréversible.
+              <Trans>
+                Êtes-vous sûr de vouloir supprimer{' '}
+                <span className='font-bold'>
+                  {pendingDeleteExpense.label}
+                </span>{' '}
+                (
+                {centsToEuros(
+                  pendingDeleteExpense.totalAmount
+                ).toLocaleString('fr-FR')}{' '}
+                €) ? Cette action est irréversible.
+              </Trans>
             </p>
           }
-          confirmText='Supprimer'
+          confirmText={t`Supprimer`}
           destructive
         />
       )}
@@ -753,14 +805,16 @@ function VehicleDetailContent() {
           }}
           handleConfirm={confirmDeleteEvent}
           isLoading={isDeletingEvent}
-          title='Supprimer cet événement'
+          title={t`Supprimer cet événement`}
           desc={
             <p>
-              Êtes-vous sûr de vouloir supprimer cette note ? Cette action est
-              irréversible.
+              <Trans>
+                Êtes-vous sûr de vouloir supprimer cette note ? Cette action
+                est irréversible.
+              </Trans>
             </p>
           }
-          confirmText='Supprimer'
+          confirmText={t`Supprimer`}
           destructive
         />
       )}

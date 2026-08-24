@@ -1,7 +1,9 @@
+import { useMemo } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { Button } from '@/components/ui/button'
 import { DecimalInput } from '@/components/ui/decimal-input'
 import {
@@ -31,15 +33,13 @@ import {
 import { getTodayAsInputValue } from '../data/data'
 import { useSavings } from './savings-provider'
 
-const addMovementSchema = z.object({
-  kind: z.union([z.literal('addition'), z.literal('withdrawal')]),
-  source: z.union([z.literal('bank'), z.literal('cash')]),
-  amount: z.number({ error: 'Requis' }).min(0.01, 'Montant requis'),
-  label: z.string().min(1, 'Libellé requis'),
-  date: z.string().min(1, 'Date requise'),
-})
-
-type AddMovementValues = z.infer<typeof addMovementSchema>
+type AddMovementValues = {
+  kind: 'addition' | 'withdrawal'
+  source: 'bank' | 'cash'
+  amount: number
+  label: string
+  date: string
+}
 
 type SavingsActionDialogProps = {
   open: boolean
@@ -51,6 +51,19 @@ export function SavingsActionDialog({
   onOpenChange,
 }: SavingsActionDialogProps) {
   const { addMovement, isAddingMovement } = useSavings()
+  const { t } = useLingui()
+
+  const addMovementSchema = useMemo(
+    () =>
+      z.object({
+        kind: z.union([z.literal('addition'), z.literal('withdrawal')]),
+        source: z.union([z.literal('bank'), z.literal('cash')]),
+        amount: z.number({ error: t`Requis` }).min(0.01, t`Montant requis`),
+        label: z.string().min(1, t`Libellé requis`),
+        date: z.string().min(1, t`Date requise`),
+      }),
+    [t]
+  )
 
   const form = useForm<AddMovementValues>({
     resolver: zodResolver(addMovementSchema),
@@ -91,9 +104,11 @@ export function SavingsActionDialog({
     >
       <DialogContent className='sm:max-w-md'>
         <DialogHeader>
-          <DialogTitle>Ajouter un mouvement</DialogTitle>
+          <DialogTitle>
+            <Trans>Ajouter un mouvement</Trans>
+          </DialogTitle>
           <DialogDescription>
-            Enregistrez un ajout ou retrait sur votre épargne.
+            <Trans>Enregistrez un ajout ou retrait sur votre épargne.</Trans>
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -108,7 +123,9 @@ export function SavingsActionDialog({
                 name='kind'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Type</FormLabel>
+                    <FormLabel>
+                      <Trans>Type</Trans>
+                    </FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
@@ -116,8 +133,12 @@ export function SavingsActionDialog({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value='addition'>Ajout</SelectItem>
-                        <SelectItem value='withdrawal'>Retrait</SelectItem>
+                        <SelectItem value='addition'>
+                          <Trans>Ajout</Trans>
+                        </SelectItem>
+                        <SelectItem value='withdrawal'>
+                          <Trans>Retrait</Trans>
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -129,7 +150,9 @@ export function SavingsActionDialog({
                 name='source'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Compte</FormLabel>
+                    <FormLabel>
+                      <Trans>Compte</Trans>
+                    </FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
@@ -137,8 +160,12 @@ export function SavingsActionDialog({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value='bank'>Banque</SelectItem>
-                        <SelectItem value='cash'>Espèces</SelectItem>
+                        <SelectItem value='bank'>
+                          <Trans>Banque</Trans>
+                        </SelectItem>
+                        <SelectItem value='cash'>
+                          <Trans>Espèces</Trans>
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -152,7 +179,9 @@ export function SavingsActionDialog({
                 name='amount'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Montant</FormLabel>
+                    <FormLabel>
+                      <Trans>Montant</Trans>
+                    </FormLabel>
                     <FormControl>
                       <div className='relative'>
                         <DecimalInput placeholder='0' {...field} />
@@ -170,7 +199,9 @@ export function SavingsActionDialog({
                 name='date'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Date</FormLabel>
+                    <FormLabel>
+                      <Trans>Date</Trans>
+                    </FormLabel>
                     <FormControl>
                       <Input type='date' {...field} />
                     </FormControl>
@@ -184,10 +215,12 @@ export function SavingsActionDialog({
               name='label'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Libellé</FormLabel>
+                  <FormLabel>
+                    <Trans>Libellé</Trans>
+                  </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder='Ex : Aide maman, remboursement dette...'
+                      placeholder={t`Ex : Aide maman, remboursement dette...`}
                       {...field}
                     />
                   </FormControl>
@@ -206,7 +239,7 @@ export function SavingsActionDialog({
             {isAddingMovement && (
               <Loader2 className='mr-2 h-4 w-4 animate-spin' />
             )}
-            Enregistrer
+            <Trans>Enregistrer</Trans>
           </Button>
         </DialogFooter>
       </DialogContent>

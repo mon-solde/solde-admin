@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Cross2Icon } from '@radix-ui/react-icons'
 import {
   type VisibilityState,
@@ -6,6 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { cn } from '@/lib/utils'
 import {
   type NavigateFn,
@@ -35,7 +36,7 @@ import { useGetVehicles } from '@/features/vehicles/api/vehicles-api'
 import { detteTypes, detteStatuses } from '../data/data'
 import { type Dette } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { dettesColumns as columns } from './dettes-columns'
+import { getDettesColumns } from './dettes-columns'
 
 const FILTER_ALL = 'all'
 
@@ -69,6 +70,9 @@ export function DettesTable({
 }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const { i18n, t } = useLingui()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const columns = useMemo(() => getDettesColumns(), [i18n])
 
   // What the debt list is filtered by — the backend does the actual
   // filtering (see useGetDettes), this just reflects/updates the URL.
@@ -136,7 +140,6 @@ export function DettesTable({
       }),
     })
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,
@@ -175,26 +178,30 @@ export function DettesTable({
           </div>
           <Select value={type || FILTER_ALL} onValueChange={onTypeChange}>
             <SelectTrigger className='h-8 w-[150px]'>
-              <SelectValue placeholder='Direction' />
+              <SelectValue placeholder={t`Direction`} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={FILTER_ALL}>Toutes les directions</SelectItem>
-              {detteTypes.map((t) => (
-                <SelectItem key={t.value} value={t.value}>
-                  {t.label}
+              <SelectItem value={FILTER_ALL}>
+                <Trans>Toutes les directions</Trans>
+              </SelectItem>
+              {detteTypes.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {i18n._(item.label)}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
           <Select value={status} onValueChange={onStatusChange}>
             <SelectTrigger className='h-8 w-[150px]'>
-              <SelectValue placeholder='Statut' />
+              <SelectValue placeholder={t`Statut`} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='tous'>Tous les statuts</SelectItem>
-              {detteStatuses.map((s) => (
-                <SelectItem key={s.value} value={s.value}>
-                  {s.label}
+              <SelectItem value='tous'>
+                <Trans>Tous les statuts</Trans>
+              </SelectItem>
+              {detteStatuses.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {i18n._(item.label)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -205,10 +212,12 @@ export function DettesTable({
               onValueChange={onVehicleIdChange}
             >
               <SelectTrigger className='h-8 w-[180px]'>
-                <SelectValue placeholder='Véhicule' />
+                <SelectValue placeholder={t`Véhicule`} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={FILTER_ALL}>Tous les véhicules</SelectItem>
+                <SelectItem value={FILTER_ALL}>
+                  <Trans>Tous les véhicules</Trans>
+                </SelectItem>
                 {vehicles.map((v) => (
                   <SelectItem key={v.id} value={v.id}>
                     {v.name}
@@ -223,7 +232,7 @@ export function DettesTable({
               onClick={resetFilters}
               className='h-8 px-2 lg:px-3'
             >
-              Réinitialiser
+              <Trans>Réinitialiser</Trans>
               <Cross2Icon className='ms-2 h-4 w-4' />
             </Button>
           )}
@@ -297,7 +306,7 @@ export function DettesTable({
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  Aucun résultat.
+                  <Trans>Aucun résultat.</Trans>
                 </TableCell>
               </TableRow>
             )}

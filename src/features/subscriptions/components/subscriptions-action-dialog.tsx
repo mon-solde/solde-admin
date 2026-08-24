@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Trans, useLingui } from '@lingui/react/macro'
 import {
   useAddRecurringChargeToBudget,
   useGetMonthlyBudget,
@@ -36,21 +37,6 @@ import {
 import { subscriptionTypes } from '../data/data'
 import { type Subscription } from '../data/schema'
 
-const subscriptionFormSchema = z.object({
-  name: z.string().min(1, 'Le nom est requis'),
-  amount: z
-    .number({ error: 'Requis' })
-    .min(0.01, 'Le montant doit être supérieur à 0'),
-  type: z.enum(['AUTOMATIC', 'MANUAL'], { error: 'Choisir un type' }),
-  dueDay: z
-    .number({ error: 'Requis' })
-    .min(1, 'Min 1')
-    .max(31, 'Max 31')
-    .optional(),
-})
-
-type SubscriptionFormValues = z.infer<typeof subscriptionFormSchema>
-
 type SubscriptionsActionDialogProps = {
   currentRow?: Subscription
   open: boolean
@@ -62,11 +48,33 @@ export function SubscriptionsActionDialog({
   open,
   onOpenChange,
 }: SubscriptionsActionDialogProps) {
+  const { i18n, t } = useLingui()
   const isEdit = !!currentRow
   const createCharge = useCreateRecurringCharge()
   const updateCharge = useUpdateRecurringCharge()
   const addToBudget = useAddRecurringChargeToBudget()
   const isPending = createCharge.isPending || updateCharge.isPending
+
+  // Rebuilt whenever the active language changes — otherwise these
+  // messages would stay frozen in whichever language was active when the
+  // component first rendered.
+  const subscriptionFormSchema = useMemo(
+    () =>
+      z.object({
+        name: z.string().min(1, t`Le nom est requis`),
+        amount: z
+          .number({ error: t`Requis` })
+          .min(0.01, t`Le montant doit être supérieur à 0`),
+        type: z.enum(['AUTOMATIC', 'MANUAL'], { error: t`Choisir un type` }),
+        dueDay: z
+          .number({ error: t`Requis` })
+          .min(1, t`Min 1`)
+          .max(31, t`Max 31`)
+          .optional(),
+      }),
+    [t]
+  )
+  type SubscriptionFormValues = z.infer<typeof subscriptionFormSchema>
 
   // A charge created after the current month's budget was already
   // generated doesn't retroactively appear in it (see MonthlyRecurringCharge
@@ -147,12 +155,23 @@ export function SubscriptionsActionDialog({
       <DialogContent className='sm:max-w-lg'>
         <DialogHeader className='text-start'>
           <DialogTitle>
-            {isEdit ? 'Modifier la charge récurrente' : 'Nouvelle charge récurrente'}
+            {isEdit ? (
+              <Trans>Modifier la charge récurrente</Trans>
+            ) : (
+              <Trans>Nouvelle charge récurrente</Trans>
+            )}
           </DialogTitle>
           <DialogDescription>
-            {isEdit
-              ? "Les mois déjà générés ne sont pas affectés par cette modification — seuls les futurs mois en tiendront compte."
-              : 'Renseignez les informations de la nouvelle charge récurrente.'}
+            {isEdit ? (
+              <Trans>
+                Les mois déjà générés ne sont pas affectés par cette
+                modification — seuls les futurs mois en tiendront compte.
+              </Trans>
+            ) : (
+              <Trans>
+                Renseignez les informations de la nouvelle charge récurrente.
+              </Trans>
+            )}
           </DialogDescription>
         </DialogHeader>
 
@@ -167,10 +186,12 @@ export function SubscriptionsActionDialog({
               name='name'
               render={({ field }) => (
                 <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                  <FormLabel className='col-span-2 text-end'>Nom</FormLabel>
+                  <FormLabel className='col-span-2 text-end'>
+                    <Trans>Nom</Trans>
+                  </FormLabel>
                   <FormControl>
                     <Input
-                      placeholder='Assurance auto - Golf 6'
+                      placeholder={t`Assurance auto - Golf 6`}
                       className='col-span-4'
                       autoComplete='off'
                       {...field}
@@ -186,7 +207,9 @@ export function SubscriptionsActionDialog({
               name='amount'
               render={({ field }) => (
                 <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                  <FormLabel className='col-span-2 text-end'>Montant</FormLabel>
+                  <FormLabel className='col-span-2 text-end'>
+                    <Trans>Montant</Trans>
+                  </FormLabel>
                   <FormControl>
                     <div className='relative col-span-4'>
                       <DecimalInput placeholder='0,00' {...field} />
@@ -205,16 +228,18 @@ export function SubscriptionsActionDialog({
               name='type'
               render={({ field }) => (
                 <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                  <FormLabel className='col-span-2 text-end'>Type</FormLabel>
+                  <FormLabel className='col-span-2 text-end'>
+                    <Trans>Type</Trans>
+                  </FormLabel>
                   <div className='col-span-4'>
                     <SelectDropdown
                       defaultValue={field.value}
                       onValueChange={field.onChange}
                       isControlled
-                      placeholder='Choisir un type'
-                      items={subscriptionTypes.map((t) => ({
-                        label: t.label,
-                        value: t.value,
+                      placeholder={t`Choisir un type`}
+                      items={subscriptionTypes.map((item) => ({
+                        label: i18n._(item.label),
+                        value: item.value,
                       }))}
                     />
                   </div>
@@ -230,7 +255,7 @@ export function SubscriptionsActionDialog({
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                     <FormLabel className='col-span-2 text-end'>
-                      Jour de prélèvement
+                      <Trans>Jour de prélèvement</Trans>
                     </FormLabel>
                     <FormControl>
                       <div className='relative col-span-4'>
@@ -245,7 +270,7 @@ export function SubscriptionsActionDialog({
                           }
                         />
                         <span className='pointer-events-none absolute end-2 top-1/2 -translate-y-1/2 text-xs text-muted-foreground'>
-                          / mois
+                          <Trans>/ mois</Trans>
                         </span>
                       </div>
                     </FormControl>
@@ -269,7 +294,7 @@ export function SubscriptionsActionDialog({
                     htmlFor='apply-to-current-month'
                     className='font-normal'
                   >
-                    Appliquer aussi au mois en cours
+                    <Trans>Appliquer aussi au mois en cours</Trans>
                   </Label>
                 </div>
               </div>
@@ -279,11 +304,13 @@ export function SubscriptionsActionDialog({
 
         <DialogFooter>
           <Button type='submit' form='subscription-form' disabled={isPending}>
-            {isPending
-              ? 'Enregistrement…'
-              : isEdit
-                ? 'Enregistrer'
-                : 'Créer la charge'}
+            {isPending ? (
+              <Trans>Enregistrement…</Trans>
+            ) : isEdit ? (
+              <Trans>Enregistrer</Trans>
+            ) : (
+              <Trans>Créer la charge</Trans>
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

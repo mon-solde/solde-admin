@@ -1,4 +1,5 @@
 import { ChevronsUpDown, LogOut } from 'lucide-react'
+import { Trans } from '@lingui/react/macro'
 import useDialogState from '@/hooks/use-dialog-state'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {
@@ -71,7 +72,7 @@ export function NavUser({ email, initials }: NavUserProps) {
                 onClick={() => setOpen(true)}
               >
                 <LogOut />
-                Sign out
+                <Trans>Se déconnecter</Trans>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

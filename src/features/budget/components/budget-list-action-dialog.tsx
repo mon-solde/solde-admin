@@ -1,7 +1,9 @@
+import { useMemo } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from '@tanstack/react-router'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { Loader2 } from 'lucide-react'
 import { eurosToCents } from '@/lib/money'
 import { Button } from '@/components/ui/button'
@@ -31,18 +33,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useGetMonthlyBudgets, useInitMonth } from '../api/budget-api'
-import { FRENCH_MONTHS } from '../data/data'
+import { MONTH_MESSAGES } from '../data/data'
 import { getNextAvailableMonth } from '../data/monthly-budgets'
-
-const formSchema = z.object({
-  month: z.number().min(1).max(12),
-  year: z.number().min(2020).max(2100),
-  receivedSalary: z
-    .number({ error: () => 'Le salaire est requis.' })
-    .positive('Le salaire doit être positif.'),
-})
-
-type BudgetListActionDialogForm = z.infer<typeof formSchema>
 
 type BudgetListActionDialogProps = {
   open: boolean
@@ -54,6 +46,26 @@ export function BudgetListActionDialog({
   onOpenChange,
 }: BudgetListActionDialogProps) {
   const navigate = useNavigate()
+  const { i18n, t } = useLingui()
+  // Rebuilt whenever the active language changes — otherwise these
+  // messages would stay frozen in whichever language was active when the
+  // component first rendered.
+  const formSchema = useMemo(
+    () =>
+      z.object({
+        month: z.number().min(1).max(12),
+        year: z
+          .number()
+          .min(2020, t`L'année doit être comprise entre 2020 et 2100.`)
+          .max(2100, t`L'année doit être comprise entre 2020 et 2100.`),
+        receivedSalary: z
+          .number({ error: () => t`Le salaire est requis.` })
+          .positive(t`Le salaire doit être positif.`),
+      }),
+    [t]
+  )
+  type BudgetListActionDialogForm = z.infer<typeof formSchema>
+
   // Only needs the single most recent budget, not the table's current
   // page — independent of whatever pagination/sort the list is on.
   const { data: latestPage } = useGetMonthlyBudgets({
@@ -106,10 +118,14 @@ export function BudgetListActionDialog({
     >
       <DialogContent className='sm:max-w-md'>
         <DialogHeader className='text-start'>
-          <DialogTitle>Nouveau mois</DialogTitle>
+          <DialogTitle>
+            <Trans>Nouveau mois</Trans>
+          </DialogTitle>
           <DialogDescription>
-            Créer le budget pour {FRENCH_MONTHS[selectedMonth - 1]}{' '}
-            {selectedYear}.
+            <Trans>
+              Créer le budget pour {i18n._(MONTH_MESSAGES[selectedMonth - 1])}{' '}
+              {selectedYear}.
+            </Trans>
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -119,7 +135,9 @@ export function BudgetListActionDialog({
             className='space-y-4'
           >
             <div className='grid grid-cols-6 items-center gap-x-4 gap-y-1'>
-              <FormLabel className='col-span-2 text-end'>Mois</FormLabel>
+              <FormLabel className='col-span-2 text-end'>
+                <Trans>Mois</Trans>
+              </FormLabel>
               <div className='col-span-4 flex overflow-hidden rounded-md border'>
                 <FormField
                   control={form.control}
@@ -136,9 +154,9 @@ export function BudgetListActionDialog({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {FRENCH_MONTHS.map((label, i) => (
+                          {MONTH_MESSAGES.map((message, i) => (
                             <SelectItem key={i + 1} value={String(i + 1)}>
-                              {label}
+                              {i18n._(message)}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -176,7 +194,7 @@ export function BudgetListActionDialog({
               render={({ field }) => (
                 <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                   <FormLabel className='col-span-2 text-end'>
-                    Salaire reçu
+                    <Trans>Salaire reçu</Trans>
                   </FormLabel>
                   <div className='col-span-4 space-y-1'>
                     <FormControl>
@@ -197,7 +215,7 @@ export function BudgetListActionDialog({
         <DialogFooter>
           <Button type='submit' form='budget-add-form' disabled={isPending}>
             {isPending && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-            Créer
+            <Trans>Créer</Trans>
           </Button>
         </DialogFooter>
       </DialogContent>

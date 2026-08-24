@@ -1,7 +1,9 @@
+import { useMemo } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -23,10 +25,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { useAddVehicleEvent, useUpdateVehicleEvent } from '../../api/vehicles-api'
 import { type VehicleEvent } from '../../data/schema'
 
-const formSchema = z.object({
-  note: z.string().min(1, 'La note est requise'),
-})
-type EventForm = z.infer<typeof formSchema>
+type EventForm = { note: string }
 
 type EventMutateDialogProps = {
   vehicleId: string
@@ -45,6 +44,15 @@ export function EventMutateDialog({
   const addEvent = useAddVehicleEvent(vehicleId)
   const updateEvent = useUpdateVehicleEvent(vehicleId)
   const isPending = addEvent.isPending || updateEvent.isPending
+  const { t } = useLingui()
+
+  const formSchema = useMemo(
+    () =>
+      z.object({
+        note: z.string().min(1, t`La note est requise`),
+      }),
+    [t]
+  )
 
   const form = useForm<EventForm>({
     resolver: zodResolver(formSchema),
@@ -53,12 +61,12 @@ export function EventMutateDialog({
 
   const onSubmit = (values: EventForm) => {
     const onSuccess = () => {
-      toast.success(isEdit ? 'Événement modifié.' : 'Événement ajouté.')
+      toast.success(isEdit ? t`Événement modifié.` : t`Événement ajouté.`)
       form.reset()
       onOpenChange(false)
     }
     const onError = (error: any) =>
-      toast.error(error?.response?.data?.message ?? 'Une erreur est survenue.')
+      toast.error(error?.response?.data?.message ?? t`Une erreur est survenue.`)
 
     if (currentEvent) {
       updateEvent.mutate(
@@ -82,10 +90,14 @@ export function EventMutateDialog({
       <DialogContent className='sm:max-w-md'>
         <DialogHeader className='text-start'>
           <DialogTitle>
-            {isEdit ? 'Modifier l’événement' : 'Ajouter un événement'}
+            {isEdit ? (
+              <Trans>Modifier l’événement</Trans>
+            ) : (
+              <Trans>Ajouter un événement</Trans>
+            )}
           </DialogTitle>
           <DialogDescription>
-            Une note libre sur ce véhicule, sans montant associé.
+            <Trans>Une note libre sur ce véhicule, sans montant associé.</Trans>
           </DialogDescription>
         </DialogHeader>
 
@@ -100,10 +112,12 @@ export function EventMutateDialog({
               name='note'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Note</FormLabel>
+                  <FormLabel>
+                    <Trans>Note</Trans>
+                  </FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder='Ex : Le vendeur a dit démarreur, finalement tout le moteur.'
+                      placeholder={t`Ex : Le vendeur a dit démarreur, finalement tout le moteur.`}
                       rows={4}
                       {...field}
                     />
@@ -117,7 +131,7 @@ export function EventMutateDialog({
 
         <DialogFooter>
           <Button type='submit' form='event-form' disabled={isPending}>
-            {isPending ? 'Enregistrement…' : isEdit ? 'Modifier' : 'Ajouter'}
+            {isPending ? t`Enregistrement…` : isEdit ? t`Modifier` : t`Ajouter`}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,4 +1,5 @@
 import { getRouteApi } from '@tanstack/react-router'
+import { Trans } from '@lingui/react/macro'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
 import { Header } from '@/components/layout/header'
@@ -86,10 +87,10 @@ export function Subscriptions() {
         <div className='flex flex-wrap items-end justify-between gap-2'>
           <div>
             <h2 className='text-2xl font-bold tracking-tight'>
-              Charges récurrentes
+              <Trans>Charges récurrentes</Trans>
             </h2>
             <p className='text-muted-foreground'>
-              Gérez vos charges récurrentes mensuelles.
+              <Trans>Gérez vos charges récurrentes mensuelles.</Trans>
             </p>
           </div>
           <SubscriptionsPrimaryButtons />

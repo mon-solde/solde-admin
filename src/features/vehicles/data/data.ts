@@ -1,15 +1,21 @@
 import { CheckCircle2, CircleDashed } from 'lucide-react'
+import { type MessageDescriptor } from '@lingui/core'
+import { msg } from '@lingui/core/macro'
 
 // Keyed by the real API status ('ACTIVE'/'SOLD') — used for the status
 // badge cell.
-export const vehicleStatuses = [
+export const vehicleStatuses: {
+  label: MessageDescriptor
+  value: 'ACTIVE' | 'SOLD'
+  icon: typeof CircleDashed
+}[] = [
   {
-    label: 'En cours',
+    label: msg`En cours`,
     value: 'ACTIVE' as const,
     icon: CircleDashed,
   },
   {
-    label: 'Vendu',
+    label: msg`Vendu`,
     value: 'SOLD' as const,
     icon: CheckCircle2,
   },
@@ -18,9 +24,12 @@ export const vehicleStatuses = [
 // Keyed by the French URL filter value ('en cours'/'vendu', see
 // dettes' detteStatuses for the same pattern) — used for the status Select
 // in the table toolbar, distinct from the API status above.
-export const vehicleStatusFilterOptions = [
-  { label: 'En cours', value: 'en cours' as const },
-  { label: 'Vendu', value: 'vendu' as const },
+export const vehicleStatusFilterOptions: {
+  label: MessageDescriptor
+  value: 'en cours' | 'vendu'
+}[] = [
+  { label: msg`En cours`, value: 'en cours' as const },
+  { label: msg`Vendu`, value: 'vendu' as const },
 ]
 
 export const statusColorMap: Record<string, string> = {

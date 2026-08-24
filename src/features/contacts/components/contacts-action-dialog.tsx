@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -31,11 +32,7 @@ import {
 import { type Contact } from '../data/schema'
 import { ContactDuplicateDialog } from './contact-duplicate-dialog'
 
-const formSchema = z.object({
-  firstName: z.string().min(1, 'Le prénom est requis.'),
-  lastName: z.string().optional(),
-})
-type ContactForm = z.infer<typeof formSchema>
+type ContactForm = { firstName: string; lastName?: string }
 
 type ContactActionDialogProps = {
   currentRow?: Contact
@@ -58,6 +55,16 @@ export function ContactsActionDialog({
     fullName: string
     payload: { firstName: string; lastName?: string }
   } | null>(null)
+  const { t } = useLingui()
+
+  const formSchema = useMemo(
+    () =>
+      z.object({
+        firstName: z.string().min(1, t`Le prénom est requis.`),
+        lastName: z.string().optional(),
+      }),
+    [t]
+  )
 
   const form = useForm<ContactForm>({
     resolver: zodResolver(formSchema),
@@ -78,7 +85,7 @@ export function ContactsActionDialog({
     reactivateContact.isPending
 
   const onCreateSuccess = () => {
-    toast.success('Contact ajouté.')
+    toast.success(t`Contact ajouté.`)
     form.reset()
     setDuplicate(null)
     onOpenChange(false)
@@ -95,13 +102,13 @@ export function ContactsActionDialog({
         { id: currentRow.id, ...payload },
         {
           onSuccess: () => {
-            toast.success('Contact modifié.')
+            toast.success(t`Contact modifié.`)
             form.reset()
             onOpenChange(false)
           },
           onError: (error: any) => {
             toast.error(
-              error?.response?.data?.message ?? 'Une erreur est survenue.'
+              error?.response?.data?.message ?? t`Une erreur est survenue.`
             )
           },
         }
@@ -123,7 +130,7 @@ export function ContactsActionDialog({
           return
         }
         toast.error(
-          error?.response?.data?.message ?? 'Une erreur est survenue.'
+          error?.response?.data?.message ?? t`Une erreur est survenue.`
         )
       },
     })
@@ -133,7 +140,7 @@ export function ContactsActionDialog({
     if (!duplicate) return
     reactivateContact.mutate(duplicate.existingContactId, {
       onSuccess: () => {
-        toast.success(`"${duplicate.fullName}" a été réactivé.`)
+        toast.success(t`"${duplicate.fullName}" a été réactivé.`)
         form.reset()
         setDuplicate(null)
         onOpenChange(false)
@@ -161,13 +168,24 @@ export function ContactsActionDialog({
         <DialogContent className='sm:max-w-lg'>
           <DialogHeader className='text-start'>
             <DialogTitle>
-              {isEdit ? 'Modifier le contact' : 'Ajouter un contact'}
+              {isEdit ? (
+                <Trans>Modifier le contact</Trans>
+              ) : (
+                <Trans>Ajouter un contact</Trans>
+              )}
             </DialogTitle>
             <DialogDescription>
-              {isEdit
-                ? 'Modifiez le contact ici. '
-                : 'Créez un nouveau contact ici. '}
-              Cliquez sur enregistrer une fois terminé.
+              {isEdit ? (
+                <Trans>
+                  Modifiez le contact ici. Cliquez sur enregistrer une fois
+                  terminé.
+                </Trans>
+              ) : (
+                <Trans>
+                  Créez un nouveau contact ici. Cliquez sur enregistrer une
+                  fois terminé.
+                </Trans>
+              )}
             </DialogDescription>
           </DialogHeader>
           <div className='w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3'>
@@ -183,11 +201,11 @@ export function ContactsActionDialog({
                   render={({ field }) => (
                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                       <FormLabel className='col-span-2 text-end'>
-                        Prénom
+                        <Trans>Prénom</Trans>
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder='Jean'
+                          placeholder={t`Jean`}
                           className='col-span-4'
                           autoComplete='off'
                           {...field}
@@ -203,14 +221,16 @@ export function ContactsActionDialog({
                   render={({ field }) => (
                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                       <FormLabel className='col-span-2 text-end'>
-                        Nom{' '}
-                        <span className='font-normal text-muted-foreground'>
-                          (optionnel)
-                        </span>
+                        <Trans>
+                          Nom{' '}
+                          <span className='font-normal text-muted-foreground'>
+                            (optionnel)
+                          </span>
+                        </Trans>
                       </FormLabel>
                       <FormControl>
                         <Input
-                          placeholder='Dupont'
+                          placeholder={t`Dupont`}
                           className='col-span-4'
                           autoComplete='off'
                           {...field}
@@ -225,7 +245,7 @@ export function ContactsActionDialog({
           </div>
           <DialogFooter>
             <Button type='submit' form='contact-form' disabled={isPending}>
-              {isPending ? 'Enregistrement...' : 'Enregistrer'}
+              {isPending ? t`Enregistrement...` : t`Enregistrer`}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -1,7 +1,9 @@
+import { useMemo } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from '@tanstack/react-router'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { Loader2 } from 'lucide-react'
 import { eurosToCents } from '@/lib/money'
 import {
@@ -24,15 +26,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { useInitMonth } from '../api/budget-api'
-import { FRENCH_MONTHS } from '../data/data'
-
-const formSchema = z.object({
-  receivedSalary: z
-    .number({ error: () => 'Le salaire est requis.' })
-    .positive('Le salaire doit être positif.'),
-})
-
-type FormValues = z.infer<typeof formSchema>
+import { MONTH_MESSAGES } from '../data/data'
 
 type BudgetInitMonthDialogProps = {
   year: number
@@ -49,6 +43,17 @@ export function BudgetInitMonthDialog({
 }: BudgetInitMonthDialogProps) {
   const navigate = useNavigate()
   const { mutate: initMonth, isPending } = useInitMonth()
+  const { i18n, t } = useLingui()
+  const formSchema = useMemo(
+    () =>
+      z.object({
+        receivedSalary: z
+          .number({ error: () => t`Le salaire est requis.` })
+          .positive(t`Le salaire doit être positif.`),
+      }),
+    [t]
+  )
+  type FormValues = z.infer<typeof formSchema>
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -78,10 +83,12 @@ export function BudgetInitMonthDialog({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            Initialiser {FRENCH_MONTHS[month - 1]} {year}
+            <Trans>
+              Initialiser {i18n._(MONTH_MESSAGES[month - 1])} {year}
+            </Trans>
           </AlertDialogTitle>
           <AlertDialogDescription>
-            Saisissez le salaire reçu pour créer le budget du mois.
+            <Trans>Saisissez le salaire reçu pour créer le budget du mois.</Trans>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <Form {...form}>
@@ -92,7 +99,7 @@ export function BudgetInitMonthDialog({
               render={({ field }) => (
                 <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                   <FormLabel className='col-span-2 text-end'>
-                    Salaire reçu
+                    <Trans>Salaire reçu</Trans>
                   </FormLabel>
                   <FormControl>
                     <div className='relative col-span-4'>
@@ -109,10 +116,12 @@ export function BudgetInitMonthDialog({
           </form>
         </Form>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isPending}>Annuler</AlertDialogCancel>
+          <AlertDialogCancel disabled={isPending}>
+            <Trans>Annuler</Trans>
+          </AlertDialogCancel>
           <Button type='submit' form='init-month-form' disabled={isPending}>
             {isPending && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-            Initialiser
+            <Trans>Initialiser</Trans>
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

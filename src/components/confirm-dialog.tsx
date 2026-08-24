@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro'
 import { cn } from '@/lib/utils'
 import {
   AlertDialog,
@@ -51,14 +52,14 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
         {children}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isLoading}>
-            {cancelBtnText ?? 'Cancel'}
+            {cancelBtnText ?? <Trans>Annuler</Trans>}
           </AlertDialogCancel>
           <Button
             variant={destructive ? 'destructive' : 'default'}
             onClick={handleConfirm}
             disabled={disabled || isLoading}
           >
-            {confirmText ?? 'Continue'}
+            {confirmText ?? <Trans>Continuer</Trans>}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

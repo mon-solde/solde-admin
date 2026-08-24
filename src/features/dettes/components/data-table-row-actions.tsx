@@ -1,5 +1,6 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { type Row } from '@tanstack/react-table'
+import { Trans } from '@lingui/react/macro'
 import {
   Trash2,
   Banknote,
@@ -37,7 +38,9 @@ export function DataTableRowActions<TData>({
           className='flex h-8 w-8 p-0 data-[state=open]:bg-muted'
         >
           <DotsHorizontalIcon className='h-4 w-4' />
-          <span className='sr-only'>Ouvrir le menu</span>
+          <span className='sr-only'>
+            <Trans>Ouvrir le menu</Trans>
+          </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align='end' className='w-[160px]'>
@@ -57,7 +60,7 @@ export function DataTableRowActions<TData>({
             setOpen('remboursements')
           }}
         >
-          Remboursements
+          <Trans>Remboursements</Trans>
           <DropdownMenuShortcut>
             <Banknote size={16} />
           </DropdownMenuShortcut>
@@ -69,7 +72,7 @@ export function DataTableRowActions<TData>({
               setOpen('unsettle')
             }}
           >
-            Annuler le règlement manuel
+            <Trans>Annuler le règlement manuel</Trans>
             <DropdownMenuShortcut>
               <Undo2 size={16} />
             </DropdownMenuShortcut>
@@ -82,7 +85,7 @@ export function DataTableRowActions<TData>({
               setOpen('unforgive')
             }}
           >
-            Annuler le pardon
+            <Trans>Annuler le pardon</Trans>
             <DropdownMenuShortcut>
               <Undo2 size={16} />
             </DropdownMenuShortcut>
@@ -96,7 +99,7 @@ export function DataTableRowActions<TData>({
                 setOpen('settle')
               }}
             >
-              Marquer comme réglée
+              <Trans>Marquer comme réglée</Trans>
               <DropdownMenuShortcut>
                 <CheckCircle2 size={16} />
               </DropdownMenuShortcut>
@@ -107,7 +110,7 @@ export function DataTableRowActions<TData>({
                 setOpen('forgive')
               }}
             >
-              Pardonner cette dette
+              <Trans>Pardonner cette dette</Trans>
               <DropdownMenuShortcut>
                 <HeartHandshake size={16} />
               </DropdownMenuShortcut>
@@ -121,7 +124,7 @@ export function DataTableRowActions<TData>({
             setOpen('delete')
           }}
         >
-          Supprimer
+          <Trans>Supprimer</Trans>
           <DropdownMenuShortcut>
             <Trash2 size={16} />
           </DropdownMenuShortcut>

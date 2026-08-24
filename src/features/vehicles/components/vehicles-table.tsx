@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Cross2Icon } from '@radix-ui/react-icons'
 import {
   type VisibilityState,
@@ -6,6 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { cn } from '@/lib/utils'
 import {
   type NavigateFn,
@@ -32,7 +33,7 @@ import { DataTablePagination } from '@/components/data-table'
 import { DataTableViewOptions } from '@/components/data-table/view-options'
 import { vehicleStatusFilterOptions } from '../data/data'
 import { type Vehicle } from '../data/schema'
-import { vehiclesColumns as columns } from './vehicles-columns'
+import { getVehiclesColumns } from './vehicles-columns'
 
 type VehiclesTableProps = Pick<
   UseTableUrlStateReturn,
@@ -67,6 +68,8 @@ export function VehiclesTable({
 }: VehiclesTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const { i18n, t } = useLingui()
+  const columns = useMemo(() => getVehiclesColumns(i18n), [i18n])
 
   // What the vehicle list is filtered by — the backend does the actual
   // filtering, this just reflects/updates the URL. 'en cours' is the
@@ -127,20 +130,22 @@ export function VehiclesTable({
       <div className='flex items-center justify-between'>
         <div className='flex flex-1 flex-wrap items-center gap-2'>
           <Input
-            placeholder='Filtrer par nom...'
+            placeholder={t`Filtrer par nom...`}
             value={globalFilter ?? ''}
             onChange={(event) => onGlobalFilterChange?.(event.target.value)}
             className='h-8 w-[150px] lg:w-[250px]'
           />
           <Select value={status} onValueChange={onStatusChange}>
             <SelectTrigger className='h-8 w-[150px]'>
-              <SelectValue placeholder='Statut' />
+              <SelectValue placeholder={t`Statut`} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='tous'>Tous les statuts</SelectItem>
+              <SelectItem value='tous'>
+                <Trans>Tous les statuts</Trans>
+              </SelectItem>
               {vehicleStatusFilterOptions.map((s) => (
                 <SelectItem key={s.value} value={s.value}>
-                  {s.label}
+                  {i18n._(s.label)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -151,7 +156,7 @@ export function VehiclesTable({
               onClick={resetFilters}
               className='h-8 px-2 lg:px-3'
             >
-              Réinitialiser
+              <Trans>Réinitialiser</Trans>
               <Cross2Icon className='ms-2 h-4 w-4' />
             </Button>
           )}
@@ -191,7 +196,7 @@ export function VehiclesTable({
                   colSpan={columns.length}
                   className='h-24 text-center text-muted-foreground'
                 >
-                  Chargement…
+                  <Trans>Chargement…</Trans>
                 </TableCell>
               </TableRow>
             ) : table.getRowModel().rows?.length ? (
@@ -224,7 +229,7 @@ export function VehiclesTable({
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  Aucun véhicule trouvé.
+                  <Trans>Aucun véhicule trouvé.</Trans>
                 </TableCell>
               </TableRow>
             )}

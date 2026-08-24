@@ -1,4 +1,5 @@
 import { Info } from 'lucide-react'
+import { Trans } from '@lingui/react/macro'
 import { centsToEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -21,7 +22,7 @@ export function SavingsOverviewCards({ balances }: SavingsOverviewCardsProps) {
       <Card>
         <CardHeader className='pb-2'>
           <CardTitle className='text-sm font-medium text-muted-foreground'>
-            Épargne Banque
+            <Trans>Épargne Banque</Trans>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -34,7 +35,7 @@ export function SavingsOverviewCards({ balances }: SavingsOverviewCardsProps) {
       <Card>
         <CardHeader className='pb-2'>
           <CardTitle className='text-sm font-medium text-muted-foreground'>
-            Épargne Espèces
+            <Trans>Épargne Espèces</Trans>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -47,15 +48,17 @@ export function SavingsOverviewCards({ balances }: SavingsOverviewCardsProps) {
       <Card>
         <CardHeader className='pb-2'>
           <CardTitle className='flex items-center gap-1.5 text-sm font-medium text-muted-foreground'>
-            Total Global
+            <Trans>Total Global</Trans>
             <Tooltip>
               <TooltipTrigger>
                 <Info size={14} />
               </TooltipTrigger>
               <TooltipContent className='max-w-64 text-center'>
-                Calculé à partir de tous les mouvements d&apos;argent de
-                l&apos;application (prêts, remboursements, salaires, ventes de
-                véhicules…), pas seulement de vos ajustements manuels.
+                <Trans>
+                  Calculé à partir de tous les mouvements d&apos;argent de
+                  l&apos;application (prêts, remboursements, salaires, ventes
+                  de véhicules…), pas seulement de vos ajustements manuels.
+                </Trans>
               </TooltipContent>
             </Tooltip>
           </CardTitle>

@@ -1,4 +1,5 @@
 import { getRouteApi } from '@tanstack/react-router'
+import { Trans } from '@lingui/react/macro'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
 import { ConfigDrawer } from '@/components/config-drawer'
@@ -83,10 +84,14 @@ export function Contacts() {
       <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
         <div className='flex flex-wrap items-end justify-between gap-2'>
           <div>
-            <h2 className='text-2xl font-bold tracking-tight'>Mes contacts</h2>
+            <h2 className='text-2xl font-bold tracking-tight'>
+              <Trans>Mes contacts</Trans>
+            </h2>
             <p className='text-muted-foreground'>
-              Gérez les personnes avec qui vous partagez des dépenses ou des
-              dettes.
+              <Trans>
+                Gérez les personnes avec qui vous partagez des dépenses ou des
+                dettes.
+              </Trans>
             </p>
           </div>
           <ContactsPrimaryButtons />

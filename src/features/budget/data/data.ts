@@ -1,26 +1,28 @@
+import { msg } from '@lingui/core/macro'
+import { type MessageDescriptor } from '@lingui/core'
 import { type MonthlyBudget } from './schema'
 
-export const FRENCH_MONTHS = [
-  'Janvier',
-  'Février',
-  'Mars',
-  'Avril',
-  'Mai',
-  'Juin',
-  'Juillet',
-  'Août',
-  'Septembre',
-  'Octobre',
-  'Novembre',
-  'Décembre',
+// Resolve with `i18n._(MONTH_MESSAGES[month - 1])` at the point of use —
+// `msg` only captures the message for translation, it doesn't resolve it
+// against the active locale (unlike `t`, which needs an active render/call
+// context to stay reactive to language switches).
+export const MONTH_MESSAGES: MessageDescriptor[] = [
+  msg`Janvier`,
+  msg`Février`,
+  msg`Mars`,
+  msg`Avril`,
+  msg`Mai`,
+  msg`Juin`,
+  msg`Juillet`,
+  msg`Août`,
+  msg`Septembre`,
+  msg`Octobre`,
+  msg`Novembre`,
+  msg`Décembre`,
 ]
 
 export function formatFrenchDate(date: Date): string {
   return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
-}
-
-export function formatBillingDay(day: number): string {
-  return day === 1 ? 'Le 1er' : `Le ${day}`
 }
 
 export const chargeTypeColorMap: Record<'AUTOMATIC' | 'MANUAL', string> = {
@@ -28,9 +30,9 @@ export const chargeTypeColorMap: Record<'AUTOMATIC' | 'MANUAL', string> = {
   MANUAL: 'text-amber-600 bg-amber-50 border-amber-200',
 }
 
-export const chargeTypeLabels: Record<'AUTOMATIC' | 'MANUAL', string> = {
-  AUTOMATIC: 'Automatique',
-  MANUAL: 'Manuel',
+export const CHARGE_TYPE_MESSAGES: Record<'AUTOMATIC' | 'MANUAL', MessageDescriptor> = {
+  AUTOMATIC: msg`Automatique`,
+  MANUAL: msg`Manuel`,
 }
 
 export function formatEuros(amount: number): string {

@@ -1,8 +1,10 @@
+import { useMemo } from 'react'
 import { z } from 'zod'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PlusIcon, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { eurosToCents } from '@/lib/money'
 import { Button } from '@/components/ui/button'
 import { DecimalInput } from '@/components/ui/decimal-input'
@@ -27,36 +29,12 @@ import { Separator } from '@/components/ui/separator'
 import { ContactCombobox } from '@/features/contacts/components/contact-combobox'
 import { useCreateVehicle } from '../api/vehicles-api'
 
-const participantSchema = z.object({
-  contactId: z.string().min(1, 'Sélectionner un participant'),
-  profitShare: z
-    .number({ error: 'Requis' })
-    .min(1, 'Min 1%')
-    .max(100, 'Max 100%'),
-})
-
-const formSchema = z
-  .object({
-    name: z.string().min(1, 'Le nom est requis'),
-    purchaseDate: z.string().min(1, "La date d'achat est requise"),
-    purchasePrice: z.number({ error: 'Requis' }).min(0, 'Doit être positif'),
-    // Can be empty — the owner keeps whatever share the participants don't claim.
-    participants: z.array(participantSchema),
-  })
-  .refine(
-    // Same logic as the backend: participants' shares can add up to less
-    // than 100% (the owner keeps the rest), but not more than 100%. 0.001
-    // of slack absorbs machine rounding errors only.
-    (data) =>
-      data.participants.reduce((sum, p) => sum + p.profitShare, 0) - 100 <=
-      0.001,
-    {
-      message: 'La somme des parts des participants ne peut pas dépasser 100%',
-      path: ['participants'],
-    }
-  )
-
-type VehicleForm = z.infer<typeof formSchema>
+type VehicleForm = {
+  name: string
+  purchaseDate: string
+  purchasePrice: number
+  participants: { contactId: string; profitShare: number }[]
+}
 
 type VehiclesActionDialogProps = {
   open: boolean
@@ -68,6 +46,47 @@ export function VehiclesActionDialog({
   onOpenChange,
 }: VehiclesActionDialogProps) {
   const { mutate, isPending } = useCreateVehicle()
+  const { t } = useLingui()
+
+  const participantSchema = useMemo(
+    () =>
+      z.object({
+        contactId: z.string().min(1, t`Sélectionner un participant`),
+        profitShare: z
+          .number({ error: t`Requis` })
+          .min(1, t`Min 1%`)
+          .max(100, t`Max 100%`),
+      }),
+    [t]
+  )
+
+  const formSchema = useMemo(
+    () =>
+      z
+        .object({
+          name: z.string().min(1, t`Le nom est requis`),
+          purchaseDate: z.string().min(1, t`La date d'achat est requise`),
+          purchasePrice: z
+            .number({ error: t`Requis` })
+            .min(0, t`Doit être positif`),
+          // Can be empty — the owner keeps whatever share the participants don't claim.
+          participants: z.array(participantSchema),
+        })
+        .refine(
+          // Same logic as the backend: participants' shares can add up to less
+          // than 100% (the owner keeps the rest), but not more than 100%. 0.001
+          // of slack absorbs machine rounding errors only.
+          (data) =>
+            data.participants.reduce((sum, p) => sum + p.profitShare, 0) -
+              100 <=
+            0.001,
+          {
+            message: t`La somme des parts des participants ne peut pas dépasser 100%`,
+            path: ['participants'],
+          }
+        ),
+    [t, participantSchema]
+  )
 
   const form = useForm<VehicleForm>({
     resolver: zodResolver(formSchema),
@@ -104,13 +123,13 @@ export function VehiclesActionDialog({
       },
       {
         onSuccess: () => {
-          toast.success('Véhicule créé.')
+          toast.success(t`Véhicule créé.`)
           form.reset()
           onOpenChange(false)
         },
         onError: (error: any) =>
           toast.error(
-            error?.response?.data?.message ?? 'Une erreur est survenue.'
+            error?.response?.data?.message ?? t`Une erreur est survenue.`
           ),
       }
     )
@@ -126,9 +145,13 @@ export function VehiclesActionDialog({
     >
       <DialogContent className='sm:max-w-lg'>
         <DialogHeader className='text-start'>
-          <DialogTitle>Nouveau véhicule</DialogTitle>
+          <DialogTitle>
+            <Trans>Nouveau véhicule</Trans>
+          </DialogTitle>
           <DialogDescription>
-            Renseignez les informations du véhicule et ses participants.
+            <Trans>
+              Renseignez les informations du véhicule et ses participants.
+            </Trans>
           </DialogDescription>
         </DialogHeader>
 
@@ -144,10 +167,12 @@ export function VehiclesActionDialog({
                 name='name'
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>Nom</FormLabel>
+                    <FormLabel className='col-span-2 text-end'>
+                      <Trans>Nom</Trans>
+                    </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder='Audi A5 2018'
+                        placeholder={t`Audi A5 2018`}
                         className='col-span-4'
                         autoComplete='off'
                         {...field}
@@ -163,7 +188,7 @@ export function VehiclesActionDialog({
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                     <FormLabel className='col-span-2 text-end'>
-                      Date d&apos;achat
+                      <Trans>Date d&apos;achat</Trans>
                     </FormLabel>
                     <FormControl>
                       <Input type='date' className='col-span-4' {...field} />
@@ -178,7 +203,7 @@ export function VehiclesActionDialog({
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                     <FormLabel className='col-span-2 text-end'>
-                      Prix d&apos;achat
+                      <Trans>Prix d&apos;achat</Trans>
                     </FormLabel>
                     <FormControl>
                       <div className='relative col-span-4'>
@@ -201,16 +226,18 @@ export function VehiclesActionDialog({
 
               <div className='space-y-3'>
                 <div className='flex items-center justify-between'>
-                  <p className='text-sm font-medium'>Participants</p>
+                  <p className='text-sm font-medium'>
+                    <Trans>Participants</Trans>
+                  </p>
                   <span
                     className={`text-xs font-medium ${totalShare > 100 ? 'text-destructive' : 'text-muted-foreground'}`}
                   >
-                    Contacts : {totalShare}%
+                    <Trans>Contacts : {totalShare}%</Trans>
                   </span>
                 </div>
 
                 <div className='flex items-center justify-between rounded-md border bg-muted/40 px-3 py-2'>
-                  <span className='text-sm font-medium'>Vous</span>
+                  <span className='text-sm font-medium'>{t`Vous`}</span>
                   <span className='text-sm font-medium tabular-nums'>
                     {ownerShare}%
                   </span>
@@ -282,7 +309,7 @@ export function VehiclesActionDialog({
                   onClick={() => append({ contactId: '', profitShare: 0 })}
                 >
                   <PlusIcon size={14} className='me-1' />
-                  Ajouter un participant
+                  <Trans>Ajouter un participant</Trans>
                 </Button>
               </div>
             </form>
@@ -291,7 +318,7 @@ export function VehiclesActionDialog({
 
         <DialogFooter>
           <Button type='submit' form='vehicle-form' disabled={isPending}>
-            {isPending ? 'Enregistrement…' : 'Créer le véhicule'}
+            {isPending ? t`Enregistrement…` : t`Créer le véhicule`}
           </Button>
         </DialogFooter>
       </DialogContent>

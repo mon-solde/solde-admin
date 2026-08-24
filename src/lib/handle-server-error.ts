@@ -1,11 +1,12 @@
 import { AxiosError } from 'axios'
 import { toast } from 'sonner'
+import { t } from '@lingui/core/macro'
 
 export function handleServerError(error: unknown) {
   // eslint-disable-next-line no-console
   console.log(error)
 
-  let errMsg = 'Something went wrong!'
+  let errMsg = t`Une erreur est survenue !`
 
   if (
     error &&
@@ -13,7 +14,7 @@ export function handleServerError(error: unknown) {
     'status' in error &&
     Number(error.status) === 204
   ) {
-    errMsg = 'Content not found.'
+    errMsg = t`Contenu introuvable.`
   }
 
   if (error instanceof AxiosError) {

@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { Menu, X } from 'lucide-react'
+import { useLingui } from '@lingui/react/macro'
 import { cn } from '@/lib/utils'
 import {
   SidebarMenu,
@@ -41,6 +42,7 @@ function ToggleSidebar({
   ...props
 }: React.ComponentProps<typeof Button>) {
   const { toggleSidebar } = useSidebar()
+  const { t } = useLingui()
 
   return (
     <Button
@@ -57,7 +59,7 @@ function ToggleSidebar({
     >
       <X className='md:hidden' />
       <Menu className='max-md:hidden' />
-      <span className='sr-only'>Toggle Sidebar</span>
+      <span className='sr-only'>{t`Afficher/masquer la barre latérale`}</span>
     </Button>
   )
 }
