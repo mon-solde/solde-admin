@@ -45,6 +45,7 @@ import {
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
+import { LanguageSwitch } from '@/components/language-switch'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { useGetDettes } from '@/features/dettes/api/dettes-api'
 import { DettesDialogs } from '@/features/dettes/components/dettes-dialogs'
@@ -283,6 +284,7 @@ function VehicleDetailContent() {
           </div>
         </div>
         <div className='ms-auto flex items-center space-x-4'>
+          <LanguageSwitch />
           <ThemeSwitch />
           <ProfileDropdown />
         </div>

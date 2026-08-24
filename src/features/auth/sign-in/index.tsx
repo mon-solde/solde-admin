@@ -1,4 +1,5 @@
 import { useSearch } from '@tanstack/react-router'
+import { Trans } from '@lingui/react/macro'
 import {
   Card,
   CardContent,
@@ -17,10 +18,14 @@ export function SignIn() {
     <AuthLayout>
       <Card className='gap-4'>
         <CardHeader>
-          <CardTitle className='text-lg tracking-tight'>Sign in</CardTitle>
+          <CardTitle className='text-lg tracking-tight'>
+            <Trans>Connexion</Trans>
+          </CardTitle>
           <CardDescription>
-            Enter your email and password below to <br />
-            log into your account
+            <Trans>
+              Entrez votre email et votre mot de passe pour vous connecter à
+              votre compte.
+            </Trans>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -28,21 +33,23 @@ export function SignIn() {
         </CardContent>
         <CardFooter>
           <p className='px-8 text-center text-sm text-muted-foreground'>
-            By clicking sign in, you agree to our{' '}
-            <a
-              href='/terms'
-              className='underline underline-offset-4 hover:text-primary'
-            >
-              Terms of Service
-            </a>{' '}
-            and{' '}
-            <a
-              href='/privacy'
-              className='underline underline-offset-4 hover:text-primary'
-            >
-              Privacy Policy
-            </a>
-            .
+            <Trans>
+              En cliquant sur connexion, vous acceptez nos{' '}
+              <a
+                href='/terms'
+                className='underline underline-offset-4 hover:text-primary'
+              >
+                Conditions d&apos;utilisation
+              </a>{' '}
+              et notre{' '}
+              <a
+                href='/privacy'
+                className='underline underline-offset-4 hover:text-primary'
+              >
+                Politique de confidentialité
+              </a>
+              .
+            </Trans>
           </p>
         </CardFooter>
       </Card>

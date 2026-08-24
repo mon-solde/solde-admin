@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useNavigate } from '@tanstack/react-router'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { FirebaseError } from 'firebase/app'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { Loader2, LogIn } from 'lucide-react'
@@ -23,16 +24,6 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
-
-const formSchema = z.object({
-  email: z.email({
-    error: (iss) => (iss.input === '' ? 'Please enter your email' : undefined),
-  }),
-  password: z
-    .string()
-    .min(1, 'Please enter your password')
-    .min(7, 'Password must be at least 7 characters long'),
-})
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLFormElement> {
   redirectTo?: string
@@ -60,6 +51,26 @@ export function UserAuthForm({
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
   const { auth } = useAuthStore()
+  const { t } = useLingui()
+
+  // Rebuilt whenever the active language changes (`t` changes identity on
+  // every locale switch) — otherwise these messages would stay frozen in
+  // whichever language was active when the component first rendered, since
+  // this object is normally only ever built once.
+  const formSchema = useMemo(
+    () =>
+      z.object({
+        email: z.email({
+          error: (iss) =>
+            iss.input === '' ? t`Veuillez saisir votre email` : undefined,
+        }),
+        password: z
+          .string()
+          .min(1, t`Veuillez saisir votre mot de passe`)
+          .min(7, t`Le mot de passe doit contenir au moins 7 caractères`),
+      }),
+    [t]
+  )
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -89,24 +100,24 @@ export function UserAuthForm({
 
       const target = redirectTo && isSafeRedirect(redirectTo) ? redirectTo : '/'
       navigate({ to: target, replace: true })
-      toast.success(`Bienvenue !`)
+      toast.success(t`Bienvenue !`)
     } catch (error) {
       if (error instanceof FirebaseError) {
         if (error.code === 'auth/network-request-failed') {
-          toast.error('Erreur réseau. Vérifiez votre connexion.')
+          toast.error(t`Erreur réseau. Vérifiez votre connexion.`)
         } else if (error.code === 'auth/too-many-requests') {
-          toast.error('Trop de tentatives. Réessayez plus tard.')
+          toast.error(t`Trop de tentatives. Réessayez plus tard.`)
         } else if (
           error.code === 'auth/invalid-credential' ||
           error.code === 'auth/wrong-password' ||
           error.code === 'auth/user-not-found'
         ) {
-          toast.error('Email ou mot de passe incorrect.')
+          toast.error(t`Email ou mot de passe incorrect.`)
         } else {
-          toast.error(`Erreur: ${error.code}`)
+          toast.error(t`Erreur: ${error.code}`)
         }
       } else {
-        toast.error('Une erreur inattendue est survenue.')
+        toast.error(t`Une erreur inattendue est survenue.`)
       }
     } finally {
       setIsLoading(false)
@@ -145,7 +156,9 @@ export function UserAuthForm({
           name='password'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>
+                <Trans>Mot de passe</Trans>
+              </FormLabel>
               <FormControl>
                 <PasswordInput placeholder='********' {...field} />
               </FormControl>
@@ -155,7 +168,7 @@ export function UserAuthForm({
         />
         <Button className='mt-2' disabled={isLoading}>
           {isLoading ? <Loader2 className='animate-spin' /> : <LogIn />}
-          Sign in
+          <Trans>Se connecter</Trans>
         </Button>
 
         {/* Or continue with (GitHub/Facebook) — commented out, not needed

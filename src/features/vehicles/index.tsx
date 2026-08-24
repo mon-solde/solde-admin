@@ -5,6 +5,7 @@ import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
+import { LanguageSwitch } from '@/components/language-switch'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { DEFAULT_PAGE_SIZE, useGetVehicles } from './api/vehicles-api'
 import { VehiclesDialogs } from './components/vehicles-dialogs'
@@ -72,6 +73,7 @@ export function Vehicles() {
       <Header fixed>
         <Search />
         <div className='ms-auto flex items-center space-x-4'>
+          <LanguageSwitch />
           <ThemeSwitch />
           <ProfileDropdown />
         </div>

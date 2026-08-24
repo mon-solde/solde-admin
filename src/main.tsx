@@ -1,5 +1,7 @@
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
+import { i18n } from '@lingui/core'
+import { I18nProvider } from '@lingui/react'
 import { AxiosError } from 'axios'
 import {
   QueryCache,
@@ -13,10 +15,16 @@ import { handleServerError } from '@/lib/handle-server-error'
 import { DirectionProvider } from './context/direction-provider'
 import { FontProvider } from './context/font-provider'
 import { ThemeProvider } from './context/theme-provider'
+import { loadCatalog } from './i18n'
 // Generated Routes
 import { routeTree } from './routeTree.gen'
 // Styles
 import './styles/index.css'
+
+// Load the default language before the app mounts, to avoid a flash of
+// untranslated content — the language switcher calls loadCatalog again
+// later to change it at runtime.
+await loadCatalog('fr')
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -90,15 +98,17 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement)
   root.render(
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <FontProvider>
-            <DirectionProvider>
-              <RouterProvider router={router} />
-            </DirectionProvider>
-          </FontProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
+      <I18nProvider i18n={i18n}>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            <FontProvider>
+              <DirectionProvider>
+                <RouterProvider router={router} />
+              </DirectionProvider>
+            </FontProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </I18nProvider>
     </StrictMode>
   )
 }

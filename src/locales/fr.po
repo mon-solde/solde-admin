@@ -1,0 +1,71 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-08-24 22:14+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: fr\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/features/auth/sign-in/components/user-auth-form.tsx:103
+msgid "Bienvenue !"
+msgstr "Bienvenue !"
+
+#: src/features/auth/sign-in/index.tsx:22
+msgid "Connexion"
+msgstr "Connexion"
+
+#: src/features/auth/sign-in/components/user-auth-form.tsx:115
+msgid "Email ou mot de passe incorrect."
+msgstr "Email ou mot de passe incorrect."
+
+#: src/features/auth/sign-in/index.tsx:36
+msgid "En cliquant sur connexion, vous acceptez nos <0>Conditions d'utilisation</0> et notre <1>Politique de confidentialité</1>."
+msgstr "En cliquant sur connexion, vous acceptez nos <0>Conditions d'utilisation</0> et notre <1>Politique de confidentialité</1>."
+
+#: src/features/auth/sign-in/index.tsx:25
+msgid "Entrez votre email et votre mot de passe pour vous connecter à votre compte."
+msgstr "Entrez votre email et votre mot de passe pour vous connecter à votre compte."
+
+#: src/features/auth/sign-in/components/user-auth-form.tsx:107
+msgid "Erreur réseau. Vérifiez votre connexion."
+msgstr "Erreur réseau. Vérifiez votre connexion."
+
+#. placeholder {0}: error.code
+#: src/features/auth/sign-in/components/user-auth-form.tsx:117
+msgid "Erreur: {0}"
+msgstr "Erreur: {0}"
+
+#: src/features/auth/sign-in/components/user-auth-form.tsx:70
+msgid "Le mot de passe doit contenir au moins 7 caractères"
+msgstr "Le mot de passe doit contenir au moins 7 caractères"
+
+#: src/features/auth/sign-in/components/user-auth-form.tsx:160
+msgid "Mot de passe"
+msgstr "Mot de passe"
+
+#: src/features/auth/sign-in/components/user-auth-form.tsx:171
+msgid "Se connecter"
+msgstr "Se connecter"
+
+#: src/features/auth/sign-in/components/user-auth-form.tsx:109
+msgid "Trop de tentatives. Réessayez plus tard."
+msgstr "Trop de tentatives. Réessayez plus tard."
+
+#: src/features/auth/sign-in/components/user-auth-form.tsx:120
+msgid "Une erreur inattendue est survenue."
+msgstr "Une erreur inattendue est survenue."
+
+#: src/features/auth/sign-in/components/user-auth-form.tsx:65
+msgid "Veuillez saisir votre email"
+msgstr "Veuillez saisir votre email"
+
+#: src/features/auth/sign-in/components/user-auth-form.tsx:69
+msgid "Veuillez saisir votre mot de passe"
+msgstr "Veuillez saisir votre mot de passe"
