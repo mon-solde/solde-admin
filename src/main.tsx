@@ -16,16 +16,17 @@ import { handleServerError } from '@/lib/handle-server-error'
 import { DirectionProvider } from './context/direction-provider'
 import { FontProvider } from './context/font-provider'
 import { ThemeProvider } from './context/theme-provider'
-import { loadCatalog } from './i18n'
+import { getStoredLocale, loadCatalog } from './i18n'
 // Generated Routes
 import { routeTree } from './routeTree.gen'
 // Styles
 import './styles/index.css'
 
-// Load the default language before the app mounts, to avoid a flash of
-// untranslated content — the language switcher calls loadCatalog again
-// later to change it at runtime.
-await loadCatalog('fr')
+// Load the language before the app mounts, to avoid a flash of untranslated
+// content — the language switcher calls loadCatalog again later to change
+// it at runtime. English by default (this is a portfolio project recruiters
+// browse), but a previously chosen language always wins.
+await loadCatalog(getStoredLocale() ?? 'en')
 
 const queryClient = new QueryClient({
   defaultOptions: {
