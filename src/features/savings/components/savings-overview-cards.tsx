@@ -1,6 +1,6 @@
 import { Info } from 'lucide-react'
-import { Trans } from '@lingui/react/macro'
-import { centsToEuros } from '@/lib/money'
+import { Trans, useLingui } from '@lingui/react/macro'
+import { centsToEuros, formatEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
@@ -8,7 +8,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { formatEuros } from '../data/data'
 
 type SavingsOverviewCardsProps = {
   balances: { bank: number; cash: number; total: number }
@@ -16,6 +15,7 @@ type SavingsOverviewCardsProps = {
 
 export function SavingsOverviewCards({ balances }: SavingsOverviewCardsProps) {
   const { bank, cash, total } = balances
+  const { i18n } = useLingui()
 
   return (
     <div className='grid gap-4 sm:grid-cols-3'>
@@ -27,7 +27,7 @@ export function SavingsOverviewCards({ balances }: SavingsOverviewCardsProps) {
         </CardHeader>
         <CardContent>
           <p className={cn('text-2xl font-bold', bank < 0 && 'text-red-600')}>
-            {formatEuros(centsToEuros(bank))}
+            {formatEuros(centsToEuros(bank), i18n.locale)}
           </p>
         </CardContent>
       </Card>
@@ -40,7 +40,7 @@ export function SavingsOverviewCards({ balances }: SavingsOverviewCardsProps) {
         </CardHeader>
         <CardContent>
           <p className={cn('text-2xl font-bold', cash < 0 && 'text-red-600')}>
-            {formatEuros(centsToEuros(cash))}
+            {formatEuros(centsToEuros(cash), i18n.locale)}
           </p>
         </CardContent>
       </Card>
@@ -70,7 +70,7 @@ export function SavingsOverviewCards({ balances }: SavingsOverviewCardsProps) {
               total < 0 ? 'text-red-600' : 'text-green-600'
             )}
           >
-            {formatEuros(centsToEuros(total))}
+            {formatEuros(centsToEuros(total), i18n.locale)}
           </p>
         </CardContent>
       </Card>

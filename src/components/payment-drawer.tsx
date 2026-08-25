@@ -3,10 +3,10 @@ import { z } from 'zod'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { fr } from 'date-fns/locale'
 import { msg } from '@lingui/core/macro'
 import { type MessageDescriptor } from '@lingui/core'
 import { Plural, Trans, useLingui } from '@lingui/react/macro'
+import { formatDayMonthYear } from '@/lib/dates'
 import {
   Plus,
   Trash2,
@@ -15,6 +15,7 @@ import {
   SplitSquareHorizontal,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { formatEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -79,11 +80,6 @@ type PaymentDrawerProps = {
   onSubmit: (data: PaymentDrawerSubmitData) => void
   onDeleteRepayment?: (repaymentId: string) => void
 }
-
-const fmt = new Intl.NumberFormat('fr-FR', {
-  style: 'currency',
-  currency: 'EUR',
-})
 
 const SOURCE_OPTIONS: {
   value: SourceType
@@ -201,7 +197,7 @@ export function PaymentDrawer({
                 {paidLabel ?? <Trans>Remboursé</Trans>}
               </span>
               <span className='font-semibold tabular-nums'>
-                {fmt.format(amountPaid)} / {fmt.format(amountDue)}
+                {formatEuros(amountPaid, i18n.locale)} / {formatEuros(amountDue, i18n.locale)}
               </span>
             </div>
             <div className='h-2 w-full overflow-hidden rounded-full bg-secondary'>
@@ -215,7 +211,7 @@ export function PaymentDrawer({
                 {remainingLabel ?? <Trans>Reste à régler</Trans>}
               </span>
               <Badge variant={remaining === 0 ? 'default' : 'secondary'}>
-                {fmt.format(remaining)}
+                {formatEuros(remaining, i18n.locale)}
               </Badge>
             </div>
           </div>
@@ -311,7 +307,7 @@ export function PaymentDrawer({
                             <Banknote size={13} /> <Trans>Espèces</Trans>
                           </CardDescription>
                           <CardTitle className='text-sm font-semibold tabular-nums'>
-                            {fmt.format(cashComputed)}
+                            {formatEuros(cashComputed, i18n.locale)}
                           </CardTitle>
                         </CardContent>
                       </Card>
@@ -400,7 +396,7 @@ export function PaymentDrawer({
                       <Banknote className='size-4 shrink-0 text-muted-foreground' />
                       <div>
                         <p className='font-medium tabular-nums'>
-                          {fmt.format(r.amount)}
+                          {formatEuros(r.amount, i18n.locale)}
                         </p>
                         {r.note && (
                           <p className='text-xs text-muted-foreground'>
@@ -411,7 +407,7 @@ export function PaymentDrawer({
                     </div>
                     <div className='flex items-center gap-2'>
                       <span className='text-xs text-muted-foreground'>
-                        {format(new Date(r.date), 'd MMM yyyy', { locale: fr })}
+                        {formatDayMonthYear(new Date(r.date), i18n.locale)}
                       </span>
                       {onDeleteRepayment && (
                         <button

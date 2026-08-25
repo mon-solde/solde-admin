@@ -6,7 +6,7 @@ import { PlusIcon, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useAuthStore } from '@/stores/auth-store'
-import { centsToEuros, eurosToCents } from '@/lib/money'
+import { centsToEuros, eurosToCents, formatEuros } from '@/lib/money'
 import { formatPersonName } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { DecimalInput } from '@/components/ui/decimal-input'
@@ -69,7 +69,7 @@ export function ExpenseMutateDrawer({
   const updateExpense = useUpdateExpense(vehicle.id)
   const isPending = addExpense.isPending || updateExpense.isPending
   const { auth } = useAuthStore()
-  const { t } = useLingui()
+  const { i18n, t } = useLingui()
   const ownerId = auth.user?.accountNo ?? ''
   const payerOptions = [
     {
@@ -247,7 +247,7 @@ export function ExpenseMutateDrawer({
                   <Trans>
                     Total :{' '}
                     <span className='text-foreground'>
-                      {totalAmount.toLocaleString('fr-FR')} €
+                      {formatEuros(totalAmount, i18n.locale)}
                     </span>
                   </Trans>
                 </span>

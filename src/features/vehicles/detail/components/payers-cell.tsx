@@ -1,6 +1,6 @@
 import { ArrowRight } from 'lucide-react'
 import { Trans, useLingui } from '@lingui/react/macro'
-import { centsToEuros } from '@/lib/money'
+import { centsToEuros, formatEuros } from '@/lib/money'
 import { Button } from '@/components/ui/button'
 import {
   Popover,
@@ -14,11 +14,11 @@ type PayersCellProps = {
 }
 
 export function PayersCell({ payers }: PayersCellProps) {
-  const { t } = useLingui()
+  const { i18n, t } = useLingui()
   const delegations = payers.filter((p) => p.imputedToId)
   const summary =
     payers.length === 1 && delegations.length === 0
-      ? `${payers[0].firstName} ${centsToEuros(payers[0].amount).toLocaleString('fr-FR')} €`
+      ? `${payers[0].firstName} ${formatEuros(centsToEuros(payers[0].amount), i18n.locale)}`
       : delegations.length > 0
         ? t`${payers.length} payeur${payers.length > 1 ? 's' : ''} (${delegations.length} délégation${delegations.length > 1 ? 's' : ''})`
         : t`${payers.length} payeurs`
@@ -44,7 +44,7 @@ export function PayersCell({ payers }: PayersCellProps) {
             <div key={i} className='flex items-center gap-3 text-sm'>
               <span className='w-20 font-medium'>{p.firstName}</span>
               <span className='w-20 text-end tabular-nums'>
-                {centsToEuros(p.amount).toLocaleString('fr-FR')} €
+                {formatEuros(centsToEuros(p.amount), i18n.locale)}
               </span>
               {p.imputedToId && (
                 <span className='flex items-center gap-1 text-muted-foreground'>

@@ -2,10 +2,10 @@ import { Link } from '@tanstack/react-router'
 import { type ColumnDef } from '@tanstack/react-table'
 import { type I18n } from '@lingui/core'
 import { t } from '@lingui/core/macro'
-import { centsToEuros } from '@/lib/money'
+import { centsToEuros, formatEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { DataTableColumnHeader } from '@/components/data-table'
-import { MONTH_MESSAGES, computeAvailableForSavings, formatEuros } from '../data/data'
+import { MONTH_MESSAGES, computeAvailableForSavings } from '../data/data'
 import { type MonthlyBudget } from '../data/schema'
 import { DataTableRowActions } from './budget-list-data-table-row-actions'
 
@@ -37,7 +37,9 @@ export function getBudgetListColumns(i18n: I18n): ColumnDef<MonthlyBudget>[] {
         <DataTableColumnHeader column={column} title={t`Salaire reçu`} />
       ),
       cell: ({ row }) => (
-        <span>{formatEuros(centsToEuros(row.original.receivedSalary))}</span>
+        <span>
+          {formatEuros(centsToEuros(row.original.receivedSalary), i18n.locale)}
+        </span>
       ),
     },
     {
@@ -52,7 +54,7 @@ export function getBudgetListColumns(i18n: I18n): ColumnDef<MonthlyBudget>[] {
           <span
             className={cn(available >= 0 ? 'text-green-600' : 'text-red-600')}
           >
-            {formatEuros(centsToEuros(available))}
+            {formatEuros(centsToEuros(available), i18n.locale)}
           </span>
         )
       },

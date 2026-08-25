@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { getRouteApi } from '@tanstack/react-router'
-import { Plural, Trans } from '@lingui/react/macro'
-import { centsToEuros } from '@/lib/money'
+import { Plural, Trans, useLingui } from '@lingui/react/macro'
+import { centsToEuros, formatEuros } from '@/lib/money'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
 import { useAuthStore } from '@/stores/auth-store'
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
@@ -20,10 +20,6 @@ import { DettesProvider } from './components/dettes-provider'
 import { DettesTable } from './components/dettes-table'
 
 const route = getRouteApi('/_authenticated/dettes/')
-const fmt = new Intl.NumberFormat('fr-FR', {
-  style: 'currency',
-  currency: 'EUR',
-})
 
 // TanStack column id -> backend sort key, and back — the single place this
 // mapping is defined, shared by useTableUrlState (URL <-> sorting state)
@@ -45,6 +41,7 @@ const emptyTotals = {
 export function Dettes() {
   const search = route.useSearch()
   const navigate = route.useNavigate()
+  const { i18n } = useLingui()
 
   // Single call, single source of truth: the resolved pageIndex/pageSize/
   // sorting below is what both the API request AND the table itself use —
@@ -134,7 +131,7 @@ export function Dettes() {
                 <Trans>On me doit</Trans>
               </Label>
               <CardTitle className='text-2xl font-bold text-emerald-600 tabular-nums'>
-                +{fmt.format(centsToEuros(onMeDoit))}
+                +{formatEuros(centsToEuros(onMeDoit), i18n.locale)}
               </CardTitle>
               <Label className='text-xs text-muted-foreground'>
                 <Plural value={nbPrets} one='# prêt' other='# prêts' />
@@ -148,7 +145,7 @@ export function Dettes() {
                 <Trans>Je dois</Trans>
               </Label>
               <CardTitle className='text-2xl font-bold text-rose-500 tabular-nums'>
-                -{fmt.format(centsToEuros(jeDois))}
+                -{formatEuros(centsToEuros(jeDois), i18n.locale)}
               </CardTitle>
               <Label className='text-xs text-muted-foreground'>
                 <Plural value={nbEmprunts} one='# emprunt' other='# emprunts' />
@@ -165,7 +162,7 @@ export function Dettes() {
                 className={`text-2xl font-bold tabular-nums ${net >= 0 ? 'text-emerald-600' : 'text-rose-500'}`}
               >
                 {net >= 0 ? '+' : ''}
-                {fmt.format(centsToEuros(net))}
+                {formatEuros(centsToEuros(net), i18n.locale)}
               </CardTitle>
               <Label className='text-xs text-muted-foreground'>
                 {net >= 0 ? (

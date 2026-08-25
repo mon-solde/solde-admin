@@ -15,7 +15,7 @@ import {
   SplitSquareHorizontal,
 } from 'lucide-react'
 import { toast } from 'sonner'
-import { eurosToCents } from '@/lib/money'
+import { eurosToCents, formatEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -51,11 +51,6 @@ import { useCreateDette } from '../api/dettes-api'
 
 type Role = 'lent' | 'borrowed'
 type SourceType = 'bank' | 'cash' | 'both'
-
-const fmt = new Intl.NumberFormat('fr-FR', {
-  style: 'currency',
-  currency: 'EUR',
-})
 
 const SOURCE_OPTIONS: {
   value: SourceType
@@ -430,7 +425,7 @@ export function DettesMutateDrawer({
                                 <Banknote size={13} /> <Trans>Espèces</Trans>
                               </CardDescription>
                               <CardTitle className='text-sm font-semibold tabular-nums'>
-                                {fmt.format(cashComputed)}
+                                {formatEuros(cashComputed, i18n.locale)}
                               </CardTitle>
                             </CardContent>
                           </Card>

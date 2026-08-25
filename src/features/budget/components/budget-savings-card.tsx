@@ -1,10 +1,9 @@
 import { useState } from 'react'
-import { Trans } from '@lingui/react/macro'
-import { centsToEuros } from '@/lib/money'
+import { Trans, useLingui } from '@lingui/react/macro'
+import { centsToEuros, formatEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { formatEuros } from '../data/data'
 import {
   type BudgetSavingsWithdrawal,
   type SavingsDestination,
@@ -35,6 +34,7 @@ export function BudgetSavingsCard({
   onAddWithdrawal,
 }: BudgetSavingsCardProps) {
   const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const { i18n } = useLingui()
 
   return (
     <>
@@ -55,7 +55,7 @@ export function BudgetSavingsCard({
                 availableForSavings >= 0 ? 'text-green-600' : 'text-red-600'
               )}
             >
-              {formatEuros(centsToEuros(availableForSavings))}
+              {formatEuros(centsToEuros(availableForSavings), i18n.locale)}
             </span>
           </div>
 
@@ -70,7 +70,7 @@ export function BudgetSavingsCard({
               <Trans>Mis de côté ce mois</Trans>
             </span>
             <span className='font-semibold text-green-600'>
-              {formatEuros(centsToEuros(totalSaved))}
+              {formatEuros(centsToEuros(totalSaved), i18n.locale)}
             </span>
           </button>
 
@@ -86,7 +86,7 @@ export function BudgetSavingsCard({
                 remainingToSave <= 0 ? 'text-green-600' : 'text-amber-600'
               )}
             >
-              {formatEuros(centsToEuros(remainingToSave))}
+              {formatEuros(centsToEuros(remainingToSave), i18n.locale)}
             </span>
           </div>
         </CardContent>

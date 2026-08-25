@@ -2,13 +2,12 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { type I18n } from '@lingui/core'
 import { t } from '@lingui/core/macro'
 import { SelectOrdinal, Trans } from '@lingui/react/macro'
-import { centsToEuros } from '@/lib/money'
+import { centsToEuros, formatEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import {
-  formatAmountInEuros,
   typeColorMap,
   statusColorMap,
   subscriptionTypes,
@@ -63,7 +62,7 @@ export function getSubscriptionsColumns(i18n: I18n): ColumnDef<Subscription>[] {
       ),
       cell: ({ row }) => (
         <span className='font-medium'>
-          {formatAmountInEuros(centsToEuros(row.original.amount))}
+          {formatEuros(centsToEuros(row.original.amount), i18n.locale)}
         </span>
       ),
     },

@@ -3,7 +3,8 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Trans, useLingui } from '@lingui/react/macro'
-import { centsToEuros } from '@/lib/money'
+import { formatDayMonth } from '@/lib/dates'
+import { centsToEuros, formatEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { DecimalInput } from '@/components/ui/decimal-input'
@@ -31,12 +32,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import {
-  formatEuros,
-  formatFrenchDate,
-  getTodayAsInputValue,
-  MONTH_MESSAGES,
-} from '../data/data'
+import { getTodayAsInputValue, MONTH_MESSAGES } from '../data/data'
 import {
   type BudgetSavingsWithdrawal,
   type SavingsDestination,
@@ -116,7 +112,7 @@ export function BudgetSavingsSheet({
           <SheetDescription>
             <Trans>
               {i18n._(MONTH_MESSAGES[month - 1])} {year} · Disponible :{' '}
-              {formatEuros(centsToEuros(availableForSavings))}
+              {formatEuros(centsToEuros(availableForSavings), i18n.locale)}
             </Trans>
           </SheetDescription>
         </SheetHeader>
@@ -125,7 +121,7 @@ export function BudgetSavingsSheet({
           <div className='flex items-center justify-between text-sm'>
             <span className='text-muted-foreground'>
               <Trans>
-                {formatEuros(centsToEuros(totalSaved))} retirés
+                {formatEuros(centsToEuros(totalSaved), i18n.locale)} retirés
               </Trans>
             </span>
             <span
@@ -164,7 +160,7 @@ export function BudgetSavingsSheet({
                 >
                   <div>
                     <p className='text-sm font-medium'>
-                      <Trans>Retiré le {formatFrenchDate(w.date)}</Trans>
+                      <Trans>Retiré le {formatDayMonth(w.date, i18n.locale)}</Trans>
                     </p>
                     <p className='text-xs text-muted-foreground'>
                       {w.source === 'BANK' ? (
@@ -175,7 +171,7 @@ export function BudgetSavingsSheet({
                     </p>
                   </div>
                   <span className='font-semibold text-green-600'>
-                    {formatEuros(centsToEuros(w.amount))}
+                    {formatEuros(centsToEuros(w.amount), i18n.locale)}
                   </span>
                 </div>
               ))}

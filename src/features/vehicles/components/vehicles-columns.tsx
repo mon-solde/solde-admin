@@ -2,7 +2,8 @@ import { Link } from '@tanstack/react-router'
 import { type ColumnDef } from '@tanstack/react-table'
 import { type I18n } from '@lingui/core'
 import { t } from '@lingui/core/macro'
-import { centsToEuros } from '@/lib/money'
+import { formatShortDate } from '@/lib/dates'
+import { centsToEuros, formatEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -82,9 +83,7 @@ export function getVehiclesColumns(i18n: I18n): ColumnDef<Vehicle>[] {
       ),
       cell: ({ row }) => (
         <span className='text-muted-foreground tabular-nums'>
-          {new Intl.DateTimeFormat('fr-FR').format(
-            row.getValue<Date>('purchaseDate')
-          )}
+          {formatShortDate(row.getValue<Date>('purchaseDate'), i18n.locale)}
         </span>
       ),
     },
@@ -116,7 +115,7 @@ export function getVehiclesColumns(i18n: I18n): ColumnDef<Vehicle>[] {
       accessorKey: 'totalExpenses',
       cell: ({ row }) => (
         <span className='font-medium'>
-          {centsToEuros(row.original.totalExpenses).toLocaleString('fr-FR')} €
+          {formatEuros(centsToEuros(row.original.totalExpenses), i18n.locale)}
         </span>
       ),
       // Computed by summing every expense payer's amount for the vehicle —

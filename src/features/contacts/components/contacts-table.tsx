@@ -54,9 +54,9 @@ export function ContactsTable({
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const { i18n, t } = useLingui()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const columns = useMemo(() => getContactsColumns(), [i18n])
+  const columns = useMemo(() => getContactsColumns(i18n), [i18n])
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,

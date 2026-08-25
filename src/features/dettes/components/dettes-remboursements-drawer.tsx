@@ -1,6 +1,6 @@
 import { toast } from 'sonner'
 import { Trans, useLingui } from '@lingui/react/macro'
-import { centsToEuros, eurosToCents } from '@/lib/money'
+import { centsToEuros, eurosToCents, formatEuros } from '@/lib/money'
 import { useAuthStore } from '@/stores/auth-store'
 import { PaymentDrawer } from '@/components/payment-drawer'
 import {
@@ -23,7 +23,7 @@ export function DettesRemboursementsDrawer({
 }: DettesRemboursementsDrawerProps) {
   const addRepayment = useAddRepayment()
   const deleteRepayment = useDeleteRepayment()
-  const { t } = useLingui()
+  const { i18n, t } = useLingui()
   // Not a table — this only needs to look up one debt by id after a
   // mutation, so it asks for every debt (no status filter, a generous page
   // size) rather than relying on whatever page/filters the table happens
@@ -46,12 +46,7 @@ export function DettesRemboursementsDrawer({
       description={
         <Trans>
           <strong>{lenderLabel}</strong> a prêté{' '}
-          <strong>
-            {new Intl.NumberFormat('fr-FR', {
-              style: 'currency',
-              currency: 'EUR',
-            }).format(centsToEuros(dette.amount))}
-          </strong>{' '}
+          <strong>{formatEuros(centsToEuros(dette.amount), i18n.locale)}</strong>{' '}
           à <strong>{borrowerLabel}</strong>
         </Trans>
       }

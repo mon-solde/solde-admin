@@ -21,10 +21,6 @@ export const MONTH_MESSAGES: MessageDescriptor[] = [
   msg`Décembre`,
 ]
 
-export function formatFrenchDate(date: Date): string {
-  return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
-}
-
 export const chargeTypeColorMap: Record<'AUTOMATIC' | 'MANUAL', string> = {
   AUTOMATIC: 'text-blue-600 bg-blue-50 border-blue-200',
   MANUAL: 'text-amber-600 bg-amber-50 border-amber-200',
@@ -33,15 +29,6 @@ export const chargeTypeColorMap: Record<'AUTOMATIC' | 'MANUAL', string> = {
 export const CHARGE_TYPE_MESSAGES: Record<'AUTOMATIC' | 'MANUAL', MessageDescriptor> = {
   AUTOMATIC: msg`Automatique`,
   MANUAL: msg`Manuel`,
-}
-
-export function formatEuros(amount: number): string {
-  return (
-    amount.toLocaleString('fr-FR', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }) + ' €'
-  )
 }
 
 export function getTodayAsInputValue(): string {

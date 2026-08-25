@@ -71,8 +71,7 @@ export function DettesTable({
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const { i18n, t } = useLingui()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const columns = useMemo(() => getDettesColumns(), [i18n])
+  const columns = useMemo(() => getDettesColumns(i18n), [i18n])
 
   // What the debt list is filtered by — the backend does the actual
   // filtering (see useGetDettes), this just reflects/updates the URL.
@@ -140,6 +139,7 @@ export function DettesTable({
       }),
     })
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,

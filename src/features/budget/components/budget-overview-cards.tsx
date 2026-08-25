@@ -1,19 +1,10 @@
 import { Pencil } from 'lucide-react'
-import { Plural, Trans } from '@lingui/react/macro'
-import { centsToEuros } from '@/lib/money'
+import { Plural, Trans, useLingui } from '@lingui/react/macro'
+import { centsToEuros, formatEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { type MonthlyRecurringCharge } from '../data/schema'
-
-function formatEuros(amount: number) {
-  return (
-    amount.toLocaleString('fr-FR', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }) + ' €'
-  )
-}
 
 type BudgetOverviewCardsProps = {
   receivedSalary: number
@@ -30,6 +21,7 @@ export function BudgetOverviewCards({
   availableAfterDeductions,
   onEditSalaryClick,
 }: BudgetOverviewCardsProps) {
+  const { i18n } = useLingui()
   const automaticCount = recurringCharges.filter(
     (c) => c.type === 'AUTOMATIC'
   ).length
@@ -56,7 +48,7 @@ export function BudgetOverviewCards({
         </CardHeader>
         <CardContent>
           <p className='text-2xl font-bold'>
-            {formatEuros(centsToEuros(receivedSalary))}
+            {formatEuros(centsToEuros(receivedSalary), i18n.locale)}
           </p>
         </CardContent>
       </Card>
@@ -69,7 +61,7 @@ export function BudgetOverviewCards({
         </CardHeader>
         <CardContent>
           <p className='text-2xl font-bold text-red-600'>
-            − {formatEuros(centsToEuros(totalCharges))}
+            − {formatEuros(centsToEuros(totalCharges), i18n.locale)}
           </p>
           <p className='mt-1 text-xs text-muted-foreground'>
             <Plural value={totalCount} one='# charge' other='# charges' />
@@ -105,7 +97,7 @@ export function BudgetOverviewCards({
               availableAfterDeductions >= 0 ? 'text-green-600' : 'text-red-600'
             )}
           >
-            {formatEuros(centsToEuros(availableAfterDeductions))}
+            {formatEuros(centsToEuros(availableAfterDeductions), i18n.locale)}
           </p>
         </CardContent>
       </Card>

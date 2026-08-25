@@ -1,9 +1,11 @@
 import { Link } from '@tanstack/react-router'
 import { type ColumnDef } from '@tanstack/react-table'
+import { type I18n } from '@lingui/core'
 import { t } from '@lingui/core/macro'
 import { Trans } from '@lingui/react/macro'
 import { ArrowUpRight, ArrowDownLeft, Car } from 'lucide-react'
-import { centsToEuros } from '@/lib/money'
+import { formatShortDate } from '@/lib/dates'
+import { centsToEuros, formatEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -19,16 +21,11 @@ import { DataTableRowActions } from './data-table-row-actions'
 
 const NOTE_COLUMN_MAX_WIDTH = 'max-w-40 sm:max-w-64'
 
-const fmt = new Intl.NumberFormat('fr-FR', {
-  style: 'currency',
-  currency: 'EUR',
-})
-
-// A function, not a static array, called via useMemo(() => getDettesColumns(), [i18n])
-// in DettesTable — the `i18n` dependency (unused here directly) forces this
-// to rebuild on every locale switch, so the `t` calls inside re-run instead
-// of staying frozen from whenever the array was first built.
-export function getDettesColumns(): ColumnDef<Dette>[] {
+// Called via useMemo(() => getDettesColumns(i18n), [i18n]) in DettesTable —
+// rebuilds on every locale switch, so the `t` calls and locale-aware
+// formatting inside re-run instead of staying frozen from whenever the
+// array was first built.
+export function getDettesColumns(i18n: I18n): ColumnDef<Dette>[] {
   return [
     {
       id: 'select',
@@ -120,7 +117,7 @@ export function getDettesColumns(): ColumnDef<Dette>[] {
       ),
       cell: ({ row }) => (
         <Label className='cursor-default font-normal tabular-nums'>
-          {fmt.format(centsToEuros(row.getValue<number>('amount')))}
+          {formatEuros(centsToEuros(row.getValue<number>('amount')), i18n.locale)}
         </Label>
       ),
     },
@@ -142,7 +139,7 @@ export function getDettesColumns(): ColumnDef<Dette>[] {
           )
         return (
           <Label className='cursor-default font-normal tabular-nums'>
-            {fmt.format(centsToEuros(remaining))}
+            {formatEuros(centsToEuros(remaining), i18n.locale)}
           </Label>
         )
       },
@@ -216,7 +213,7 @@ export function getDettesColumns(): ColumnDef<Dette>[] {
       ),
       cell: ({ row }) => (
         <Label className='cursor-default font-normal text-muted-foreground tabular-nums'>
-          {new Intl.DateTimeFormat('fr-FR').format(row.getValue<Date>('date'))}
+          {formatShortDate(row.getValue<Date>('date'), i18n.locale)}
         </Label>
       ),
     },

@@ -1,14 +1,13 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { type I18n } from '@lingui/core'
 import { t } from '@lingui/core/macro'
-import { centsToEuros } from '@/lib/money'
+import { formatDayMonthYear } from '@/lib/dates'
+import { centsToEuros, formatEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import { DataTableColumnHeader } from '@/components/data-table'
 import {
   type SavingsHistoryEntry,
-  formatEuros,
-  formatFrenchDate,
   savingsMovementKinds,
   savingsSources,
 } from '../data/data'
@@ -25,7 +24,7 @@ export function getSavingsColumns(
       ),
       cell: ({ row }) => (
         <span className='text-sm'>
-          {formatFrenchDate(row.getValue('date'))}
+          {formatDayMonthYear(row.getValue('date'), i18n.locale)}
         </span>
       ),
     },
@@ -91,7 +90,7 @@ export function getSavingsColumns(
             )}
           >
             {kind === 'addition' ? '+' : '-'}
-            {formatEuros(centsToEuros(amount))}
+            {formatEuros(centsToEuros(amount), i18n.locale)}
           </span>
         )
       },

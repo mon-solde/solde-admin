@@ -3,7 +3,7 @@ import { Info, TrendingDown, TrendingUp } from 'lucide-react'
 import { toast } from 'sonner'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useAuthStore } from '@/stores/auth-store'
-import { centsToEuros, eurosToCents } from '@/lib/money'
+import { centsToEuros, eurosToCents, formatEuros } from '@/lib/money'
 import { formatPersonName } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { DecimalInput } from '@/components/ui/decimal-input'
@@ -65,11 +65,11 @@ function computeProfitShares(
   )
 }
 
-function formatSettlementAmount(total: number): string {
-  const amount = Math.abs(total).toLocaleString('fr-FR', {
+function formatSettlementAmount(total: number, locale: string): string {
+  const amount = formatEuros(Math.abs(total), locale, {
     maximumFractionDigits: 2,
   })
-  return total < 0 ? `− ${amount} €` : `${amount} €`
+  return total < 0 ? `− ${amount}` : amount
 }
 
 type DeclareSoldDialogProps = {
@@ -90,7 +90,7 @@ export function DeclareSoldDialog({
   const [bankSplit, setBankSplit] = useState<number>(NaN)
   const { mutate: declareSale, isPending } = useDeclareSale(vehicle.id)
   const { auth } = useAuthStore()
-  const { t } = useLingui()
+  const { i18n, t } = useLingui()
   const ownerId = auth.user?.accountNo ?? ''
   const cashierOptions = [
     {
@@ -251,10 +251,10 @@ export function DeclareSoldDialog({
             <Trans>
               {vehicle.name} — Total investi :{' '}
               <span className='font-medium text-foreground'>
-                {centsToEuros(financialSummary.totalExpenses).toLocaleString(
-                  'fr-FR'
-                )}{' '}
-                €
+                {formatEuros(
+                  centsToEuros(financialSummary.totalExpenses),
+                  i18n.locale
+                )}
               </span>
             </Trans>
           </DialogDescription>
@@ -363,10 +363,10 @@ export function DeclareSoldDialog({
                       <Trans>Espèces</Trans>
                     </span>
                     <span className='font-medium text-foreground'>
-                      {centsToEuros(cashComputedCents).toLocaleString(
-                        'fr-FR'
-                      )}{' '}
-                      €
+                      {formatEuros(
+                        centsToEuros(cashComputedCents),
+                        i18n.locale
+                      )}
                     </span>
                   </div>
                   {vehicle.participants.length > 0 && (
@@ -406,8 +406,8 @@ export function DeclareSoldDialog({
                   >
                     {profit !== null
                       ? isDeficit
-                        ? `${centsToEuros(Math.abs(profit)).toLocaleString('fr-FR')} €`
-                        : `+${centsToEuros(profit).toLocaleString('fr-FR')} €`
+                        ? formatEuros(centsToEuros(Math.abs(profit)), i18n.locale)
+                        : `+${formatEuros(centsToEuros(profit), i18n.locale)}`
                       : '—'}
                   </span>
                 </span>
@@ -424,19 +424,18 @@ export function DeclareSoldDialog({
                     <p className='text-sm font-medium'>{t`Vous`}</p>
                     <p className='text-xs text-muted-foreground'>
                       <Trans>
-                        Mise : {ownerBreakdown.invested.toLocaleString('fr-FR')}{' '}
-                        € · Bénéf :{' '}
-                        {ownerBreakdown.profitAmount.toLocaleString('fr-FR', {
+                        Mise : {formatEuros(ownerBreakdown.invested, i18n.locale)}{' '}
+                        · Bénéf :{' '}
+                        {formatEuros(ownerBreakdown.profitAmount, i18n.locale, {
                           maximumFractionDigits: 2,
-                        })}{' '}
-                        €
+                        })}
                       </Trans>
                     </p>
                   </div>
                   <span
                     className={`text-base font-bold ${ownerBreakdown.total < 0 ? 'text-red-500' : ''}`}
                   >
-                    {formatSettlementAmount(ownerBreakdown.total)}
+                    {formatSettlementAmount(ownerBreakdown.total, i18n.locale)}
                   </span>
                 </div>
                 {breakdown.map((p) => (
@@ -450,19 +449,18 @@ export function DeclareSoldDialog({
                       </p>
                       <p className='text-xs text-muted-foreground'>
                         <Trans>
-                          Mise : {p.invested.toLocaleString('fr-FR')} € ·
+                          Mise : {formatEuros(p.invested, i18n.locale)} ·
                           Bénéf :{' '}
-                          {p.profitAmount.toLocaleString('fr-FR', {
+                          {formatEuros(p.profitAmount, i18n.locale, {
                             maximumFractionDigits: 2,
-                          })}{' '}
-                          €
+                          })}
                         </Trans>
                       </p>
                     </div>
                     <span
                       className={`text-base font-bold ${p.total < 0 ? 'text-red-500' : ''}`}
                     >
-                      {formatSettlementAmount(p.total)}
+                      {formatSettlementAmount(p.total, i18n.locale)}
                     </span>
                   </div>
                 ))}

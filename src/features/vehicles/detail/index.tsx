@@ -14,7 +14,8 @@ import {
 import { toast } from 'sonner'
 import { Plural, Trans, useLingui } from '@lingui/react/macro'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
-import { centsToEuros } from '@/lib/money'
+import { formatShortDate, formatWeekdayDayMonth } from '@/lib/dates'
+import { centsToEuros, formatEuros } from '@/lib/money'
 import { cn, formatPersonName } from '@/lib/utils'
 import { useAuthStore } from '@/stores/auth-store'
 import { ConfirmDialog } from '@/components/confirm-dialog'
@@ -85,7 +86,7 @@ function VehicleDetailContent() {
   const navigate = route.useNavigate()
   const { setOpen, setCurrentExpense, setCurrentVehicleEvent } =
     useVehicleDetail()
-  const { t } = useLingui()
+  const { i18n, t } = useLingui()
   const { data: vehicle, isLoading } = useGetVehicleDetail(vehicleId)
   const {
     pagination: dettesPagination,
@@ -309,10 +310,10 @@ function VehicleDetailContent() {
             </CardHeader>
             <CardContent>
               <p className='text-2xl font-bold'>
-                {centsToEuros(financialSummary.totalExpenses).toLocaleString(
-                  'fr-FR'
-                )}{' '}
-                €
+                {formatEuros(
+                  centsToEuros(financialSummary.totalExpenses),
+                  i18n.locale
+                )}
               </p>
               <p className='text-xs text-muted-foreground'>
                 <Plural
@@ -334,15 +335,15 @@ function VehicleDetailContent() {
               {vehicle.soldVehicle ? (
                 <>
                   <p className='text-2xl font-bold text-green-600'>
-                    {centsToEuros(
-                      vehicle.soldVehicle.salePrice
-                    ).toLocaleString('fr-FR')}{' '}
-                    €
+                    {formatEuros(
+                      centsToEuros(vehicle.soldVehicle.salePrice),
+                      i18n.locale
+                    )}
                   </p>
                   <p className='text-xs text-muted-foreground'>
                     <Trans>
                       Vendu le{' '}
-                      {vehicle.soldVehicle.soldAt.toLocaleDateString('fr-FR')}
+                      {formatShortDate(vehicle.soldVehicle.soldAt, i18n.locale)}
                     </Trans>
                   </p>
                   {(() => {
@@ -391,10 +392,10 @@ function VehicleDetailContent() {
                     )}
                   >
                     {financialSummary.profit >= 0 ? '+' : ''}
-                    {centsToEuros(financialSummary.profit).toLocaleString(
-                      'fr-FR'
-                    )}{' '}
-                    €
+                    {formatEuros(
+                      centsToEuros(financialSummary.profit),
+                      i18n.locale
+                    )}
                   </p>
                   <p className='text-xs text-muted-foreground'>
                     <Trans>Après dépenses et prix d&apos;achat</Trans>
@@ -482,15 +483,21 @@ function VehicleDetailContent() {
                       </Badge>
                     </TableCell>
                     <TableCell className='text-end'>
-                      {centsToEuros(
-                        financialSummary.owner.totalInvested
-                      ).toLocaleString('fr-FR')}{' '}
-                      €
+                      {formatEuros(
+                        centsToEuros(financialSummary.owner.totalInvested),
+                        i18n.locale
+                      )}
                     </TableCell>
                     {isSold && (
                       <TableCell className='text-end font-medium text-green-600'>
                         {financialSummary.owner.amountToReceive !== null
-                          ? `${centsToEuros(financialSummary.owner.amountToReceive).toLocaleString('fr-FR', { maximumFractionDigits: 2 })} €`
+                          ? formatEuros(
+                              centsToEuros(
+                                financialSummary.owner.amountToReceive
+                              ),
+                              i18n.locale,
+                              { maximumFractionDigits: 2 }
+                            )
                           : '—'}
                       </TableCell>
                     )}
@@ -504,12 +511,16 @@ function VehicleDetailContent() {
                         <Badge variant='outline'>{p.profitShare}%</Badge>
                       </TableCell>
                       <TableCell className='text-end'>
-                        {centsToEuros(p.totalInvested).toLocaleString('fr-FR')} €
+                        {formatEuros(centsToEuros(p.totalInvested), i18n.locale)}
                       </TableCell>
                       {isSold && (
                         <TableCell className='text-end font-medium text-green-600'>
                           {p.amountToReceive !== null
-                            ? `${centsToEuros(p.amountToReceive).toLocaleString('fr-FR', { maximumFractionDigits: 2 })} €`
+                            ? formatEuros(
+                                centsToEuros(p.amountToReceive),
+                                i18n.locale,
+                                { maximumFractionDigits: 2 }
+                              )
                             : '—'}
                         </TableCell>
                       )}
@@ -603,11 +614,7 @@ function VehicleDetailContent() {
                 {expenseGroups.map((group) => (
                   <div key={group.dateKey} className='space-y-2'>
                     <p className='text-xs font-semibold text-muted-foreground capitalize'>
-                      {group.date.toLocaleDateString('fr-FR', {
-                        weekday: 'long',
-                        day: 'numeric',
-                        month: 'long',
-                      })}
+                      {formatWeekdayDayMonth(group.date, i18n.locale)}
                     </p>
                     <div className='space-y-2'>
                       {group.expenses.map((expense) => (
@@ -633,7 +640,10 @@ function VehicleDetailContent() {
                           </div>
                           <div className='flex shrink-0 items-center gap-1'>
                             <span className='font-medium tabular-nums'>
-                              {centsToEuros(expense.totalAmount).toLocaleString('fr-FR')} €
+                              {formatEuros(
+                                centsToEuros(expense.totalAmount),
+                                i18n.locale
+                              )}
                             </span>
                             {!isSold && (
                               <>
@@ -785,10 +795,11 @@ function VehicleDetailContent() {
                   {pendingDeleteExpense.label}
                 </span>{' '}
                 (
-                {centsToEuros(
-                  pendingDeleteExpense.totalAmount
-                ).toLocaleString('fr-FR')}{' '}
-                €) ? Cette action est irréversible.
+                {formatEuros(
+                  centsToEuros(pendingDeleteExpense.totalAmount),
+                  i18n.locale
+                )}
+                ) ? Cette action est irréversible.
               </Trans>
             </p>
           }

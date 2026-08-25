@@ -44,12 +44,3 @@ export const statusColorMap: Record<string, string> = {
   active: 'text-green-600 bg-green-50 border-green-200',
   inactive: 'text-gray-500 bg-gray-50 border-gray-200',
 }
-
-export function formatAmountInEuros(amount: number) {
-  return (
-    amount.toLocaleString('fr-FR', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }) + ' €'
-  )
-}

@@ -1,5 +1,7 @@
 import ExcelJS from 'exceljs'
+import { i18n } from '@lingui/core'
 import { t } from '@lingui/core/macro'
+import { formatShortDate } from '@/lib/dates'
 import { centsToEuros } from '@/lib/money'
 import { formatPersonName } from '@/lib/utils'
 import { type VehicleDetail } from '../../data/schema'
@@ -105,7 +107,7 @@ function buildDetailTable(vehicle: VehicleDetail, ownerId: string): Table {
     }
     for (const [responsibleId, amount] of amountByResponsibleId) {
       rows.push([
-        expense.date.toLocaleDateString('fr-FR'),
+        formatShortDate(expense.date, i18n.locale),
         expense.label,
         resolvePersonName(responsibleId, ownerId, vehicle),
         centsToEuros(amount),

@@ -35,23 +35,6 @@ export const savingsSources: { label: MessageDescriptor; value: string }[] = [
   { label: msg`Espèces`, value: 'cash' },
 ]
 
-export function formatEuros(amount: number): string {
-  return (
-    amount.toLocaleString('fr-FR', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }) + ' €'
-  )
-}
-
-export function formatFrenchDate(date: Date): string {
-  return date.toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
-}
-
 export function getTodayAsInputValue(): string {
   return new Date().toISOString().split('T')[0]
 }

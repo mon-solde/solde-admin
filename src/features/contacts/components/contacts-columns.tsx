@@ -1,5 +1,7 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import { type I18n } from '@lingui/core'
 import { t } from '@lingui/core/macro'
+import { formatShortDate } from '@/lib/dates'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -7,7 +9,7 @@ import { LongText } from '@/components/long-text'
 import { type Contact } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 
-export function getContactsColumns(): ColumnDef<Contact>[] {
+export function getContactsColumns(i18n: I18n): ColumnDef<Contact>[] {
   return [
     {
       id: 'select',
@@ -63,7 +65,7 @@ export function getContactsColumns(): ColumnDef<Contact>[] {
       ),
       cell: ({ row }) => (
         <div className='text-muted-foreground'>
-          {new Intl.DateTimeFormat('fr-FR').format(row.getValue('createdAt'))}
+          {formatShortDate(row.getValue('createdAt'), i18n.locale)}
         </div>
       ),
     },
