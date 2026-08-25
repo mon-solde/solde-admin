@@ -23,6 +23,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Popover,
   PopoverContent,
@@ -154,12 +155,18 @@ function VehicleDetailContent() {
 
   if (isLoading) {
     return (
-      <Main>
-        <div className='flex items-center justify-center py-24'>
-          <p className='text-muted-foreground'>
-            <Trans>Chargement…</Trans>
-          </p>
+      <Main className='flex flex-1 flex-col gap-6'>
+        <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className='h-24 rounded-xl' />
+          ))}
         </div>
+        <div className='grid gap-6 lg:grid-cols-3'>
+          <Skeleton className='h-64 rounded-xl' />
+          <Skeleton className='h-64 rounded-xl lg:col-span-2' />
+        </div>
+        <Skeleton className='h-40 rounded-xl' />
+        <Skeleton className='h-64 rounded-xl' />
       </Main>
     )
   }
