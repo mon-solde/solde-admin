@@ -1,5 +1,5 @@
-import { Pencil } from 'lucide-react'
 import { Plural, Trans, useLingui } from '@lingui/react/macro'
+import { Pencil } from 'lucide-react'
 import { centsToEuros, formatEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -25,9 +25,7 @@ export function BudgetOverviewCards({
   const automaticCount = recurringCharges.filter(
     (c) => c.type === 'AUTOMATIC'
   ).length
-  const manualCount = recurringCharges.filter(
-    (c) => c.type === 'MANUAL'
-  ).length
+  const manualCount = recurringCharges.filter((c) => c.type === 'MANUAL').length
   const totalCount = recurringCharges.length
 
   return (

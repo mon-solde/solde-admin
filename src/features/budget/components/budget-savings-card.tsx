@@ -1,7 +1,7 @@
-import { useState } from 'react'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { centsToEuros, formatEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
+import useDialogState from '@/hooks/use-dialog-state'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import {
@@ -33,7 +33,7 @@ export function BudgetSavingsCard({
   year,
   onAddWithdrawal,
 }: BudgetSavingsCardProps) {
-  const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const [isSheetOpen, setIsSheetOpen] = useDialogState<boolean>(false)
   const { i18n } = useLingui()
 
   return (
@@ -64,7 +64,7 @@ export function BudgetSavingsCard({
           <button
             type='button'
             onClick={() => setIsSheetOpen(true)}
-            className='flex w-full items-center justify-between rounded-md border px-4 py-3 text-left transition-colors hover:bg-muted'
+            className='flex w-full items-center justify-between rounded-md border px-4 py-3 text-start transition-colors hover:bg-muted'
           >
             <span className='text-sm text-muted-foreground'>
               <Trans>Mis de côté ce mois</Trans>
@@ -98,7 +98,7 @@ export function BudgetSavingsCard({
         availableForSavings={availableForSavings}
         month={month}
         year={year}
-        open={isSheetOpen}
+        open={isSheetOpen ?? false}
         onOpenChange={setIsSheetOpen}
         onAddWithdrawal={onAddWithdrawal}
       />

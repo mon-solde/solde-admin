@@ -2,13 +2,16 @@ import { getRouteApi } from '@tanstack/react-router'
 import { Trans } from '@lingui/react/macro'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
+import { LanguageSwitch } from '@/components/language-switch'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
-import { LanguageSwitch } from '@/components/language-switch'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { DEFAULT_PAGE_SIZE, useGetRecurringCharges } from './api/subscriptions-api'
+import {
+  DEFAULT_PAGE_SIZE,
+  useGetRecurringCharges,
+} from './api/subscriptions-api'
 import { SubscriptionsDialogs } from './components/subscriptions-dialogs'
 import { SubscriptionsPrimaryButtons } from './components/subscriptions-primary-buttons'
 import { SubscriptionsProvider } from './components/subscriptions-provider'

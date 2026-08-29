@@ -1,6 +1,6 @@
-import { CheckCircle2, CircleDashed } from 'lucide-react'
 import { type MessageDescriptor } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
+import { CheckCircle2, CircleDashed } from 'lucide-react'
 
 // Keyed by the real API status ('ACTIVE'/'SOLD') — used for the status
 // badge cell.

@@ -21,7 +21,7 @@ function budgetByYearMonthKey(year: number, month: number) {
 // disagree.
 export const DEFAULT_PAGE_SIZE = 10
 
-export type MonthlyBudgetsFilters = {
+type MonthlyBudgetsFilters = {
   pageIndex?: number
   pageSize?: number
   sortBy?: 'month' | 'receivedSalary'
@@ -55,7 +55,7 @@ async function fetchMonthlyBudget(
   }
 }
 
-export type InitMonthPayload = {
+type InitMonthPayload = {
   year: number
   month: number
   receivedSalary: number
@@ -69,7 +69,7 @@ async function deleteMonthlyBudget(id: string): Promise<void> {
   return apiClient.delete(`/v1/monthly-budgets/${id}`)
 }
 
-export type UpdateSalaryPayload = {
+type UpdateSalaryPayload = {
   id: string
   receivedSalary: number
 }
@@ -81,7 +81,7 @@ async function updateSalary({
   return apiClient.patch(`/v1/monthly-budgets/${id}/salary`, body)
 }
 
-export type AddSavingsWithdrawalPayload = {
+type AddSavingsWithdrawalPayload = {
   budgetId: string
   amount: number
   destination: SavingsDestination
@@ -98,7 +98,7 @@ async function addSavingsWithdrawal({
   )
 }
 
-export type AddRecurringChargeToBudgetPayload = {
+type AddRecurringChargeToBudgetPayload = {
   budgetId: string
   recurringChargeId: string
 }
@@ -122,7 +122,8 @@ export function useGetMonthlyBudgets(filters: MonthlyBudgetsFilters = {}) {
       sortBy ?? '',
       sortOrder ?? '',
     ],
-    queryFn: () => fetchMonthlyBudgets({ pageIndex, pageSize, sortBy, sortOrder }),
+    queryFn: () =>
+      fetchMonthlyBudgets({ pageIndex, pageSize, sortBy, sortOrder }),
   })
 }
 

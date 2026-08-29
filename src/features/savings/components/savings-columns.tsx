@@ -53,8 +53,7 @@ export function getSavingsColumns(
       cell: ({ row }) => (
         <Badge variant='outline'>
           {i18n._(
-            savingsSources.find((s) => s.value === row.original.source)!
-              .label
+            savingsSources.find((s) => s.value === row.original.source)!.label
           )}
         </Badge>
       ),

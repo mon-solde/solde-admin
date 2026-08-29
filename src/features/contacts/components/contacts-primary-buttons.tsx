@@ -1,5 +1,5 @@
-import { UserPlus } from 'lucide-react'
 import { Trans } from '@lingui/react/macro'
+import { UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useContacts } from './contacts-provider'
 

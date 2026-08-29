@@ -3,10 +3,9 @@ import { z } from 'zod'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { msg } from '@lingui/core/macro'
 import { type MessageDescriptor } from '@lingui/core'
+import { msg } from '@lingui/core/macro'
 import { Plural, Trans, useLingui } from '@lingui/react/macro'
-import { formatDayMonthYear } from '@/lib/dates'
 import {
   Plus,
   Trash2,
@@ -15,6 +14,7 @@ import {
   SplitSquareHorizontal,
 } from 'lucide-react'
 import { toast } from 'sonner'
+import { formatDayMonthYear } from '@/lib/dates'
 import { formatEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
@@ -49,14 +49,14 @@ import {
 
 type SourceType = 'bank' | 'cash' | 'both'
 
-export type PaymentRecord = {
+type PaymentRecord = {
   id: string
   amount: number
   date: Date
   note?: string | null
 }
 
-export type PaymentDrawerSubmitData = {
+type PaymentDrawerSubmitData = {
   amount: number
   date: string
   note?: string
@@ -197,7 +197,8 @@ export function PaymentDrawer({
                 {paidLabel ?? <Trans>Remboursé</Trans>}
               </span>
               <span className='font-semibold tabular-nums'>
-                {formatEuros(amountPaid, i18n.locale)} / {formatEuros(amountDue, i18n.locale)}
+                {formatEuros(amountPaid, i18n.locale)} /{' '}
+                {formatEuros(amountDue, i18n.locale)}
               </span>
             </div>
             <div className='h-2 w-full overflow-hidden rounded-full bg-secondary'>

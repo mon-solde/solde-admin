@@ -2,9 +2,9 @@ import { useMemo } from 'react'
 import { z } from 'zod'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { PlusIcon, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { Trans, useLingui } from '@lingui/react/macro'
 import { eurosToCents } from '@/lib/money'
 import { Button } from '@/components/ui/button'
 import { DecimalInput } from '@/components/ui/decimal-input'
@@ -127,10 +127,6 @@ export function VehiclesActionDialog({
           form.reset()
           onOpenChange(false)
         },
-        onError: (error: any) =>
-          toast.error(
-            error?.response?.data?.message ?? t`Une erreur est survenue.`
-          ),
       }
     )
   }

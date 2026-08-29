@@ -1,5 +1,5 @@
-import { toast } from 'sonner'
 import { Trans, useLingui } from '@lingui/react/macro'
+import { toast } from 'sonner'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,10 +33,6 @@ export function VehiclesDeleteDialog({
         toast.success(t`Véhicule supprimé.`)
         onOpenChange(false)
       },
-      onError: (error: any) =>
-        toast.error(
-          error?.response?.data?.message ?? t`Une erreur est survenue.`
-        ),
     })
   }
 
@@ -53,8 +49,8 @@ export function VehiclesDeleteDialog({
               <span className='font-medium text-foreground'>
                 {currentRow.name}
               </span>{' '}
-              ? Cette action est irréversible et supprimera toutes les
-              dépenses associées.
+              ? Cette action est irréversible et supprimera toutes les dépenses
+              associées.
             </Trans>
           </AlertDialogDescription>
         </AlertDialogHeader>

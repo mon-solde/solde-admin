@@ -1,5 +1,5 @@
-import { ChevronsUpDown, LogOut } from 'lucide-react'
 import { Trans } from '@lingui/react/macro'
+import { ChevronsUpDown, LogOut } from 'lucide-react'
 import useDialogState from '@/hooks/use-dialog-state'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import {

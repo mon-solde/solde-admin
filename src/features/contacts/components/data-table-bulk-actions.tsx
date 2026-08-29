@@ -1,8 +1,8 @@
-import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
-import { Trash2 } from 'lucide-react'
-import { Trans, useLingui } from '@lingui/react/macro'
 import { msg } from '@lingui/core/macro'
+import { Trans, useLingui } from '@lingui/react/macro'
+import { Trash2 } from 'lucide-react'
+import useDialogState from '@/hooks/use-dialog-state'
 import { Button } from '@/components/ui/button'
 import {
   Tooltip,
@@ -19,7 +19,8 @@ type DataTableBulkActionsProps<TData> = {
 export function DataTableBulkActions<TData>({
   table,
 }: DataTableBulkActionsProps<TData>) {
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] =
+    useDialogState<boolean>(false)
   const { t } = useLingui()
 
   return (
@@ -51,7 +52,7 @@ export function DataTableBulkActions<TData>({
 
       <ContactsMultiDeleteDialog
         table={table}
-        open={showDeleteConfirm}
+        open={showDeleteConfirm ?? false}
         onOpenChange={setShowDeleteConfirm}
       />
     </>

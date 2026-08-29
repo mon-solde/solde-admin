@@ -42,7 +42,11 @@ const FILTER_ALL = 'all'
 
 type DataTableProps = Pick<
   UseTableUrlStateReturn,
-  'pagination' | 'onPaginationChange' | 'sorting' | 'onSortingChange' | 'ensurePageInRange'
+  | 'pagination'
+  | 'onPaginationChange'
+  | 'sorting'
+  | 'onSortingChange'
+  | 'ensurePageInRange'
 > & {
   data: Dette[]
   rowCount: number
@@ -83,9 +87,9 @@ export function DettesTable({
   const vehicleId = (search.vehicleId as string) || ''
   const isFiltered = Boolean(
     contactId ||
-      type ||
-      status !== 'en cours' ||
-      (!hideVehicleFilter && vehicleId)
+    type ||
+    status !== 'en cours' ||
+    (!hideVehicleFilter && vehicleId)
   )
   // Not a table — this only needs every vehicle to populate the filter
   // dropdown, so it asks for a generous page size rather than the default.

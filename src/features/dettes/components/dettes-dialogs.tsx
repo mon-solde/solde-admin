@@ -1,5 +1,5 @@
-import { toast } from 'sonner'
 import { Trans, useLingui } from '@lingui/react/macro'
+import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import {
   useDeleteDette,
@@ -17,6 +17,14 @@ export function DettesDialogs() {
   const setDebtForgiven = useSetDebtForgiven()
   const { t } = useLingui()
 
+  // Closes (or toggles) a dialog, then clears `currentRow` once its exit
+  // animation has had time to finish — clearing it immediately would blank
+  // the dialog's content while it's still visibly closing.
+  const closeDialog = (key: Parameters<typeof setOpen>[0] = null) => {
+    setOpen(key)
+    setTimeout(() => setCurrentRow(null), 500)
+  }
+
   return (
     <>
       <DettesMutateDrawer
@@ -30,12 +38,7 @@ export function DettesDialogs() {
           <DettesRemboursementsDrawer
             key={`dette-remboursements-${currentRow.id}`}
             open={open === 'remboursements'}
-            onOpenChange={() => {
-              setOpen('remboursements')
-              setTimeout(() => {
-                setCurrentRow(null)
-              }, 500)
-            }}
+            onOpenChange={() => closeDialog('remboursements')}
             currentRow={currentRow}
           />
 
@@ -57,18 +60,12 @@ export function DettesDialogs() {
             key='dette-delete'
             destructive
             open={open === 'delete'}
-            onOpenChange={() => {
-              setOpen('delete')
-              setTimeout(() => {
-                setCurrentRow(null)
-              }, 500)
-            }}
+            onOpenChange={() => closeDialog('delete')}
             handleConfirm={() => {
               deleteDette.mutate(currentRow.id, {
                 onSuccess: () => {
                   toast.success(t`Dette supprimée.`)
-                  setOpen(null)
-                  setTimeout(() => setCurrentRow(null), 500)
+                  closeDialog()
                 },
               })
             }}
@@ -87,20 +84,14 @@ export function DettesDialogs() {
           <ConfirmDialog
             key='dette-settle'
             open={open === 'settle'}
-            onOpenChange={() => {
-              setOpen('settle')
-              setTimeout(() => {
-                setCurrentRow(null)
-              }, 500)
-            }}
+            onOpenChange={() => closeDialog('settle')}
             handleConfirm={() => {
               setDebtSettled.mutate(
                 { debtId: currentRow.id, settled: true },
                 {
                   onSuccess: () => {
                     toast.success(t`Dette marquée comme réglée.`)
-                    setOpen(null)
-                    setTimeout(() => setCurrentRow(null), 500)
+                    closeDialog()
                   },
                 }
               )
@@ -122,20 +113,14 @@ export function DettesDialogs() {
           <ConfirmDialog
             key='dette-unsettle'
             open={open === 'unsettle'}
-            onOpenChange={() => {
-              setOpen('unsettle')
-              setTimeout(() => {
-                setCurrentRow(null)
-              }, 500)
-            }}
+            onOpenChange={() => closeDialog('unsettle')}
             handleConfirm={() => {
               setDebtSettled.mutate(
                 { debtId: currentRow.id, settled: false },
                 {
                   onSuccess: () => {
                     toast.success(t`Règlement manuel annulé.`)
-                    setOpen(null)
-                    setTimeout(() => setCurrentRow(null), 500)
+                    closeDialog()
                   },
                 }
               )
@@ -155,20 +140,14 @@ export function DettesDialogs() {
           <ConfirmDialog
             key='dette-forgive'
             open={open === 'forgive'}
-            onOpenChange={() => {
-              setOpen('forgive')
-              setTimeout(() => {
-                setCurrentRow(null)
-              }, 500)
-            }}
+            onOpenChange={() => closeDialog('forgive')}
             handleConfirm={() => {
               setDebtForgiven.mutate(
                 { debtId: currentRow.id, forgiven: true },
                 {
                   onSuccess: () => {
                     toast.success(t`Dette pardonnée.`)
-                    setOpen(null)
-                    setTimeout(() => setCurrentRow(null), 500)
+                    closeDialog()
                   },
                 }
               )
@@ -179,8 +158,8 @@ export function DettesDialogs() {
             desc={
               <Trans>
                 Elle ne sera plus considérée comme due, sans qu&apos;aucun
-                remboursement n&apos;ait eu lieu. Aucun nouveau remboursement
-                ne pourra être ajouté tant que ce n&apos;est pas annulé.
+                remboursement n&apos;ait eu lieu. Aucun nouveau remboursement ne
+                pourra être ajouté tant que ce n&apos;est pas annulé.
               </Trans>
             }
             confirmText={t`Pardonner`}
@@ -189,20 +168,14 @@ export function DettesDialogs() {
           <ConfirmDialog
             key='dette-unforgive'
             open={open === 'unforgive'}
-            onOpenChange={() => {
-              setOpen('unforgive')
-              setTimeout(() => {
-                setCurrentRow(null)
-              }, 500)
-            }}
+            onOpenChange={() => closeDialog('unforgive')}
             handleConfirm={() => {
               setDebtForgiven.mutate(
                 { debtId: currentRow.id, forgiven: false },
                 {
                   onSuccess: () => {
                     toast.success(t`Pardon annulé.`)
-                    setOpen(null)
-                    setTimeout(() => setCurrentRow(null), 500)
+                    closeDialog()
                   },
                 }
               )

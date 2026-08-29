@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
-import { Menu, X } from 'lucide-react'
 import { useLingui } from '@lingui/react/macro'
+import { Menu, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   SidebarMenu,

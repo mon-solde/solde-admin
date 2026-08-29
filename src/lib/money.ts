@@ -1,6 +1,6 @@
 import Dinero from 'dinero.js'
 
-export function eur(cents: number): Dinero.Dinero {
+function eur(cents: number): Dinero.Dinero {
   return Dinero({ amount: cents, currency: 'EUR' })
 }
 

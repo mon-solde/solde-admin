@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
-import { Check, ChevronsUpDown, Loader2 } from 'lucide-react'
 import { Trans, useLingui } from '@lingui/react/macro'
+import { Check, ChevronsUpDown, Loader2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {

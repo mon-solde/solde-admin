@@ -1,9 +1,9 @@
 import { type SVGProps } from 'react'
 import { Root as Radio, Item } from '@radix-ui/react-radio-group'
-import { CircleCheck, RotateCcw, Settings } from 'lucide-react'
 import { type MessageDescriptor } from '@lingui/core'
-import { Trans, useLingui } from '@lingui/react/macro'
 import { msg } from '@lingui/core/macro'
+import { Trans, useLingui } from '@lingui/react/macro'
+import { CircleCheck, RotateCcw, Settings } from 'lucide-react'
 import { IconDir } from '@/assets/custom/icon-dir'
 import { IconLayoutCompact } from '@/assets/custom/icon-layout-compact'
 import { IconLayoutDefault } from '@/assets/custom/icon-layout-default'
@@ -177,7 +177,11 @@ function RadioGroupItem({
   )
 }
 
-const THEME_ITEMS: { value: string; label: MessageDescriptor; icon: typeof IconThemeSystem }[] = [
+const THEME_ITEMS: {
+  value: string
+  label: MessageDescriptor
+  icon: typeof IconThemeSystem
+}[] = [
   {
     value: 'system',
     label: msg`Système`,
@@ -227,7 +231,11 @@ function ThemeConfig() {
   )
 }
 
-const SIDEBAR_ITEMS: { value: string; label: MessageDescriptor; icon: typeof IconSidebarInset }[] = [
+const SIDEBAR_ITEMS: {
+  value: string
+  label: MessageDescriptor
+  icon: typeof IconSidebarInset
+}[] = [
   {
     value: 'inset',
     label: msg`Encastrée`,
@@ -278,7 +286,11 @@ function SidebarConfig() {
   )
 }
 
-const LAYOUT_ITEMS: { value: string; label: MessageDescriptor; icon: typeof IconLayoutDefault }[] = [
+const LAYOUT_ITEMS: {
+  value: string
+  label: MessageDescriptor
+  icon: typeof IconLayoutDefault
+}[] = [
   {
     value: 'default',
     label: msg`Par défaut`,
@@ -336,8 +348,8 @@ function LayoutConfig() {
       </Radio>
       <div id='layout-description' className='sr-only'>
         <Trans>
-          Choisissez entre étendue par défaut, icônes compactes, ou mise en
-          page complète
+          Choisissez entre étendue par défaut, icônes compactes, ou mise en page
+          complète
         </Trans>
       </div>
     </div>
@@ -348,7 +360,11 @@ function DirConfig() {
   const { defaultDir, dir, setDir } = useDirection()
   const { i18n, t } = useLingui()
 
-  const items: { value: string; label: MessageDescriptor; icon: (props: SVGProps<SVGSVGElement>) => React.ReactElement }[] = [
+  const items: {
+    value: string
+    label: MessageDescriptor
+    icon: (props: SVGProps<SVGSVGElement>) => React.ReactElement
+  }[] = [
     {
       value: 'ltr',
       label: msg`Gauche à droite`,
@@ -388,8 +404,7 @@ function DirConfig() {
       </Radio>
       <div id='direction-description' className='sr-only'>
         <Trans>
-          Choisissez entre le sens de lecture gauche-à-droite ou
-          droite-à-gauche
+          Choisissez entre le sens de lecture gauche-à-droite ou droite-à-gauche
         </Trans>
       </div>
     </div>

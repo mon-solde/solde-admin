@@ -5,11 +5,13 @@ import { type Table } from '@tanstack/react-table'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
+import { getErrorMessage } from '@/lib/utils'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
+import { useDeleteDette } from '../api/dettes-api'
+import { type Dette } from '../data/schema'
 
 type DettesMultiDeleteDialogProps<TData> = {
   open: boolean
@@ -23,6 +25,7 @@ export function DettesMultiDeleteDialog<TData>({
   table,
 }: DettesMultiDeleteDialogProps<TData>) {
   const [value, setValue] = useState('')
+  const deleteDette = useDeleteDette()
   const { t } = useLingui()
   // The word the user must retype to confirm — translated too, so an
   // English-speaking user isn't asked to type a French word.
@@ -38,14 +41,16 @@ export function DettesMultiDeleteDialog<TData>({
 
     onOpenChange(false)
 
-    toast.promise(sleep(2000), {
+    const ids = selectedRows.map((row) => (row.original as Dette).id)
+
+    toast.promise(Promise.all(ids.map((id) => deleteDette.mutateAsync(id))), {
       loading: t`Suppression en cours...`,
       success: () => {
         setValue('')
         table.resetRowSelection()
-        return t`${selectedRows.length} dette${selectedRows.length > 1 ? 's' : ''} supprimée${selectedRows.length > 1 ? 's' : ''}.`
+        return t`${ids.length} dette${ids.length > 1 ? 's' : ''} supprimée${ids.length > 1 ? 's' : ''}.`
       },
-      error: t`Erreur`,
+      error: (error) => getErrorMessage(error, t`Erreur`),
     })
   }
 

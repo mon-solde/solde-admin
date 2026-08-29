@@ -1,8 +1,8 @@
-import { signOut } from 'firebase/auth'
 import { useNavigate, useLocation } from '@tanstack/react-router'
 import { useLingui } from '@lingui/react/macro'
-import { firebaseAuth } from '@/lib/firebase'
+import { signOut } from 'firebase/auth'
 import { useAuthStore } from '@/stores/auth-store'
+import { firebaseAuth } from '@/lib/firebase'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 
 interface SignOutDialogProps {

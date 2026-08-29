@@ -1,7 +1,7 @@
-import { toast } from 'sonner'
 import { Trans, useLingui } from '@lingui/react/macro'
-import { centsToEuros, eurosToCents, formatEuros } from '@/lib/money'
+import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
+import { centsToEuros, eurosToCents, formatEuros } from '@/lib/money'
 import { PaymentDrawer } from '@/components/payment-drawer'
 import {
   useAddRepayment,
@@ -46,7 +46,9 @@ export function DettesRemboursementsDrawer({
       description={
         <Trans>
           <strong>{lenderLabel}</strong> a prêté{' '}
-          <strong>{formatEuros(centsToEuros(dette.amount), i18n.locale)}</strong>{' '}
+          <strong>
+            {formatEuros(centsToEuros(dette.amount), i18n.locale)}
+          </strong>{' '}
           à <strong>{borrowerLabel}</strong>
         </Trans>
       }
@@ -63,10 +65,6 @@ export function DettesRemboursementsDrawer({
           { debtId: dette.id, repaymentId },
           {
             onSuccess: () => toast.success(t`Versement supprimé.`),
-            onError: (error: any) =>
-              toast.error(
-                error?.response?.data?.message ?? t`Une erreur est survenue.`
-              ),
           }
         )
       }
@@ -76,7 +74,9 @@ export function DettesRemboursementsDrawer({
       // form (dettes-mutate-drawer.tsx) for the non-reversed version of this
       // question.
       sourceSelectorLabel={
-        isLender ? t`Où avez-vous reçu cet argent ?` : t`D'où vient cet argent ?`
+        isLender
+          ? t`Où avez-vous reçu cet argent ?`
+          : t`D'où vient cet argent ?`
       }
       paidLabel={t`Remboursé`}
       remainingLabel={t`Reste à régler`}
@@ -93,10 +93,6 @@ export function DettesRemboursementsDrawer({
           },
           {
             onSuccess: () => toast.success(t`Versement enregistré.`),
-            onError: (error: any) =>
-              toast.error(
-                error?.response?.data?.message ?? t`Une erreur est survenue.`
-              ),
           }
         )
       }

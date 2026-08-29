@@ -14,7 +14,6 @@
     "lingui:extract": "lingui extract"
   },
   "dependencies": {
-    "@clerk/clerk-react": "^5.61.3",
     "@hookform/resolvers": "^5.2.2",
     "@lingui/core": "^6.6.0",
     "@lingui/react": "^6.6.0",
@@ -55,7 +54,6 @@
     "react-dom": "^19.2.4",
     "react-hook-form": "^7.72.0",
     "react-top-loading-bar": "^3.0.2",
-    "recharts": "^3.8.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.2",
@@ -65,7 +63,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@faker-js/faker": "^10.4.0",
     "@lingui/cli": "^6.6.0",
     "@lingui/swc-plugin": "^6.6.0",
     "@lingui/vite-plugin": "^6.6.0",

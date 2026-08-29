@@ -1,14 +1,12 @@
 import { z } from 'zod'
 
-export const repaymentSchema = z.object({
+const repaymentSchema = z.object({
   id: z.string(),
   amount: z.number(),
   date: z.coerce.date(),
   note: z.string().optional(),
   source: z.enum(['BANK', 'CASH']),
 })
-
-export type Repayment = z.infer<typeof repaymentSchema>
 
 export const detteSchema = z.object({
   id: z.string(),
@@ -35,15 +33,13 @@ export const detteSchema = z.object({
 
 export type Dette = z.infer<typeof detteSchema>
 
-export const debtTotalsSchema = z.object({
+const debtTotalsSchema = z.object({
   lentRemaining: z.coerce.number(),
   borrowedRemaining: z.coerce.number(),
   net: z.coerce.number(),
   lentCount: z.number(),
   borrowedCount: z.number(),
 })
-
-export type DebtTotals = z.infer<typeof debtTotalsSchema>
 
 export const dettesPageSchema = z.object({
   data: z.array(detteSchema),

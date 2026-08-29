@@ -2,10 +2,11 @@ import { useEffect, useMemo } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
 import { Trans, useLingui } from '@lingui/react/macro'
+import { toast } from 'sonner'
 import { formatPersonName } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { DecimalInput } from '@/components/ui/decimal-input'
 import {
   Dialog,
   DialogContent,
@@ -14,7 +15,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { DecimalInput } from '@/components/ui/decimal-input'
 import {
   Form,
   FormControl,
@@ -49,7 +49,10 @@ export function EditParticipantsDialog({
     () =>
       z.object({
         contactId: z.string(),
-        profitShare: z.number({ error: t`Requis` }).min(0).max(100),
+        profitShare: z
+          .number({ error: t`Requis` })
+          .min(0)
+          .max(100),
       }),
     [t]
   )
@@ -115,10 +118,6 @@ export function EditParticipantsDialog({
           toast.success(t`Parts mises à jour.`)
           onOpenChange(false)
         },
-        onError: (error: any) =>
-          toast.error(
-            error?.response?.data?.message ?? t`Une erreur est survenue.`
-          ),
       }
     )
   }

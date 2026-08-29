@@ -1,12 +1,5 @@
-import {
-  PiggyBank,
-  Repeat,
-  Wallet,
-  Users,
-  Car,
-  Handshake,
-} from 'lucide-react'
 import { msg } from '@lingui/core/macro'
+import { PiggyBank, Repeat, Wallet, Users, Car, Handshake } from 'lucide-react'
 import { type SidebarData } from '../types'
 
 export const sidebarData: SidebarData = {

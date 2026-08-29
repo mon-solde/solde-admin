@@ -3,8 +3,8 @@ import { z } from 'zod'
 import { format } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { msg } from '@lingui/core/macro'
 import { type MessageDescriptor } from '@lingui/core'
+import { msg } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import {
   ArrowUpRight,
@@ -167,11 +167,6 @@ export function DettesMutateDrawer({
           toast.success(t`Dette enregistrée.`)
           onOpenChange(false)
           setTimeout(handleReset, 300)
-        },
-        onError: (error: any) => {
-          toast.error(
-            error?.response?.data?.message ?? t`Une erreur est survenue.`
-          )
         },
       }
     )

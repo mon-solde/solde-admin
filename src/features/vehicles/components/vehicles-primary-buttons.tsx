@@ -1,5 +1,5 @@
-import { PlusIcon } from 'lucide-react'
 import { Trans } from '@lingui/react/macro'
+import { PlusIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useVehicles } from './vehicles-provider'
 

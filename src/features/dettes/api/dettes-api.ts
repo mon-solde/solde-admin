@@ -9,7 +9,7 @@ const DEBTS_KEY = ['debts'] as const
 // page size and the value actually sent to the backend can never disagree.
 export const DEFAULT_PAGE_SIZE = 10
 
-export type DettesFilters = {
+type DettesFilters = {
   contactId?: string
   type?: 'prêté' | 'emprunté'
   status?: 'en cours' | 'remboursé' | 'pardonné' | 'tous'
@@ -23,8 +23,16 @@ export type DettesFilters = {
 }
 
 async function fetchDebts(filters: DettesFilters = {}): Promise<DettesPage> {
-  const { contactId, type, status, vehicleId, pageIndex, pageSize, sortBy, sortOrder } =
-    filters
+  const {
+    contactId,
+    type,
+    status,
+    vehicleId,
+    pageIndex,
+    pageSize,
+    sortBy,
+    sortOrder,
+  } = filters
   const params: Record<string, string | number> = {}
   if (contactId) params.contactId = contactId
   if (type) params.role = type === 'prêté' ? 'LENDER' : 'BORROWER'
@@ -47,7 +55,7 @@ async function fetchDebts(filters: DettesFilters = {}): Promise<DettesPage> {
   return dettesPageSchema.parse(data)
 }
 
-export type CreateDettePayload = {
+type CreateDettePayload = {
   role: 'lent' | 'borrowed'
   personId: string
   amount: number
@@ -76,7 +84,7 @@ async function deleteDette(id: string): Promise<void> {
   return apiClient.delete(`/v1/debts/${id}`)
 }
 
-export type AddRepaymentPayload = {
+type AddRepaymentPayload = {
   debtId: string
   amount: number
   date: string
@@ -93,8 +101,16 @@ async function addRepayment({
 }
 
 export function useGetDettes(filters: DettesFilters = {}) {
-  const { contactId, type, status, vehicleId, pageIndex, pageSize, sortBy, sortOrder } =
-    filters
+  const {
+    contactId,
+    type,
+    status,
+    vehicleId,
+    pageIndex,
+    pageSize,
+    sortBy,
+    sortOrder,
+  } = filters
   return useQuery({
     queryKey: [
       ...DEBTS_KEY,

@@ -1,5 +1,5 @@
-import { Info } from 'lucide-react'
 import { Trans, useLingui } from '@lingui/react/macro'
+import { Info } from 'lucide-react'
 import { centsToEuros, formatEuros } from '@/lib/money'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -56,8 +56,8 @@ export function SavingsOverviewCards({ balances }: SavingsOverviewCardsProps) {
               <TooltipContent className='max-w-64 text-center'>
                 <Trans>
                   Calculé à partir de tous les mouvements d&apos;argent de
-                  l&apos;application (prêts, remboursements, salaires, ventes
-                  de véhicules…), pas seulement de vos ajustements manuels.
+                  l&apos;application (prêts, remboursements, salaires, ventes de
+                  véhicules…), pas seulement de vos ajustements manuels.
                 </Trans>
               </TooltipContent>
             </Tooltip>

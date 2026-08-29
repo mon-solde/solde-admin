@@ -19,12 +19,16 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination } from '@/components/data-table'
-import { getBudgetListColumns } from './budget-list-columns'
 import { type MonthlyBudget } from '../data/schema'
+import { getBudgetListColumns } from './budget-list-columns'
 
 type BudgetListTableProps = Pick<
   UseTableUrlStateReturn,
-  'pagination' | 'onPaginationChange' | 'sorting' | 'onSortingChange' | 'ensurePageInRange'
+  | 'pagination'
+  | 'onPaginationChange'
+  | 'sorting'
+  | 'onSortingChange'
+  | 'ensurePageInRange'
 > & {
   data: MonthlyBudget[]
   rowCount: number

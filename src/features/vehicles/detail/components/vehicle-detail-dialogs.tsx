@@ -19,6 +19,17 @@ export function VehicleDetailDialogs({ vehicle }: VehicleDetailDialogsProps) {
     setCurrentVehicleEvent,
   } = useVehicleDetail()
 
+  // Closes (or toggles) a dialog, then clears the row it was editing once
+  // its exit animation has had time to finish — clearing it immediately
+  // would blank the dialog's content while it's still visibly closing.
+  const closeDialog = (
+    key: Parameters<typeof setOpen>[0],
+    clearRow: () => void
+  ) => {
+    setOpen(key)
+    setTimeout(clearRow, 500)
+  }
+
   return (
     <>
       <ExpenseMutateDrawer
@@ -34,10 +45,9 @@ export function VehicleDetailDialogs({ vehicle }: VehicleDetailDialogsProps) {
           vehicle={vehicle}
           currentExpense={currentExpense}
           open={open === 'edit-expense'}
-          onOpenChange={() => {
-            setOpen('edit-expense')
-            setTimeout(() => setCurrentExpense(null), 500)
-          }}
+          onOpenChange={() =>
+            closeDialog('edit-expense', () => setCurrentExpense(null))
+          }
         />
       )}
 
@@ -54,10 +64,9 @@ export function VehicleDetailDialogs({ vehicle }: VehicleDetailDialogsProps) {
           vehicleId={vehicle.id}
           currentEvent={currentVehicleEvent}
           open={open === 'edit-event'}
-          onOpenChange={() => {
-            setOpen('edit-event')
-            setTimeout(() => setCurrentVehicleEvent(null), 500)
-          }}
+          onOpenChange={() =>
+            closeDialog('edit-event', () => setCurrentVehicleEvent(null))
+          }
         />
       )}
 

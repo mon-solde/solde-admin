@@ -1,5 +1,5 @@
-import { msg } from '@lingui/core/macro'
 import { type MessageDescriptor } from '@lingui/core'
+import { msg } from '@lingui/core/macro'
 import { type MonthlyBudget } from './schema'
 
 // Resolve with `i18n._(MONTH_MESSAGES[month - 1])` at the point of use —
@@ -26,7 +26,10 @@ export const chargeTypeColorMap: Record<'AUTOMATIC' | 'MANUAL', string> = {
   MANUAL: 'text-amber-600 bg-amber-50 border-amber-200',
 }
 
-export const CHARGE_TYPE_MESSAGES: Record<'AUTOMATIC' | 'MANUAL', MessageDescriptor> = {
+export const CHARGE_TYPE_MESSAGES: Record<
+  'AUTOMATIC' | 'MANUAL',
+  MessageDescriptor
+> = {
   AUTOMATIC: msg`Automatique`,
   MANUAL: msg`Manuel`,
 }

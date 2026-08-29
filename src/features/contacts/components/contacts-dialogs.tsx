@@ -4,6 +4,15 @@ import { useContacts } from './contacts-provider'
 
 export function ContactsDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useContacts()
+
+  // Closes (or toggles) a dialog, then clears `currentRow` once its exit
+  // animation has had time to finish — clearing it immediately would blank
+  // the dialog's content while it's still visibly closing.
+  const closeDialog = (key: Parameters<typeof setOpen>[0] = null) => {
+    setOpen(key)
+    setTimeout(() => setCurrentRow(null), 500)
+  }
+
   return (
     <>
       <ContactsActionDialog
@@ -17,24 +26,14 @@ export function ContactsDialogs() {
           <ContactsActionDialog
             key={`contact-edit-${currentRow.id}`}
             open={open === 'edit'}
-            onOpenChange={() => {
-              setOpen('edit')
-              setTimeout(() => {
-                setCurrentRow(null)
-              }, 500)
-            }}
+            onOpenChange={() => closeDialog('edit')}
             currentRow={currentRow}
           />
 
           <ContactsDeleteDialog
             key={`contact-delete-${currentRow.id}`}
             open={open === 'delete'}
-            onOpenChange={() => {
-              setOpen('delete')
-              setTimeout(() => {
-                setCurrentRow(null)
-              }, 500)
-            }}
+            onOpenChange={() => closeDialog('delete')}
             currentRow={currentRow}
           />
         </>

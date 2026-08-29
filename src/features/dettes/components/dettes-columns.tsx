@@ -117,7 +117,10 @@ export function getDettesColumns(i18n: I18n): ColumnDef<Dette>[] {
       ),
       cell: ({ row }) => (
         <Label className='cursor-default font-normal tabular-nums'>
-          {formatEuros(centsToEuros(row.getValue<number>('amount')), i18n.locale)}
+          {formatEuros(
+            centsToEuros(row.getValue<number>('amount')),
+            i18n.locale
+          )}
         </Label>
       ),
     },

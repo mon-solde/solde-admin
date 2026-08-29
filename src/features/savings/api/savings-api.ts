@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
 
-export const SAVINGS_KEY = ['savings'] as const
+const SAVINGS_KEY = ['savings'] as const
 
 // Single source of truth for "how many rows per page by default" — reused
 // by useTableUrlState (features/savings/index.tsx) so the table's resolved
@@ -42,10 +42,9 @@ const savingsPageSchema = z.object({
   page: z.number(),
 })
 
-export type SavingsHistoryItem = z.infer<typeof savingsHistoryItemSchema>
-export type SavingsPage = z.infer<typeof savingsPageSchema>
+type SavingsPage = z.infer<typeof savingsPageSchema>
 
-export type SavingsFilters = {
+type SavingsFilters = {
   kind?: 'addition' | 'withdrawal' | 'tous'
   source?: 'bank' | 'cash' | 'tous'
   search?: string
@@ -73,7 +72,7 @@ async function fetchSavings(
   return savingsPageSchema.parse(data)
 }
 
-export type CreateSavingsEventPayload = {
+type CreateSavingsEventPayload = {
   kind: 'ADDITION' | 'WITHDRAWAL'
   source: 'BANK' | 'CASH'
   amount: number

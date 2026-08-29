@@ -1,7 +1,7 @@
 import { useState } from 'react'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { Info, TrendingDown, TrendingUp } from 'lucide-react'
 import { toast } from 'sonner'
-import { Trans, useLingui } from '@lingui/react/macro'
 import { useAuthStore } from '@/stores/auth-store'
 import { centsToEuros, eurosToCents, formatEuros } from '@/lib/money'
 import { formatPersonName } from '@/lib/utils'
@@ -181,10 +181,6 @@ export function DeclareSoldDialog({
             reset()
             onOpenChange(false)
           },
-          onError: (error: any) =>
-            toast.error(
-              error?.response?.data?.message ?? t`Une erreur est survenue.`
-            ),
         }
       )
       return
@@ -226,10 +222,6 @@ export function DeclareSoldDialog({
           reset()
           onOpenChange(false)
         },
-        onError: (error: any) =>
-          toast.error(
-            error?.response?.data?.message ?? t`Une erreur est survenue.`
-          ),
       }
     )
   }
@@ -375,11 +367,10 @@ export function DeclareSoldDialog({
                       <span>
                         <Trans>
                           Comme l&apos;argent est réparti entre banque et
-                          espèces, votre épargne comptera votre part
-                          entièrement en banque par défaut. Une fois la
-                          répartition réelle connue avec les autres
-                          participants, corrigez si besoin avec un mouvement
-                          manuel dans l&apos;épargne.
+                          espèces, votre épargne comptera votre part entièrement
+                          en banque par défaut. Une fois la répartition réelle
+                          connue avec les autres participants, corrigez si
+                          besoin avec un mouvement manuel dans l&apos;épargne.
                         </Trans>
                       </span>
                     </div>
@@ -406,7 +397,10 @@ export function DeclareSoldDialog({
                   >
                     {profit !== null
                       ? isDeficit
-                        ? formatEuros(centsToEuros(Math.abs(profit)), i18n.locale)
+                        ? formatEuros(
+                            centsToEuros(Math.abs(profit)),
+                            i18n.locale
+                          )
                         : `+${formatEuros(centsToEuros(profit), i18n.locale)}`
                       : '—'}
                   </span>
@@ -424,8 +418,9 @@ export function DeclareSoldDialog({
                     <p className='text-sm font-medium'>{t`Vous`}</p>
                     <p className='text-xs text-muted-foreground'>
                       <Trans>
-                        Mise : {formatEuros(ownerBreakdown.invested, i18n.locale)}{' '}
-                        · Bénéf :{' '}
+                        Mise :{' '}
+                        {formatEuros(ownerBreakdown.invested, i18n.locale)} ·
+                        Bénéf :{' '}
                         {formatEuros(ownerBreakdown.profitAmount, i18n.locale, {
                           maximumFractionDigits: 2,
                         })}
@@ -449,8 +444,8 @@ export function DeclareSoldDialog({
                       </p>
                       <p className='text-xs text-muted-foreground'>
                         <Trans>
-                          Mise : {formatEuros(p.invested, i18n.locale)} ·
-                          Bénéf :{' '}
+                          Mise : {formatEuros(p.invested, i18n.locale)} · Bénéf
+                          :{' '}
                           {formatEuros(p.profitAmount, i18n.locale, {
                             maximumFractionDigits: 2,
                           })}

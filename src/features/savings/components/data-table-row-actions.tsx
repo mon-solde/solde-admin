@@ -1,6 +1,6 @@
 import { type Row } from '@tanstack/react-table'
-import { MoreHorizontal, Trash2 } from 'lucide-react'
 import { Trans, useLingui } from '@lingui/react/macro'
+import { MoreHorizontal, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,

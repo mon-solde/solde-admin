@@ -1,6 +1,6 @@
-import { CheckCircle2, XCircle, Zap, Hand } from 'lucide-react'
-import { msg } from '@lingui/core/macro'
 import { type MessageDescriptor } from '@lingui/core'
+import { msg } from '@lingui/core/macro'
+import { CheckCircle2, XCircle, Zap, Hand } from 'lucide-react'
 
 // Keyed by the real API values — used for the type/status badge cells.
 // `label` is a message descriptor, not a resolved string — resolve with

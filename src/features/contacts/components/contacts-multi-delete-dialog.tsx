@@ -2,14 +2,14 @@
 
 import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
+import { plural } from '@lingui/core/macro'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
-import { Trans, useLingui } from '@lingui/react/macro'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import { plural } from '@lingui/core/macro'
 import { useDeleteContact, type DeleteContactResult } from '../api/contacts-api'
 import { type Contact } from '../data/schema'
 
@@ -120,9 +120,9 @@ export function ContactsMultiDeleteDialog<TData>({
             </AlertTitle>
             <AlertDescription>
               <Trans>
-                Cette opération ne peut pas être annulée. Les contacts ayant
-                des dettes ou dépenses associées seront masqués plutôt que
-                supprimés pour garder l'historique lisible.
+                Cette opération ne peut pas être annulée. Les contacts ayant des
+                dettes ou dépenses associées seront masqués plutôt que supprimés
+                pour garder l'historique lisible.
               </Trans>
             </AlertDescription>
           </Alert>

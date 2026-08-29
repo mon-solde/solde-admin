@@ -4,11 +4,11 @@ import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
+import { LanguageSwitch } from '@/components/language-switch'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
-import { LanguageSwitch } from '@/components/language-switch'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { useGetMonthlyBudget } from './api/budget-api'
 import { BudgetChargesCard } from './components/budget-charges-card'
@@ -125,9 +125,7 @@ function BudgetContent() {
               <Trans>Mois non initialisé</Trans>
             </p>
             <p className='text-sm'>
-              <Trans>
-                Cliquez sur "Initialiser ce mois" pour commencer.
-              </Trans>
+              <Trans>Cliquez sur "Initialiser ce mois" pour commencer.</Trans>
             </p>
           </div>
         )}

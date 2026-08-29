@@ -2,8 +2,8 @@ import { useMemo } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
 import { Trans, useLingui } from '@lingui/react/macro'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -22,7 +22,10 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Textarea } from '@/components/ui/textarea'
-import { useAddVehicleEvent, useUpdateVehicleEvent } from '../../api/vehicles-api'
+import {
+  useAddVehicleEvent,
+  useUpdateVehicleEvent,
+} from '../../api/vehicles-api'
 import { type VehicleEvent } from '../../data/schema'
 
 type EventForm = { note: string }
@@ -65,18 +68,12 @@ export function EventMutateDialog({
       form.reset()
       onOpenChange(false)
     }
-    const onError = (error: any) =>
-      toast.error(error?.response?.data?.message ?? t`Une erreur est survenue.`)
-
     if (currentEvent) {
-      updateEvent.mutate(
-        { eventId: currentEvent.id, ...values },
-        { onSuccess, onError }
-      )
+      updateEvent.mutate({ eventId: currentEvent.id, ...values }, { onSuccess })
       return
     }
 
-    addEvent.mutate(values, { onSuccess, onError })
+    addEvent.mutate(values, { onSuccess })
   }
 
   return (

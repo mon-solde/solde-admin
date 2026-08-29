@@ -1,11 +1,8 @@
 import { AxiosError } from 'axios'
-import { toast } from 'sonner'
 import { t } from '@lingui/core/macro'
+import { toast } from 'sonner'
 
 export function handleServerError(error: unknown) {
-  // eslint-disable-next-line no-console
-  console.log(error)
-
   let errMsg = t`Une erreur est survenue !`
 
   if (
@@ -18,7 +15,7 @@ export function handleServerError(error: unknown) {
   }
 
   if (error instanceof AxiosError) {
-    errMsg = error.response?.data.title
+    errMsg = error.response?.data?.message ?? errMsg
   }
 
   toast.error(errMsg)

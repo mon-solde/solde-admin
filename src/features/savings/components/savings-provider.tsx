@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
-import { toast } from 'sonner'
 import { useLingui } from '@lingui/react/macro'
+import { toast } from 'sonner'
 import { eurosToCents } from '@/lib/money'
 import useDialogState from '@/hooks/use-dialog-state'
-import { useCreateSavingsEvent, useDeleteSavingsEvent } from '../api/savings-api'
+import {
+  useCreateSavingsEvent,
+  useDeleteSavingsEvent,
+} from '../api/savings-api'
 import { type SavingsHistoryEntry } from '../data/data'
 
 type SavingsDialogType = 'add' | 'delete'
@@ -61,10 +64,6 @@ export function SavingsProvider({ children }: { children: React.ReactNode }) {
           toast.success(t`Mouvement enregistré`)
           callbacks?.onSuccess?.()
         },
-        onError: (error: any) =>
-          toast.error(
-            error?.response?.data?.message ?? t`Une erreur est survenue.`
-          ),
       }
     )
   }
@@ -75,10 +74,6 @@ export function SavingsProvider({ children }: { children: React.ReactNode }) {
         toast.success(t`Mouvement supprimé`)
         callbacks?.onSuccess?.()
       },
-      onError: (error: any) =>
-        toast.error(
-          error?.response?.data?.message ?? t`Une erreur est survenue.`
-        ),
     })
   }
 

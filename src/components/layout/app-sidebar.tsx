@@ -1,6 +1,6 @@
-import { useLayout } from '@/context/layout-provider'
 import { useAuthStore } from '@/stores/auth-store'
 import { getInitialsFromEmail } from '@/lib/utils'
+import { useLayout } from '@/context/layout-provider'
 import {
   Sidebar,
   SidebarContent,

@@ -1,7 +1,7 @@
+import { loadCatalog } from '@/i18n'
+import { t } from '@lingui/core/macro'
 import { useLingui } from '@lingui/react'
 import { Check } from 'lucide-react'
-import { t } from '@lingui/core/macro'
-import { loadCatalog } from '@/i18n'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 
-export type LanguageOption = {
+type LanguageOption = {
   code: string
   flag: string
   label: string

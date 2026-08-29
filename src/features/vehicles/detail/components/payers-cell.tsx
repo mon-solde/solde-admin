@@ -1,5 +1,5 @@
-import { ArrowRight } from 'lucide-react'
 import { Trans, useLingui } from '@lingui/react/macro'
+import { ArrowRight } from 'lucide-react'
 import { centsToEuros, formatEuros } from '@/lib/money'
 import { Button } from '@/components/ui/button'
 import {

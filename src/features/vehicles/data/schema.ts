@@ -1,18 +1,13 @@
 import { z } from 'zod'
 
-export const vehicleStatusSchema = z.union([
-  z.literal('ACTIVE'),
-  z.literal('SOLD'),
-])
-export type VehicleStatus = z.infer<typeof vehicleStatusSchema>
+const vehicleStatusSchema = z.union([z.literal('ACTIVE'), z.literal('SOLD')])
 
-export const vehicleParticipantSchema = z.object({
+const vehicleParticipantSchema = z.object({
   contactId: z.string(),
   firstName: z.string(),
   lastName: z.string().nullable(),
   profitShare: z.number().min(0).max(100),
 })
-export type VehicleParticipant = z.infer<typeof vehicleParticipantSchema>
 
 export const vehicleSchema = z.object({
   id: z.string(),
@@ -66,7 +61,7 @@ export const vehicleEventSchema = z.object({
 })
 export type VehicleEvent = z.infer<typeof vehicleEventSchema>
 
-export const participantSummarySchema = z.object({
+const participantSummarySchema = z.object({
   contactId: z.string(),
   firstName: z.string(),
   lastName: z.string().nullable(),
@@ -75,15 +70,13 @@ export const participantSummarySchema = z.object({
   profitFromSale: z.coerce.number().nullable(),
   amountToReceive: z.coerce.number().nullable(),
 })
-export type ParticipantSummary = z.infer<typeof participantSummarySchema>
 
-export const ownerSummarySchema = z.object({
+const ownerSummarySchema = z.object({
   profitShare: z.coerce.number(),
   totalInvested: z.coerce.number(),
   profitFromSale: z.coerce.number().nullable(),
   amountToReceive: z.coerce.number().nullable(),
 })
-export type OwnerSummary = z.infer<typeof ownerSummarySchema>
 
 export const vehicleDetailSchema = vehicleSchema.extend({
   totalExpenses: z.coerce.number().optional().default(0),

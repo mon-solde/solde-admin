@@ -1,4 +1,4 @@
-import Axios, { InternalAxiosRequestConfig } from 'axios'
+import Axios, { type InternalAxiosRequestConfig } from 'axios'
 import { firebaseAuth } from '@/lib/firebase'
 
 async function requestInterceptor(config: InternalAxiosRequestConfig) {

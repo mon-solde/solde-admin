@@ -88,7 +88,9 @@ export function BudgetInitMonthDialog({
             </Trans>
           </AlertDialogTitle>
           <AlertDialogDescription>
-            <Trans>Saisissez le salaire reçu pour créer le budget du mois.</Trans>
+            <Trans>
+              Saisissez le salaire reçu pour créer le budget du mois.
+            </Trans>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <Form {...form}>

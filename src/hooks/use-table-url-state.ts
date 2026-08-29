@@ -222,7 +222,8 @@ export function useTableUrlState(
   const sorting: SortingState = useMemo(() => {
     if (!sortingCfg) return []
     const rawSortBy = (search as SearchRecord)[sortByKey]
-    const sortBy = typeof rawSortBy === 'string' ? rawSortBy : sortingCfg.defaultSortBy
+    const sortBy =
+      typeof rawSortBy === 'string' ? rawSortBy : sortingCfg.defaultSortBy
     const rawSortOrder = (search as SearchRecord)[sortOrderKey]
     const sortOrder =
       rawSortOrder === 'asc' || rawSortOrder === 'desc'

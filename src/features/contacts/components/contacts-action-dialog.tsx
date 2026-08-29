@@ -2,10 +2,11 @@
 
 import { useMemo, useState } from 'react'
 import { z } from 'zod'
+import { isAxiosError } from 'axios'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
 import { Trans, useLingui } from '@lingui/react/macro'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -106,11 +107,6 @@ export function ContactsActionDialog({
             form.reset()
             onOpenChange(false)
           },
-          onError: (error: any) => {
-            toast.error(
-              error?.response?.data?.message ?? t`Une erreur est survenue.`
-            )
-          },
         }
       )
       return
@@ -118,20 +114,20 @@ export function ContactsActionDialog({
 
     createContact.mutate(payload, {
       onSuccess: onCreateSuccess,
-      onError: (error: any) => {
-        const existingContactId = error?.response?.data?.existingContactId
-        if (existingContactId) {
-          setDuplicate({
-            existingContactId,
-            hidden: error.response.data.hidden,
-            fullName: `${payload.firstName} ${payload.lastName ?? ''}`.trim(),
-            payload,
-          })
-          return
+      onError: (error) => {
+        if (
+          isAxiosError<{ existingContactId?: string; hidden?: boolean }>(error)
+        ) {
+          const existingContactId = error.response?.data?.existingContactId
+          if (existingContactId) {
+            setDuplicate({
+              existingContactId,
+              hidden: Boolean(error.response?.data?.hidden),
+              fullName: `${payload.firstName} ${payload.lastName ?? ''}`.trim(),
+              payload,
+            })
+          }
         }
-        toast.error(
-          error?.response?.data?.message ?? t`Une erreur est survenue.`
-        )
       },
     })
   }
@@ -182,8 +178,8 @@ export function ContactsActionDialog({
                 </Trans>
               ) : (
                 <Trans>
-                  Créez un nouveau contact ici. Cliquez sur enregistrer une
-                  fois terminé.
+                  Créez un nouveau contact ici. Cliquez sur enregistrer une fois
+                  terminé.
                 </Trans>
               )}
             </DialogDescription>

@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { AlertTriangle } from 'lucide-react'
 import { toast } from 'sonner'
-import { Trans, useLingui } from '@lingui/react/macro'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -40,12 +40,6 @@ export function ContactsDeleteDialog({
         )
         onOpenChange(false)
         setValue('')
-      },
-      onError: (error: any) => {
-        toast.error(
-          error?.response?.data?.message ??
-            t`Impossible de supprimer ce contact.`
-        )
       },
     })
   }

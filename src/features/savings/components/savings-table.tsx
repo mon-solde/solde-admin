@@ -76,7 +76,8 @@ export function SavingsTable({
 
   const kind = (search.kind as string) || 'tous'
   const source = (search.source as string) || 'tous'
-  const isFiltered = kind !== 'tous' || source !== 'tous' || Boolean(globalFilter)
+  const isFiltered =
+    kind !== 'tous' || source !== 'tous' || Boolean(globalFilter)
 
   const onKindChange = (value: string) =>
     navigate({

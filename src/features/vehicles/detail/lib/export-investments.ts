@@ -1,6 +1,6 @@
-import ExcelJS from 'exceljs'
 import { i18n } from '@lingui/core'
 import { t } from '@lingui/core/macro'
+import type ExcelJS from 'exceljs'
 import { formatShortDate } from '@/lib/dates'
 import { centsToEuros } from '@/lib/money'
 import { formatPersonName } from '@/lib/utils'
@@ -139,7 +139,9 @@ function buildVehicleInfoTable(vehicle: VehicleDetail): Table {
   return { header: [t`Métrique`, t`Valeur`], rows }
 }
 
-function buildSummaryTable(vehicle: VehicleDetail): Table & { isDeficit: boolean } {
+function buildSummaryTable(
+  vehicle: VehicleDetail
+): Table & { isDeficit: boolean } {
   const { financialSummary } = vehicle
   const isSold = Boolean(vehicle.soldVehicle)
   // A profit is split by each participant's % de participation; a deficit is
@@ -147,7 +149,8 @@ function buildSummaryTable(vehicle: VehicleDetail): Table & { isDeficit: boolean
   // percentage — see computeProfitShares on the backend. The column reflects
   // whichever actually applied, instead of always showing the % (which would
   // be misleading on a deficit, since it played no part in the split).
-  const isDeficit = financialSummary.profit !== null && financialSummary.profit < 0
+  const isDeficit =
+    financialSummary.profit !== null && financialSummary.profit < 0
   const header = [
     t`Participant`,
     isDeficit ? t`Répartition` : t`% bénéfice`,
@@ -251,6 +254,10 @@ export async function exportVehicleInvestmentsToExcel(
   vehicle: VehicleDetail,
   ownerId: string
 ) {
+  // Loaded on demand — exceljs is the single largest dependency in the app,
+  // and this export is a rarely-clicked action, not something every visitor
+  // to a vehicle page needs to pay for in the initial bundle.
+  const { default: ExcelJS } = await import('exceljs')
   const workbook = new ExcelJS.Workbook()
   const sheet = workbook.addWorksheet(t`Investissements`)
   sheet.columns = [
@@ -272,7 +279,10 @@ export async function exportVehicleInvestmentsToExcel(
   if (detail.rows.length > 0) {
     sheet.autoFilter = {
       from: { row: detailHeaderRow, column: 1 },
-      to: { row: detailHeaderRow + detail.rows.length, column: detail.header.length },
+      to: {
+        row: detailHeaderRow + detail.rows.length,
+        column: detail.header.length,
+      },
     }
   }
 

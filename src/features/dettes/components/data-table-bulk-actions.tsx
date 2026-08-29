@@ -1,10 +1,10 @@
-import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
+import { msg } from '@lingui/core/macro'
+import { useLingui } from '@lingui/react/macro'
 import { Trash2, CheckCircle2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { useLingui } from '@lingui/react/macro'
-import { msg } from '@lingui/core/macro'
-import { sleep } from '@/lib/utils'
+import { getErrorMessage } from '@/lib/utils'
+import useDialogState from '@/hooks/use-dialog-state'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -18,6 +18,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
+import { useSetDebtSettled, useSetDebtForgiven } from '../api/dettes-api'
 import { detteStatuses } from '../data/data'
 import { type Dette } from '../data/schema'
 import { DettesMultiDeleteDialog } from './dettes-multi-delete-dialog'
@@ -29,21 +30,39 @@ type DataTableBulkActionsProps<TData> = {
 export function DataTableBulkActions<TData>({
   table,
 }: DataTableBulkActionsProps<TData>) {
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] =
+    useDialogState<boolean>(false)
   const selectedRows = table.getFilteredSelectedRowModel().rows
   const { i18n, t } = useLingui()
+  const setDebtSettled = useSetDebtSettled()
+  const setDebtForgiven = useSetDebtForgiven()
 
-  const handleBulkStatusChange = (_status: string) => {
+  const handleBulkStatusChange = (
+    status: 'en cours' | 'remboursé' | 'pardonné'
+  ) => {
     const selectedDettes = selectedRows.map((row) => row.original as Dette)
-    toast.promise(sleep(2000), {
-      loading: t`Mise à jour du statut...`,
-      success: () => {
-        table.resetRowSelection()
-        return t`Statut mis à jour pour ${selectedDettes.length} dette${selectedDettes.length > 1 ? 's' : ''}.`
-      },
-      error: t`Erreur`,
-    })
-    table.resetRowSelection()
+    const applyToOne = (debtId: string) => {
+      if (status === 'remboursé')
+        return setDebtSettled.mutateAsync({ debtId, settled: true })
+      if (status === 'pardonné')
+        return setDebtForgiven.mutateAsync({ debtId, forgiven: true })
+      return Promise.all([
+        setDebtSettled.mutateAsync({ debtId, settled: false }),
+        setDebtForgiven.mutateAsync({ debtId, forgiven: false }),
+      ])
+    }
+
+    toast.promise(
+      Promise.all(selectedDettes.map((dette) => applyToOne(dette.id))),
+      {
+        loading: t`Mise à jour du statut...`,
+        success: () => {
+          table.resetRowSelection()
+          return t`Statut mis à jour pour ${selectedDettes.length} dette${selectedDettes.length > 1 ? 's' : ''}.`
+        },
+        error: (error) => getErrorMessage(error, t`Erreur`),
+      }
+    )
   }
 
   return (
@@ -105,7 +124,7 @@ export function DataTableBulkActions<TData>({
       </BulkActionsToolbar>
 
       <DettesMultiDeleteDialog
-        open={showDeleteConfirm}
+        open={showDeleteConfirm ?? false}
         onOpenChange={setShowDeleteConfirm}
         table={table}
       />

@@ -1,6 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiClient } from '@/lib/api-client'
-import { vehiclesPageSchema, vehicleDetailSchema, type VehiclesPage } from '../data/schema'
+import {
+  vehiclesPageSchema,
+  vehicleDetailSchema,
+  type VehiclesPage,
+} from '../data/schema'
 
 const VEHICLES_KEY = ['vehicles'] as const
 const vehicleDetailKey = (id: string) => ['vehicles', id] as const
@@ -12,7 +16,7 @@ const vehicleDetailKey = (id: string) => ['vehicles', id] as const
 // page size and the value actually sent to the backend can never disagree.
 export const DEFAULT_PAGE_SIZE = 10
 
-export type VehiclesFilters = {
+type VehiclesFilters = {
   status?: 'en cours' | 'vendu' | 'tous'
   search?: string
   pageIndex?: number
@@ -21,7 +25,9 @@ export type VehiclesFilters = {
   sortOrder?: 'asc' | 'desc'
 }
 
-async function fetchVehicles(filters: VehiclesFilters = {}): Promise<VehiclesPage> {
+async function fetchVehicles(
+  filters: VehiclesFilters = {}
+): Promise<VehiclesPage> {
   const { status, search, pageIndex, pageSize, sortBy, sortOrder } = filters
   const params: Record<string, string | number> = {}
   // Absent status means "not specified yet", which defaults to 'en cours' —
@@ -124,7 +130,8 @@ export function useUpdateExpense(vehicleId: string) {
         source?: 'BANK' | 'CASH'
         imputedToId?: string
       }>
-    }) => apiClient.put(`/v1/vehicles/${vehicleId}/expenses/${expenseId}`, data),
+    }) =>
+      apiClient.put(`/v1/vehicles/${vehicleId}/expenses/${expenseId}`, data),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: vehicleDetailKey(vehicleId) }),
   })
@@ -153,13 +160,8 @@ export function useAddVehicleEvent(vehicleId: string) {
 export function useUpdateVehicleEvent(vehicleId: string) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({
-      eventId,
-      ...data
-    }: {
-      eventId: string
-      note: string
-    }) => apiClient.put(`/v1/vehicles/${vehicleId}/events/${eventId}`, data),
+    mutationFn: ({ eventId, ...data }: { eventId: string; note: string }) =>
+      apiClient.put(`/v1/vehicles/${vehicleId}/events/${eventId}`, data),
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: vehicleDetailKey(vehicleId) }),
   })

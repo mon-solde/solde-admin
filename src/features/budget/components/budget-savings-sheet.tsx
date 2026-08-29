@@ -160,7 +160,9 @@ export function BudgetSavingsSheet({
                 >
                   <div>
                     <p className='text-sm font-medium'>
-                      <Trans>Retiré le {formatDayMonth(w.date, i18n.locale)}</Trans>
+                      <Trans>
+                        Retiré le {formatDayMonth(w.date, i18n.locale)}
+                      </Trans>
                     </p>
                     <p className='text-xs text-muted-foreground'>
                       {w.source === 'BANK' ? (

@@ -1,7 +1,7 @@
 import * as React from 'react'
+import { useLingui } from '@lingui/react/macro'
 import { Command as CommandPrimitive } from 'cmdk'
 import { SearchIcon } from 'lucide-react'
-import { useLingui } from '@lingui/react/macro'
 import { cn } from '@/lib/utils'
 import {
   Dialog,

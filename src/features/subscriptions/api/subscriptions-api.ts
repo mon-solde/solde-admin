@@ -14,7 +14,7 @@ const RECURRING_CHARGES_KEY = ['recurring-charges'] as const
 // disagree.
 export const DEFAULT_PAGE_SIZE = 10
 
-export type SubscriptionsFilters = {
+type SubscriptionsFilters = {
   status?: 'en cours' | 'inactif' | 'tous'
   type?: RecurringChargeType | 'tous'
   search?: string
@@ -45,7 +45,7 @@ async function fetchRecurringCharges(
   return subscriptionsPageSchema.parse(data)
 }
 
-export type CreateRecurringChargePayload = {
+type CreateRecurringChargePayload = {
   name: string
   amount: number
   type: RecurringChargeType
@@ -58,7 +58,7 @@ async function createRecurringCharge(
   return apiClient.post('/v1/recurring-charges', body)
 }
 
-export type UpdateRecurringChargePayload = CreateRecurringChargePayload & {
+type UpdateRecurringChargePayload = CreateRecurringChargePayload & {
   id: string
 }
 

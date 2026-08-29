@@ -1,5 +1,5 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useLingui } from '@lingui/react'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { type NavigateFn } from '@/hooks/use-table-url-state'
 import { Button } from '@/components/ui/button'
 import { MONTH_MESSAGES } from '../data/data'

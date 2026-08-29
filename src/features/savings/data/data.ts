@@ -12,20 +12,10 @@ export type SavingsHistoryEntry = {
   source: 'bank' | 'cash'
 }
 
-export function computeSavingsTotals(history: SavingsHistoryEntry[]) {
-  let bank = 0
-  let cash = 0
-
-  for (const entry of history) {
-    const sign = entry.kind === 'addition' ? 1 : -1
-    if (entry.source === 'bank') bank += sign * entry.amount
-    else cash += sign * entry.amount
-  }
-
-  return { bank, cash, total: bank + cash }
-}
-
-export const savingsMovementKinds: { label: MessageDescriptor; value: string }[] = [
+export const savingsMovementKinds: {
+  label: MessageDescriptor
+  value: string
+}[] = [
   { label: msg`Ajout`, value: 'addition' },
   { label: msg`Retrait`, value: 'withdrawal' },
 ]

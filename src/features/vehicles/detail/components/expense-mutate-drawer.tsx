@@ -2,9 +2,9 @@ import { useMemo } from 'react'
 import { z } from 'zod'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { Trans, useLingui } from '@lingui/react/macro'
 import { PlusIcon, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
-import { Trans, useLingui } from '@lingui/react/macro'
 import { useAuthStore } from '@/stores/auth-store'
 import { centsToEuros, eurosToCents, formatEuros } from '@/lib/money'
 import { formatPersonName } from '@/lib/utils'
@@ -158,18 +158,15 @@ export function ExpenseMutateDrawer({
       form.reset()
       onOpenChange(false)
     }
-    const onError = (error: any) =>
-      toast.error(error?.response?.data?.message ?? t`Une erreur est survenue.`)
-
     if (currentExpense) {
       updateExpense.mutate(
         { expenseId: currentExpense.id, ...payload },
-        { onSuccess, onError }
+        { onSuccess }
       )
       return
     }
 
-    addExpense.mutate(payload, { onSuccess, onError })
+    addExpense.mutate(payload, { onSuccess })
   }
 
   return (
@@ -450,11 +447,7 @@ export function ExpenseMutateDrawer({
             </Button>
           </DialogClose>
           <Button form='expense-form' type='submit' disabled={isPending}>
-            {isPending
-              ? t`Enregistrement…`
-              : isEdit
-                ? t`Modifier`
-                : t`Ajouter`}
+            {isPending ? t`Enregistrement…` : isEdit ? t`Modifier` : t`Ajouter`}
           </Button>
         </DialogFooter>
       </DialogContent>

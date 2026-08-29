@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro'
 import {
   ArrowDownLeft,
   ArrowUpRight,
@@ -5,7 +6,6 @@ import {
   CheckCircle2,
   HeartHandshake,
 } from 'lucide-react'
-import { msg } from '@lingui/core/macro'
 
 // `label` is a message descriptor, not a resolved string — resolve with
 // `i18n._(item.label)` at the point of use to stay reactive to language

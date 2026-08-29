@@ -3,10 +3,6 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Trans, useLingui } from '@lingui/react/macro'
-import {
-  useAddRecurringChargeToBudget,
-  useGetMonthlyBudget,
-} from '@/features/budget/api/budget-api'
 import { centsToEuros, eurosToCents } from '@/lib/money'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -30,6 +26,10 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SelectDropdown } from '@/components/select-dropdown'
+import {
+  useAddRecurringChargeToBudget,
+  useGetMonthlyBudget,
+} from '@/features/budget/api/budget-api'
 import {
   useCreateRecurringCharge,
   useUpdateRecurringCharge,
@@ -83,10 +83,7 @@ export function SubscriptionsActionDialog({
   const now = new Date()
   const currentYear = now.getFullYear()
   const currentMonth = now.getMonth() + 1
-  const { data: currentBudget } = useGetMonthlyBudget(
-    currentYear,
-    currentMonth
-  )
+  const { data: currentBudget } = useGetMonthlyBudget(currentYear, currentMonth)
   const [applyToCurrentMonth, setApplyToCurrentMonth] = useState(true)
   const showApplyToCurrentMonth = !isEdit && !!currentBudget
 

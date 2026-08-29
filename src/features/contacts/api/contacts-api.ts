@@ -10,7 +10,7 @@ const CONTACTS_KEY = ['contacts'] as const
 // disagree.
 export const DEFAULT_PAGE_SIZE = 10
 
-export type ContactsFilters = {
+type ContactsFilters = {
   search?: string
   pageIndex?: number
   pageSize?: number
@@ -33,7 +33,7 @@ async function fetchContacts(
   return contactsPageSchema.parse(data)
 }
 
-export type CreateContactPayload = {
+type CreateContactPayload = {
   firstName: string
   lastName?: string
   skipDuplicateNameCheck?: boolean
@@ -45,7 +45,7 @@ async function createContact(
   return apiClient.post('/v1/contacts', payload)
 }
 
-export type UpdateContactPayload = {
+type UpdateContactPayload = {
   id: string
   firstName: string
   lastName?: string
