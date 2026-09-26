@@ -46,6 +46,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 
 type SourceType = 'bank' | 'cash' | 'both'
 
@@ -77,6 +78,9 @@ type PaymentDrawerProps = {
   sourceSelectorLabel?: string
   paidLabel?: string
   remainingLabel?: string
+  // Shown before recording a payment larger than what's still owed —
+  // receives the already-formatted excess (e.g. "20,00 €").
+  overpaymentWarning: (formattedExcess: string) => React.ReactNode
   onSubmit: (data: PaymentDrawerSubmitData) => void
   onDeleteRepayment?: (repaymentId: string) => void
 }
@@ -104,10 +108,15 @@ export function PaymentDrawer({
   sourceSelectorLabel,
   paidLabel,
   remainingLabel,
+  overpaymentWarning,
   onSubmit,
   onDeleteRepayment,
 }: PaymentDrawerProps) {
   const [sourceType, setSourceType] = useState<SourceType | null>(null)
+  // A payment above what's still owed, waiting for the user to confirm it
+  // in the dialog before it's actually submitted.
+  const [pendingOverpayment, setPendingOverpayment] =
+    useState<PaymentDrawerSubmitData | null>(null)
   const { i18n, t } = useLingui()
 
   const formSchema = useMemoFormSchema(t)
@@ -154,7 +163,7 @@ export function PaymentDrawer({
       }
     }
 
-    onSubmit({
+    const payment: PaymentDrawerSubmitData = {
       amount: data.amount,
       date: data.date,
       note: data.note || undefined,
@@ -166,8 +175,19 @@ export function PaymentDrawer({
             : 'BOTH',
       bankSplitAmount:
         sourceType === 'both' ? (data.bankSplit ?? 0) : undefined,
-    })
+    }
+    if (data.amount > remaining) {
+      setPendingOverpayment(payment)
+      return
+    }
+    onSubmit(payment)
   }
+
+  // Rounded to the cent: euros are floats here, and 750 - 730.1 would
+  // otherwise show up as 19.899999999999977.
+  const overpaymentExcess = pendingOverpayment
+    ? Math.round((pendingOverpayment.amount - remaining) * 100) / 100
+    : 0
 
   const sortedRepayments = [...repayments].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -435,6 +455,22 @@ export function PaymentDrawer({
           </SheetClose>
         </SheetFooter>
       </SheetContent>
+
+      <ConfirmDialog
+        open={pendingOverpayment !== null}
+        onOpenChange={(v) => {
+          if (!v) setPendingOverpayment(null)
+        }}
+        title={t`Montant supérieur au reste à régler`}
+        desc={
+          <>{overpaymentWarning(formatEuros(overpaymentExcess, i18n.locale))}</>
+        }
+        confirmText={t`Oui, enregistrer`}
+        handleConfirm={() => {
+          if (pendingOverpayment) onSubmit(pendingOverpayment)
+          setPendingOverpayment(null)
+        }}
+      />
     </Sheet>
   )
 }

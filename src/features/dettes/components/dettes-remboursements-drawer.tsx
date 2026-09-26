@@ -80,6 +80,20 @@ export function DettesRemboursementsDrawer({
       }
       paidLabel={t`Remboursé`}
       remainingLabel={t`Reste à régler`}
+      overpaymentWarning={(excess) =>
+        isLender ? (
+          <Trans>
+            <strong>{borrowerLabel}</strong> va vous rembourser{' '}
+            <strong>{excess}</strong> de plus que ce qu&apos;il vous doit.
+            Êtes-vous sûr ?
+          </Trans>
+        ) : (
+          <Trans>
+            Vous allez rembourser <strong>{excess}</strong> de plus que ce que
+            vous devez à <strong>{lenderLabel}</strong>. Êtes-vous sûr ?
+          </Trans>
+        )
+      }
       onSubmit={(data) =>
         addRepayment.mutate(
           {
