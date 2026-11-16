@@ -1,5 +1,9 @@
 import { initializeApp } from 'firebase/app'
-import { initializeAuth, browserLocalPersistence } from 'firebase/auth'
+import {
+  initializeAuth,
+  browserLocalPersistence,
+  connectAuthEmulator,
+} from 'firebase/auth'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDrsXtaNOHI21rsHZyEbbOHrvJPtHP-8p4',
@@ -16,3 +20,10 @@ const app = initializeApp(firebaseConfig)
 export const firebaseAuth = initializeAuth(app, {
   persistence: [browserLocalPersistence],
 })
+
+// Local dev: sign in against the Firebase Auth Emulator (the one the API and
+// its seed use) instead of the real project. Unset in production.
+const authEmulatorUrl = import.meta.env.VITE_FIREBASE_AUTH_EMULATOR_URL
+if (authEmulatorUrl) {
+  connectAuthEmulator(firebaseAuth, authEmulatorUrl, { disableWarnings: true })
+}
