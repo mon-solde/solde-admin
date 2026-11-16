@@ -3,8 +3,7 @@
 Web app of **Solde**, a personal finance app: a monthly budget, debts between friends, savings in bank and cash, and vehicles bought together. You enter something once and every page that depends on it updates.
 
 ## Demo
-
-<!-- Paste the GitHub video link here: drag the video into the editor on github.com. -->
+https://github.com/user-attachments/assets/71b88293-b151-4137-8992-b61fa38ebab1
 
 Backend (NestJS, PostgreSQL, Firebase Auth): [voit-api](https://github.com/Voit-admin/voit-api)
 
