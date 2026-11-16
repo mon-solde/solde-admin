@@ -11,6 +11,7 @@ import {
   savingsMovementKinds,
   savingsSources,
 } from '../data/data'
+import { getSavingsEntryLabel } from '../data/labels'
 import { DataTableRowActions } from './data-table-row-actions'
 
 export function getSavingsColumns(
@@ -29,7 +30,8 @@ export function getSavingsColumns(
       ),
     },
     {
-      accessorKey: 'label',
+      id: 'label',
+      accessorFn: (entry) => getSavingsEntryLabel(entry.details, i18n.locale),
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title={t`Libellé`} />
       ),

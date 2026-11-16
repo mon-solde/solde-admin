@@ -19,7 +19,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const { setOpen, setCurrentRow } = useSavings()
   const { t } = useLingui()
 
-  if (row.original.sourceType !== 'manual') return null
+  if (row.original.details.type !== 'MANUAL') return null
 
   function openDeleteDialog() {
     setCurrentRow(row.original)

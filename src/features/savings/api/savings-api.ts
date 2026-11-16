@@ -9,6 +9,29 @@ const SAVINGS_KEY = ['savings'] as const
 // page size and the value actually sent to the backend can never disagree.
 export const DEFAULT_PAGE_SIZE = 10
 
+// What an entry is about, as raw data — the label shown to the user is
+// composed (and translated) client-side, see data/labels.ts.
+const savingsEntryDetailsSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('MANUAL'), label: z.string() }),
+  z.object({ type: z.literal('DEBT'), contactName: z.string() }),
+  z.object({
+    type: z.literal('REPAYMENT'),
+    contactName: z.string(),
+    vehicleName: z.string().optional(),
+  }),
+  z.object({
+    type: z.literal('BUDGET'),
+    year: z.number(),
+    month: z.number(),
+  }),
+  z.object({
+    type: z.literal('VEHICLE_EXPENSE'),
+    expenseLabel: z.string(),
+    vehicleName: z.string(),
+  }),
+  z.object({ type: z.literal('VEHICLE_SALE'), vehicleName: z.string() }),
+])
+
 const savingsHistoryItemSchema = z.object({
   id: z.string(),
   kind: z
@@ -18,20 +41,9 @@ const savingsHistoryItemSchema = z.object({
     .enum(['BANK', 'CASH'])
     .transform((v) => v.toLowerCase() as 'bank' | 'cash'),
   amount: z.number(),
-  label: z.string(),
+  details: savingsEntryDetailsSchema,
   note: z.string().optional(),
   date: z.coerce.date(),
-  sourceType: z
-    .enum(['DEBT', 'REPAYMENT', 'BUDGET', 'MANUAL', 'VEHICLE_SALE'])
-    .transform(
-      (v) =>
-        v.toLowerCase() as
-          | 'debt'
-          | 'repayment'
-          | 'budget'
-          | 'manual'
-          | 'vehicle_sale'
-    ),
 })
 
 const savingsPageSchema = z.object({

@@ -161,7 +161,7 @@ msgid "Afficher/masquer les colonnes"
 msgstr "Toggle columns"
 
 #: src/features/savings/components/savings-action-dialog.tsx:137
-#: src/features/savings/data/data.ts:19
+#: src/features/savings/data/data.ts:26
 msgid "Ajout"
 msgstr "Addition"
 
@@ -243,7 +243,7 @@ msgstr "Skip to main content"
 #: src/features/budget/components/budget-init-month-dialog.tsx:122
 #: src/features/contacts/components/contact-duplicate-dialog.tsx:59
 #: src/features/dettes/components/dettes-mutate-drawer.tsx:499
-#: src/features/savings/components/savings-delete-dialog.tsx:52
+#: src/features/savings/components/savings-delete-dialog.tsx:53
 #: src/features/subscriptions/components/subscriptions-delete-dialog.tsx:53
 #: src/features/vehicles/components/vehicles-delete-dialog.tsx:59
 #: src/features/vehicles/detail/components/declare-sold-dialog.tsx:469
@@ -372,7 +372,7 @@ msgstr "April"
 #: src/features/budget/components/budget-savings-sheet.tsx:235
 #: src/features/dettes/components/dettes-mutate-drawer.tsx:60
 #: src/features/savings/components/savings-action-dialog.tsx:164
-#: src/features/savings/data/data.ts:24
+#: src/features/savings/data/data.ts:31
 #: src/features/vehicles/detail/components/declare-sold-dialog.tsx:325
 #: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:337
 msgid "Banque"
@@ -507,7 +507,7 @@ msgid "Complète"
 msgstr "Full"
 
 #: src/features/savings/components/savings-action-dialog.tsx:154
-#: src/features/savings/components/savings-columns.tsx:51
+#: src/features/savings/components/savings-columns.tsx:53
 #: src/features/savings/components/savings-table.tsx:166
 msgid "Compte"
 msgstr "Account"
@@ -606,7 +606,7 @@ msgstr "Where does the money come from?"
 #: src/features/dettes/components/dettes-columns.tsx:215
 #: src/features/dettes/components/dettes-mutate-drawer.tsx:438
 #: src/features/savings/components/savings-action-dialog.tsx:203
-#: src/features/savings/components/savings-columns.tsx:23
+#: src/features/savings/components/savings-columns.tsx:24
 #: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:226
 #: src/features/vehicles/detail/lib/export-investments.ts:87
 msgid "Date"
@@ -876,6 +876,10 @@ msgstr "Savings"
 msgid "Épargne Banque"
 msgstr "Bank savings"
 
+#: src/features/savings/data/labels.ts:29
+msgid "Épargne de {month}"
+msgstr "Savings for {month}"
+
 #: src/features/savings/components/savings-overview-cards.tsx:38
 msgid "Épargne Espèces"
 msgstr "Cash savings"
@@ -913,7 +917,7 @@ msgstr "Error: {0}"
 #: src/features/dettes/components/dettes-mutate-drawer.tsx:61
 #: src/features/dettes/components/dettes-mutate-drawer.tsx:420
 #: src/features/savings/components/savings-action-dialog.tsx:167
-#: src/features/savings/data/data.ts:25
+#: src/features/savings/data/data.ts:32
 #: src/features/vehicles/detail/components/declare-sold-dialog.tsx:328
 #: src/features/vehicles/detail/components/declare-sold-dialog.tsx:355
 #: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:340
@@ -925,9 +929,9 @@ msgstr "Cash"
 msgid "Êtes-vous sûr de vouloir supprimer <0>{0}</0> ? Cette action est irréversible et supprimera toutes les dépenses associées."
 msgstr "Are you sure you want to delete <0>{0}</0>? This action is irreversible and will delete all associated expenses."
 
-#. placeholder {0}: currentRow.label
 #. placeholder {0}: currentRow.name
-#: src/features/savings/components/savings-delete-dialog.tsx:41
+#. placeholder {0}: getSavingsEntryLabel(currentRow.details, i18n.locale)
+#: src/features/savings/components/savings-delete-dialog.tsx:42
 #: src/features/subscriptions/components/subscriptions-delete-dialog.tsx:42
 msgid "Êtes-vous sûr de vouloir supprimer <0>{0}</0> ? Cette action est irréversible."
 msgstr "Are you sure you want to delete <0>{0}</0>? This action is irreversible."
@@ -1225,7 +1229,7 @@ msgid "Les mois déjà générés ne sont pas affectés par cette modification �
 msgstr "Months already generated aren't affected by this change — only future months will take it into account."
 
 #: src/features/savings/components/savings-action-dialog.tsx:219
-#: src/features/savings/components/savings-columns.tsx:34
+#: src/features/savings/components/savings-columns.tsx:36
 #: src/features/vehicles/detail/components/expense-mutate-drawer.tsx:206
 msgid "Libellé"
 msgstr "Label"
@@ -1372,7 +1376,7 @@ msgstr "Month not initialized"
 
 #: src/features/budget/components/budget-savings-sheet.tsx:202
 #: src/features/savings/components/savings-action-dialog.tsx:183
-#: src/features/savings/components/savings-columns.tsx:80
+#: src/features/savings/components/savings-columns.tsx:82
 #: src/features/subscriptions/components/subscriptions-action-dialog.tsx:208
 msgid "Montant"
 msgstr "Amount"
@@ -1621,6 +1625,10 @@ msgstr "First or last name..."
 msgid "Prêt"
 msgstr "Lent"
 
+#: src/features/savings/data/labels.ts:16
+msgid "Prêt à {contactName}"
+msgstr "Loan to {contactName}"
+
 #: src/features/vehicles/components/vehicles-action-dialog.tsx:202
 msgid "Prix d'achat"
 msgstr "Purchase price"
@@ -1688,6 +1696,10 @@ msgstr "Reset all settings to default"
 #: src/features/dettes/data/data.tsx:33
 msgid "Remboursé"
 msgstr "Repaid"
+
+#: src/features/savings/data/labels.ts:22
+msgid "Remboursement de {contactName}"
+msgstr "Repayment from {contactName}"
 
 #: src/features/dettes/components/data-table-row-actions.tsx:63
 #: src/features/dettes/components/dettes-remboursements-drawer.tsx:45
@@ -1768,9 +1780,13 @@ msgid "Retour à la liste"
 msgstr "Back to list"
 
 #: src/features/savings/components/savings-action-dialog.tsx:140
-#: src/features/savings/data/data.ts:20
+#: src/features/savings/data/data.ts:27
 msgid "Retrait"
 msgstr "Withdrawal"
+
+#: src/features/savings/data/labels.ts:21
+msgid "Reversement de {contactName} — {vehicleName}"
+msgstr "Payout from {contactName} — {vehicleName}"
 
 #: src/features/budget/components/budget-init-month-dialog.tsx:91
 msgid "Saisissez le salaire reçu pour créer le budget du mois."
@@ -1900,7 +1916,7 @@ msgstr "Track your loans and debts in one place."
 msgid "Suppression en cours..."
 msgstr "Deleting..."
 
-#: src/features/savings/components/savings-delete-dialog.tsx:59
+#: src/features/savings/components/savings-delete-dialog.tsx:60
 #: src/features/vehicles/components/vehicles-delete-dialog.tsx:66
 msgid "Suppression…"
 msgstr "Deleting…"
@@ -1914,7 +1930,7 @@ msgstr "Deleting…"
 #: src/features/dettes/components/dettes-dialogs.tsx:81
 #: src/features/dettes/components/dettes-multi-delete-dialog.tsx:106
 #: src/features/savings/components/data-table-row-actions.tsx:46
-#: src/features/savings/components/savings-delete-dialog.tsx:59
+#: src/features/savings/components/savings-delete-dialog.tsx:60
 #: src/features/subscriptions/components/data-table-row-actions.tsx:104
 #: src/features/subscriptions/components/subscriptions-delete-dialog.tsx:60
 #: src/features/vehicles/components/data-table-row-actions.tsx:57
@@ -1966,7 +1982,7 @@ msgstr "Delete this debt: {0}?"
 msgid "Supprimer la charge récurrente"
 msgstr "Delete the recurring charge"
 
-#: src/features/savings/components/savings-delete-dialog.tsx:38
+#: src/features/savings/components/savings-delete-dialog.tsx:39
 msgid "Supprimer le mouvement"
 msgstr "Delete the movement"
 
@@ -2073,7 +2089,7 @@ msgid "Trop de tentatives. Réessayez plus tard."
 msgstr "Too many attempts. Try again later."
 
 #: src/features/savings/components/savings-action-dialog.tsx:127
-#: src/features/savings/components/savings-columns.tsx:65
+#: src/features/savings/components/savings-columns.tsx:67
 #: src/features/savings/components/savings-table.tsx:151
 #: src/features/subscriptions/components/subscriptions-action-dialog.tsx:229
 #: src/features/subscriptions/components/subscriptions-columns.tsx:91
@@ -2165,6 +2181,10 @@ msgstr "Sold"
 #: src/features/vehicles/detail/components/vehicle-summary-cards.tsx:57
 msgid "Vendu le {0}"
 msgstr "Sold on {0}"
+
+#: src/features/savings/data/labels.ts:35
+msgid "Vente de {vehicleName}"
+msgstr "Sale of {vehicleName}"
 
 #: src/features/vehicles/detail/components/declare-sold-dialog.tsx:180
 #: src/features/vehicles/detail/components/declare-sold-dialog.tsx:221

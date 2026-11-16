@@ -1,11 +1,18 @@
 import { type MessageDescriptor } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
 
+export type SavingsEntryDetails =
+  | { type: 'MANUAL'; label: string }
+  | { type: 'DEBT'; contactName: string }
+  | { type: 'REPAYMENT'; contactName: string; vehicleName?: string }
+  | { type: 'BUDGET'; year: number; month: number }
+  | { type: 'VEHICLE_EXPENSE'; expenseLabel: string; vehicleName: string }
+  | { type: 'VEHICLE_SALE'; vehicleName: string }
+
 export type SavingsHistoryEntry = {
   id: string
-  sourceType: 'debt' | 'repayment' | 'budget' | 'manual' | 'vehicle_sale'
+  details: SavingsEntryDetails
   date: Date
-  label: string
   note?: string
   amount: number
   kind: 'addition' | 'withdrawal'

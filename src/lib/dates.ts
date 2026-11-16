@@ -28,3 +28,8 @@ export function formatDayMonthYear(date: Date, locale: string): string {
 export function formatWeekdayDayMonth(date: Date, locale: string): string {
   return format(date, 'EEEE d MMMM', { locale: resolveDateFnsLocale(locale) })
 }
+
+// Long month + year — "novembre 2026" (fr) / "November 2026" (en).
+export function formatMonthYear(date: Date, locale: string): string {
+  return format(date, 'LLLL yyyy', { locale: resolveDateFnsLocale(locale) })
+}

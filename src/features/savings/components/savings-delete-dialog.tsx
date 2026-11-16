@@ -10,6 +10,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { type SavingsHistoryEntry } from '../data/data'
+import { getSavingsEntryLabel } from '../data/labels'
 import { useSavings } from './savings-provider'
 
 type SavingsDeleteDialogProps = {
@@ -24,7 +25,7 @@ export function SavingsDeleteDialog({
   onOpenChange,
 }: SavingsDeleteDialogProps) {
   const { deleteMovement, isDeletingMovement } = useSavings()
-  const { t } = useLingui()
+  const { t, i18n } = useLingui()
 
   function handleDelete() {
     deleteMovement(currentRow.id, { onSuccess: () => onOpenChange(false) })
@@ -41,7 +42,7 @@ export function SavingsDeleteDialog({
             <Trans>
               Êtes-vous sûr de vouloir supprimer{' '}
               <span className='font-medium text-foreground'>
-                {currentRow.label}
+                {getSavingsEntryLabel(currentRow.details, i18n.locale)}
               </span>{' '}
               ? Cette action est irréversible.
             </Trans>
